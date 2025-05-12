@@ -2,7 +2,7 @@
 
 domains=(orthotics.medairum.com)
 rsa_key_size=4096
-data_path="./certbot"
+data_path="../certbot"
 email="your-email@example.com" # Change to your email
 
 if [ -d "$data_path" ]; then
@@ -20,10 +20,10 @@ if [ ! -e "$data_path/conf/options-ssl-nginx.conf" ] || [ ! -e "$data_path/conf/
   echo
 fi
 
-echo "### Creating dummy certificate for $domains ..."
+echo "### Creating dummy certificate for ${domains[0]} ..."
 path="/etc/letsencrypt/live/$domains"
 mkdir -p "$data_path/conf/live/$domains"
-docker-compose run --rm --entrypoint "\
+docker compose run --rm --entrypoint "\
   openssl req -x509 -nodes -newkey rsa:$rsa_key_size -days 1\
     -keyout '$path/privkey.pem' \
     -out '$path/fullchain.pem' \
@@ -31,30 +31,40 @@ docker-compose run --rm --entrypoint "\
 echo
 
 echo "### Starting nginx ..."
-docker-compose up --force-recreate -d nginx
+docker compose up --force-recreate -d nginx
 echo
 
-echo "### Deleting dummy certificate for $domains ..."
-docker-compose run --rm --entrypoint "\
+echo "### Deleting dummy certificate for ${domains[0]} ..."
+docker compose run --rm --entrypoint "\
   rm -Rf /etc/letsencrypt/live/$domains && \
   rm -Rf /etc/letsencrypt/archive/$domains && \
   rm -Rf /etc/letsencrypt/renewal/$domains.conf" certbot
 echo
 
-echo "### Requesting Let's Encrypt certificate for $domains ..."
+echo "### Requesting Let's Encrypt certificate for ${domains[0]} ..."
 domain_args=""
 for domain in "${domains[@]}"; do
   domain_args="$domain_args -d $domain"
 done
 
-docker-compose run --rm --entrypoint "\
+# Select appropriate email arg
+case "$email" in
+  "") email_arg="--register-unsafely-without-email" ;;
+  *) email_arg="--email $email" ;;
+esac
+
+# Enable staging mode if needed
+if [ $staging != "0" ]; then staging_arg="--staging"; fi
+
+docker compose run --rm --entrypoint "\
   certbot certonly --webroot -w /var/www/certbot \
+    $staging_arg \
+    $email_arg \
     $domain_args \
-    --email $email \
     --rsa-key-size $rsa_key_size \
     --agree-tos \
     --force-renewal" certbot
 echo
 
 echo "### Reloading nginx ..."
-docker-compose exec nginx nginx -s reload 
+docker compose exec nginx nginx -s reload 

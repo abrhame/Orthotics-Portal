@@ -169,7 +169,6 @@ const ShoeFittingModule = {
     const nextBtn = document.querySelector("#nextShoeFittingBtn");
 
     if (saveBtn) {
-
       saveBtn.addEventListener("click", async (e) => {
         console.log("Saving shoe fitting");
         e.preventDefault();
@@ -306,11 +305,12 @@ const ShoeFittingModule = {
       if (shoeFittingModal) {
         // Hide the modal
         shoeFittingModal.hide();
-
+        console.log("Hiding shoe fitting modal");
         // Clean up after modal is hidden
         modalElement.addEventListener(
           "hidden.bs.modal",
           () => {
+            console.log("Hiding shoe fitting modal");
             // Remove any lingering backdrops
             const backdrops = document.getElementsByClassName("modal-backdrop");
             Array.from(backdrops).forEach((backdrop) => backdrop.remove());
@@ -318,13 +318,38 @@ const ShoeFittingModule = {
             document.body.classList.remove("modal-open");
             document.body.style.removeProperty("padding-right");
 
-            const deviceOptionsModal = new bootstrap.Modal(
-              document.getElementById("deviceOptionsModal")
-            );
-            deviceOptionsModal.show();
-            setTimeout(() => {
-              window.DeviceOptionsModule.init(this.prescriptionId);
-            }, 100);
+            // Check if DeviceOptionsModule exists before trying to use it
+            if (shouldProceedToNext) {
+              setTimeout(() => {
+                const deviceOptionsModal = new bootstrap.Modal(
+                  document.getElementById("deviceOptionsModal")
+                );
+                if (!deviceOptionsModal) {
+                  console.error("Device options modal not found");
+                  showToast("Could not proceed to device options", "danger");
+                  return;
+                }
+
+                try {
+                  deviceOptionsModal.show();
+
+                  if (
+                    window.DeviceOptionsModule &&
+                    typeof window.DeviceOptionsModule.init === "function"
+                  ) {
+                    window.DeviceOptionsModule.init(this.prescriptionId);
+                  } else {
+                    console.error(
+                      "DeviceOptionsModule not found or init method not available"
+                    );
+                    showToast("Could not initialize device options", "danger");
+                  }
+                } catch (error) {
+                  console.error("Error showing device options modal:", error);
+                  showToast("Error showing device options", "danger");
+                }
+              }, 300);
+            }
           },
           { once: true }
         );
