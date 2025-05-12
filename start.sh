@@ -3,55 +3,41 @@
 # Exit on error
 set -e
 
-echo "Setting up Orthotics Portal project..."
+if [ "$1" = "reset" ]; then
+    echo "Resetting database volume..."
+    ./reset-db.sh
+    exit 0
+fi
 
-# Create necessary directories
-mkdir -p backend/mediafiles backend/staticfiles
+echo "Starting Orthotics Portal in development mode..."
 
-# Start docker-compose services
-echo "Starting Docker containers..."
-docker-compose up -d --build
+# Build containers if needed
+echo "Building containers..."
+docker compose build
 
-# Wait for database to be ready
-echo "Waiting for database to be ready..."
+# Start containers
+echo "Starting containers..."
+docker compose up -d
+
+# Wait for services to be available
+echo "Waiting for services to be ready..."
 sleep 10
 
-# Run migrations
-echo "Running migrations..."
-docker-compose exec backend python manage.py migrate
+# Display container status
+echo "Container status:"
+docker compose ps
 
-# Create superuser
-echo "Creating superuser..."
-docker-compose exec backend python manage.py shell -c "
-from orthotics_portal.users.models import User, Clinic
-from django.db.utils import IntegrityError
+# Fix collation warning if needed
+echo "Checking if database needs collation fix..."
+docker compose exec db psql -U postgres -c "ALTER DATABASE orthotics_portal REFRESH COLLATION VERSION;"
 
-try:
-    # Create clinic
-    clinic, created = Clinic.objects.get_or_create(
-        name='Demo Clinic',
-        defaults={
-            'address': '123 Main St, Anytown, USA',
-            'phone': '555-123-4567',
-            'email': 'demo@example.com'
-        }
-    )
-    
-    # Create admin user
-    User.objects.create_superuser(
-        email='admin@example.com',
-        password='admin123',
-        first_name='Admin',
-        last_name='User',
-        clinic=clinic
-    )
-    print('Admin user created successfully.')
-except IntegrityError:
-    print('Admin user already exists.')
-"
-
-echo "Setup complete! The application is now running."
-echo "Access the frontend at: http://localhost:3000"
-echo "Access the backend API at: http://localhost:8000/api/v1"
-echo "Access the API documentation at: http://localhost:8000/api/docs"
-echo "Admin credentials: admin@example.com / admin123" 
+echo "Orthotics Portal is now running!"
+echo ""
+echo "Access the application at: http://localhost:8000/"
+echo "Admin interface: http://localhost:8000/admin/"
+echo "  Username: admin"
+echo "  Password: adminpassword"
+echo ""
+echo "To view logs:                  docker compose logs -f"
+echo "To stop the application:       docker compose down"
+echo "To reset the database:         ./start.sh reset"

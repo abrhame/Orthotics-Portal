@@ -1,0 +1,3894 @@
+{% extends 'orthotics_portal/base.html' %} {% load static %} {# Include all
+required modals #} {% include 'orthotics_portal/plantar_modifiers.html' %} {%
+include 'orthotics_portal/posting.html' %} {% block title %} Prescriptions -
+Orthotics Prescription Portal {% endblock %} {% block content %}
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-12">
+      <h1>Prescriptions</h1>
+      <p class="lead">
+        Create and manage orthotic prescriptions for your patients.
+      </p>
+    </div>
+  </div>
+  <div class="row mb-4">
+    <div class="col-md-6">
+      <div class="input-group">
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Search prescriptions..."
+          id="prescriptionSearch"
+        />
+        <button class="btn btn-outline" type="button">
+          <i class="bi bi-search"></i>
+        </button>
+      </div>
+    </div>
+    <div class="col-md-6 d-flex justify-content-md-end mt-3 mt-md-0">
+      <button
+        type="button"
+        class="btn btn-primary"
+        data-bs-toggle="modal"
+        data-bs-target="#createPrescriptionModal"
+      >
+        <i class="bi bi-plus-circle"></i> New Prescription
+      </button>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12">
+      <div class="card mb-4">
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <thead>
+                <tr>
+                  <th>Prescription ID</th>
+                  <th>Patient</th>
+                  <th>Date</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="prescriptionsTableBody">
+                {% for prescription in prescriptions %}
+                <tr>
+                  <td>{{ prescription.id }}</td>
+                  <td>{{ prescription.patient.full_name }}</td>
+                  <td>{{ prescription.created_at|date:"M d, Y" }}</td>
+                  <td>
+                    <span
+                      class="badge bg-{% if prescription.status == 'completed' %}success{% elif prescription.status == 'pending' %}warning{% else %}info{% endif %}"
+                    >
+                      {{ prescription.get_status_display }}
+                    </span>
+                  </td>
+                  <td>
+                    <button
+                      type="button"
+                      class="btn btn-sm btn-primary me-1 view-prescription-btn"
+                      data-id="{{ prescription.id }}"
+                    >
+                      <i class="bi bi-eye"></i>
+                    </button>
+                    <button
+                      type="button"
+                      class="btn btn-sm btn-secondary me-1 edit-prescription-btn"
+                      data-id="{{ prescription.id }}"
+                    >
+                      <i class="bi bi-pencil"></i>
+                    </button>
+                    <button
+                      type="button"
+                      class="btn btn-sm btn-success me-1 add-to-basket-btn"
+                      data-id="{{ prescription.id }}"
+                    >
+                      <i class="bi bi-cart-plus"></i>
+                    </button>
+                    <button
+                      type="button"
+                      class="btn btn-sm btn-info upload-scan-btn"
+                      data-id="{{ prescription.id }}"
+                      title="Upload Foot Scans"
+                    >
+                      <i class="bi bi-file-earmark-image"></i>
+                    </button>
+                    <button
+                      type="button"
+                      class="btn btn-sm btn-warning clinical-measures-btn"
+                      data-id="{{ prescription.id }}"
+                      title="Clinical Measures"
+                    >
+                      <i class="bi bi-ruler"></i>
+                    </button>
+                  </td>
+                </tr>
+                {% empty %}
+                <tr>
+                  <td colspan="5" class="text-center py-4">
+                    No prescriptions found. Create a new prescription to get
+                    started.
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row mt-5">
+    <div class="col-12">
+      <h2>Patient Management</h2>
+      <p>Add and manage patients to create prescriptions for them.</p>
+    </div>
+  </div>
+  <div class="row mb-4">
+    <div class="col-md-6">
+      <div class="input-group">
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Search patients..."
+          id="patientSearch"
+        />
+        <button class="btn btn-outline" type="button">
+          <i class="bi bi-search"></i>
+        </button>
+      </div>
+    </div>
+    <div class="col-md-6 d-flex justify-content-md-end mt-3 mt-md-0">
+      <button
+        type="button"
+        class="btn"
+        style="background-color: #3a6b6d; color: white"
+        data-bs-toggle="modal"
+        data-bs-target="#addPatientModal"
+      >
+        <i class="bi bi-person-plus"></i> Add Patient
+      </button>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <thead>
+                <tr>
+                  <th>Patient ID</th>
+                  <th>Name</th>
+                  <th>Date of Birth</th>
+                  <th>Contact</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="patientsTableBody">
+                {% for patient in patients %}
+                <tr>
+                  <td>{{ patient.external_id|default:patient.id }}</td>
+                  <td>{{ patient.full_name }}</td>
+                  <td>{{ patient.date_of_birth|date:"M d, Y" }}</td>
+                  <td>{{ patient.email }}</td>
+                  <td>
+                    <button
+                      class="btn btn-sm btn-outline view-patient-btn"
+                      data-id="{{ patient.id }}"
+                    >
+                      <i class="bi bi-eye"></i> View
+                    </button>
+                    <button
+                      class="btn btn-sm btn-outline edit-patient-btn"
+                      data-id="{{ patient.id }}"
+                    >
+                      <i class="bi bi-pencil"></i> Edit
+                    </button>
+                    <button
+                      class="btn btn-sm btn-primary create-prescription-btn"
+                      data-id="{{ patient.id }}"
+                      data-name="{{ patient.full_name }}"
+                    >
+                      <i class="bi bi-clipboard-plus"></i> Prescribe
+                    </button>
+                  </td>
+                </tr>
+                {% empty %}
+                <tr>
+                  <td colspan="5" class="text-center py-4">
+                    No patients found. Add a patient to get started.
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div
+  class="modal fade"
+  id="addPatientModal"
+  tabindex="-1"
+  aria-labelledby="addPatientModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addPatientModalLabel">Add New Patient</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form id="addPatientForm">
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label for="firstName" class="form-label">First Name</label>
+              <input type="text" class="form-control" id="firstName" required />
+            </div>
+            <div class="col-md-6">
+              <label for="lastName" class="form-label">Last Name</label>
+              <input type="text" class="form-control" id="lastName" required />
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label for="dateOfBirth" class="form-label">Date of Birth</label>
+              <input
+                type="date"
+                class="form-control"
+                id="dateOfBirth"
+                required
+              />
+            </div>
+            <div class="col-md-6">
+              <label for="gender" class="form-label">Gender</label>
+              <select class="form-select" id="gender" required>
+                <option value="" selected disabled>Select gender</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label for="patientId" class="form-label">Patient ID</label>
+              <input type="text" class="form-control" id="patientId" />
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label for="templateSelect" class="form-label"
+                >Select Template</label
+              >
+              <select class="form-select" id="templateSelect" required>
+                <option value="" selected disabled>Select template</option>
+                {% for template in templates %}
+                <option value="{{ template.id }}">{{ template.name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" data-bs-dismiss="modal">
+          Cancel
+        </button>
+        <button
+          type="button"
+          class="btn"
+          style="background-color: #3a6b6d; color: white"
+          id="savePatientBtn"
+        >
+          Save Patient
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<div
+  class="modal fade"
+  id="scanUploadModal"
+  tabindex="-1"
+  aria-labelledby="scanUploadModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog" style="max-width: 90vw; max-height: 90vh">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="scanUploadModalLabel">Upload Foot Scans</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Hidden input for prescription ID -->
+        <input type="hidden" id="scanPrescriptionId" />
+        <div class="row">
+          <div class="col-md-6">
+            <div class="card mb-3">
+              <div class="card-header">Left Foot Scan</div>
+              <div class="card-body text-center">
+                <div
+                  id="leftFootPreview"
+                  class="mb-3 d-none"
+                  style="max-height: 200px"
+                >
+                  Left Foot Preview
+                </div>
+                <!-- 3D Preview Container -->
+                <div
+                  id="leftFoot3DPreview"
+                  class="d-none"
+                  style="height: 45vh; width: 100%"
+                ></div>
+
+                <div class="input-group mt-2">
+                  <input
+                    type="file"
+                    class="form-control"
+                    id="leftFootScan"
+                    accept=".stl,.wrl,image/*"
+                    style="display: none"
+                  />
+                  <label
+                    id="leftFootScanLabel"
+                    for="leftFootScan"
+                    class="form-control text-start overflow-hidden"
+                    >Select file</label
+                  >
+                  <label
+                    for="leftFootScan"
+                    class="input-group-text btn"
+                    style="background-color: #3a6b6d; color: white"
+                    >Browse</label
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="card mb-3">
+              <div class="card-header">Right Foot Scan</div>
+              <div class="card-body text-center">
+                <div
+                  id="rightFootPreview"
+                  class="mb-3 d-none"
+                  style="max-height: 200px"
+                >
+                  Right Foot Preview
+                </div>
+                <!-- 3D Preview Container -->
+                <div
+                  id="rightFoot3DPreview"
+                  class="d-none"
+                  style="height: 45vh; width: 100%"
+                ></div>
+
+                <div class="input-group mt-2">
+                  <input
+                    type="file"
+                    class="form-control"
+                    id="rightFootScan"
+                    accept=".stl,.wrl,image/*"
+                    style="display: none"
+                  />
+                  <label
+                    id="rightFootScanLabel"
+                    for="rightFootScan"
+                    class="form-control text-start overflow-hidden"
+                    >Select file</label
+                  >
+                  <label
+                    for="rightFootScan"
+                    class="input-group-text btn"
+                    style="background-color: #3a6b6d; color: white"
+                    >Browse</label
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="clearFiles">
+          Clear Files
+        </button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Cancel
+        </button>
+        <button
+          type="button"
+          class="btn"
+          style="background-color: #3a6b6d; color: white"
+          id="uploadScans"
+        >
+          Upload Scans
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          id="nextStepBtnClinicalMeasures"
+        >
+          Next
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div
+  class="modal fade"
+  id="clinicalMeasuresModal"
+  tabindex="-1"
+  aria-labelledby="clinicalMeasuresModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="clinicalMeasuresModalLabel">
+          Clinical Measures
+        </h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form id="clinicalMeasuresForm">
+          <input type="hidden" id="clinicalMeasuresPrescriptionId" value="" />
+
+          <div class="row mb-4">
+            <div class="col-12">
+              <h6>Alignment Methods</h6>
+            </div>
+            <div class="col-12">
+              <div class="card mb-3">
+                <div class="card-body">
+                  <div class="row align-items-center mb-3">
+                    <div class="col-md-3">
+                      <label class="form-label mb-0">Scan Angle</label>
+                      <span class="badge bg-primary ms-1">deg.</span>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="input-group">
+                        <button
+                          type="button"
+                          class="btn btn-outline-secondary decrease-btn"
+                          data-target="leftScanAngle"
+                        >
+                          −
+                        </button>
+                        <input
+                          type="number"
+                          class="form-control text-center"
+                          id="leftScanAngle"
+                          value="0"
+                        />
+                        <button
+                          type="button"
+                          class="btn btn-outline-secondary increase-btn"
+                          data-target="leftScanAngle"
+                        >
+                          +
+                        </button>
+                      </div>
+                      <div class="d-flex justify-content-between mt-1">
+                        <small>Everted</small>
+                        <small>Inverted</small>
+                      </div>
+                    </div>
+                    <div class="col-md-1"></div>
+                    <div class="col-md-4">
+                      <div class="input-group">
+                        <button
+                          type="button"
+                          class="btn btn-outline-secondary decrease-btn"
+                          data-target="rightScanAngle"
+                        >
+                          −
+                        </button>
+                        <input
+                          type="number"
+                          class="form-control text-center"
+                          id="rightScanAngle"
+                          value="0"
+                        />
+                        <button
+                          type="button"
+                          class="btn btn-outline-secondary increase-btn"
+                          data-target="rightScanAngle"
+                        >
+                          +
+                        </button>
+                      </div>
+                      <div class="d-flex justify-content-between mt-1">
+                        <small>Everted</small>
+                        <small>Inverted</small>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row align-items-center mb-3">
+                    <div class="col-md-3">
+                      <label class="form-label mb-0">Forefoot Varus</label>
+                      <span class="badge bg-primary ms-1">deg.</span>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="input-group">
+                        <button
+                          type="button"
+                          class="btn btn-outline-secondary decrease-btn"
+                          data-target="leftForefootVarus"
+                        >
+                          −
+                        </button>
+                        <input
+                          type="number"
+                          class="form-control text-center"
+                          id="leftForefootVarus"
+                          value="0"
+                        />
+                        <button
+                          type="button"
+                          class="btn btn-outline-secondary increase-btn"
+                          data-target="leftForefootVarus"
+                        >
+                          +
+                        </button>
+                      </div>
+                      <div class="d-flex justify-content-between mt-1">
+                        <small>Everted</small>
+                        <small>Inverted</small>
+                      </div>
+                    </div>
+                    <div class="col-md-1"></div>
+                    <div class="col-md-4">
+                      <div class="input-group">
+                        <button
+                          type="button"
+                          class="btn btn-outline-secondary decrease-btn"
+                          data-target="rightForefootVarus"
+                        >
+                          −
+                        </button>
+                        <input
+                          type="number"
+                          class="form-control text-center"
+                          id="rightForefootVarus"
+                          value="0"
+                        />
+                        <button
+                          type="button"
+                          class="btn btn-outline-secondary increase-btn"
+                          data-target="rightForefootVarus"
+                        >
+                          +
+                        </button>
+                      </div>
+                      <div class="d-flex justify-content-between mt-1">
+                        <small>Everted</small>
+                        <small>Inverted</small>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row align-items-center mb-3">
+                    <div class="col-md-3">
+                      <label class="form-label mb-0">Forefoot Valgus</label>
+                      <span class="badge bg-primary ms-1">deg.</span>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="input-group">
+                        <button
+                          type="button"
+                          class="btn btn-outline-secondary decrease-btn"
+                          data-target="leftForefootValgus"
+                        >
+                          −
+                        </button>
+                        <input
+                          type="number"
+                          class="form-control text-center"
+                          id="leftForefootValgus"
+                          value="0"
+                        />
+                        <button
+                          type="button"
+                          class="btn btn-outline-secondary increase-btn"
+                          data-target="leftForefootValgus"
+                        >
+                          +
+                        </button>
+                      </div>
+                      <div class="d-flex justify-content-between mt-1">
+                        <small>Everted</small>
+                        <small>Inverted</small>
+                      </div>
+                    </div>
+                    <div class="col-md-1"></div>
+                    <div class="col-md-4">
+                      <div class="input-group">
+                        <button
+                          type="button"
+                          class="btn btn-outline-secondary decrease-btn"
+                          data-target="rightForefootValgus"
+                        >
+                          −
+                        </button>
+                        <input
+                          type="number"
+                          class="form-control text-center"
+                          id="rightForefootValgus"
+                          value="0"
+                        />
+                        <button
+                          type="button"
+                          class="btn btn-outline-secondary increase-btn"
+                          data-target="rightForefootValgus"
+                        >
+                          +
+                        </button>
+                      </div>
+                      <div class="d-flex justify-content-between mt-1">
+                        <small>Everted</small>
+                        <small>Inverted</small>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row align-items-center mb-3">
+                    <div class="col-md-3">
+                      <label class="form-label mb-0"
+                        >Heel Centre to 1st MPJ Centre</label
+                      >
+                      <span class="badge bg-primary ms-1">mm</span>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="input-group">
+                        <button
+                          type="button"
+                          class="btn btn-outline-secondary decrease-btn"
+                          data-target="leftHeelToMPJ"
+                        >
+                          −
+                        </button>
+                        <input
+                          type="number"
+                          class="form-control text-center"
+                          id="leftHeelToMPJ"
+                          value="0"
+                        />
+                        <button
+                          type="button"
+                          class="btn btn-outline-secondary increase-btn"
+                          data-target="leftHeelToMPJ"
+                        >
+                          +
+                        </button>
+                      </div>
+                    </div>
+                    <div class="col-md-1"></div>
+                    <div class="col-md-4">
+                      <div class="input-group">
+                        <button
+                          type="button"
+                          class="btn btn-outline-secondary decrease-btn"
+                          data-target="rightHeelToMPJ"
+                        >
+                          −
+                        </button>
+                        <input
+                          type="number"
+                          class="form-control text-center"
+                          id="rightHeelToMPJ"
+                          value="0"
+                        />
+                        <button
+                          type="button"
+                          class="btn btn-outline-secondary increase-btn"
+                          data-target="rightHeelToMPJ"
+                        >
+                          +
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row align-items-center">
+                    <div class="col-md-3">
+                      <label class="form-label mb-0"
+                        >Posterior Heel to Heel Centre</label
+                      >
+                      <span class="badge bg-primary ms-1">mm</span>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="input-group">
+                        <button
+                          type="button"
+                          class="btn btn-outline-secondary decrease-btn"
+                          data-target="leftPosteriorHeel"
+                        >
+                          −
+                        </button>
+                        <input
+                          type="number"
+                          class="form-control text-center"
+                          id="leftPosteriorHeel"
+                          value="0"
+                        />
+                        <button
+                          type="button"
+                          class="btn btn-outline-secondary increase-btn"
+                          data-target="leftPosteriorHeel"
+                        >
+                          +
+                        </button>
+                      </div>
+                    </div>
+                    <div class="col-md-1"></div>
+                    <div class="col-md-4">
+                      <div class="input-group">
+                        <button
+                          type="button"
+                          class="btn btn-outline-secondary decrease-btn"
+                          data-target="rightPosteriorHeel"
+                        >
+                          −
+                        </button>
+                        <input
+                          type="number"
+                          class="form-control text-center"
+                          id="rightPosteriorHeel"
+                          value="0"
+                        />
+                        <button
+                          type="button"
+                          class="btn btn-outline-secondary increase-btn"
+                          data-target="rightPosteriorHeel"
+                        >
+                          +
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="clinicalNotes" class="form-label">Clinical Notes</label>
+            <textarea
+              class="form-control"
+              id="clinicalNotes"
+              rows="3"
+              placeholder="Enter any additional clinical observations or notes"
+            ></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" data-bs-dismiss="modal">
+          Cancel
+        </button>
+        <button
+          type="button"
+          class="btn"
+          style="background-color: #3a6b6d; color: white"
+          id="saveClinicalMeasuresBtn"
+        >
+          Save Measures
+        </button>
+        <button
+          type="button"
+          class="btn"
+          style="background-color: #3a6b6d; color: white"
+          id="nextStepBtnIntrinsicAdjustments"
+        >
+          Next
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<div
+  class="modal fade"
+  id="intrinsicAdjustmentsModal"
+  tabindex="-1"
+  aria-labelledby="intrinsicAdjustmentsModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="intrinsicAdjustmentsModalLabel">
+          Intrinsic Adjustments
+        </h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form id="intrinsicAdjustmentsForm">
+          <input
+            type="hidden"
+            id="intrinsicAdjustmentsPrescriptionId"
+            value=""
+          />
+
+          <div class="row mb-4">
+            <div class="col-md-6 text-center bg-light py-2 rounded-3">
+              <h6>Left Foot</h6>
+            </div>
+            <div class="col-md-6 text-center bg-light py-2 rounded-3">
+              <h6>Right Foot</h6>
+            </div>
+          </div>
+
+          <!-- Arch Expansion -->
+          <div class="row mb-3 align-items-center">
+            <div class="col-md-3">
+              <label class="form-label mb-0">Arch Expansion</label>
+              <span class="badge bg-primary ms-1">i</span>
+            </div>
+            <div class="col-md-4">
+              <select class="form-select" id="leftArchExpansion">
+                <option value="none" selected>None</option>
+                <option value="minimal">Minimal(10%)</option>
+                <option value="moderate">Standard(20%)</option>
+                <option value="maximum">Maximum(30%)</option>
+              </select>
+            </div>
+            <div class="col-md-1"></div>
+            <div class="col-md-4">
+              <select class="form-select" id="rightArchExpansion">
+                <option value="none" selected>None</option>
+                <option value="minimal">Minimal(10%)</option>
+                <option value="moderate">Standard(20%)</option>
+                <option value="maximum">Maximum(30%)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Heel Expansion -->
+          <div class="row mb-3 align-items-center">
+            <div class="col-md-3">
+              <label class="form-label mb-0">Heel Expansion</label>
+              <span class="badge bg-primary ms-1">i</span>
+            </div>
+            <div class="col-md-4">
+              <select class="form-select" id="leftHeelExpansion">
+                <option value="none" selected>None</option>
+                <option value="minimal">Minimal(10%)</option>
+                <option value="moderate">Standard(20%)</option>
+                <option value="maximum">Maximum(30%)</option>
+              </select>
+            </div>
+            <div class="col-md-1"></div>
+            <div class="col-md-4">
+              <select class="form-select" id="rightHeelExpansion">
+                <option value="none" selected>None</option>
+                <option value="minimal">Minimal(10%)</option>
+                <option value="moderate">Standard(20%)</option>
+                <option value="maximum">Maximum(30%)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Shell Width -->
+          <div class="row mb-3 align-items-center">
+            <div class="col-md-3">
+              <label class="form-label mb-0">Shell Width</label>
+              <span class="badge bg-primary ms-1">i</span>
+            </div>
+            <div class="col-md-4">
+              <select class="form-select" id="leftShellWidth">
+                <option value="wide">Wide</option>
+                <option value="standard" selected>Standard</option>
+                <option value="slim">Slim</option>
+                <option value="super-slim">Super Slim</option>
+              </select>
+            </div>
+            <div class="col-md-1"></div>
+            <div class="col-md-4">
+              <select class="form-select" id="rightShellWidth">
+                <option value="wide">Wide</option>
+                <option value="standard" selected>Standard</option>
+                <option value="slim">Slim</option>
+                <option value="super-slim">Super Slim</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Shell Length -->
+          <div class="row mb-3 align-items-center">
+            <div class="col-md-3">
+              <label class="form-label mb-0">Shell Length</label>
+              <span class="badge bg-primary ms-1">i</span>
+            </div>
+            <div class="col-md-4">
+              <select class="form-select" id="leftShellLength">
+                <option value="short">Short</option>
+                <option value="standard" selected>Standard</option>
+                <option value="long">Long</option>
+              </select>
+            </div>
+            <div class="col-md-1"></div>
+            <div class="col-md-4">
+              <select class="form-select" id="rightShellLength">
+                <option value="short">Short</option>
+                <option value="standard" selected>Standard</option>
+                <option value="long">Long</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- PFA Height -->
+          <div class="row mb-3 align-items-center">
+            <div class="col-md-3">
+              <label class="form-label mb-0">PFA Height</label>
+              <span class="badge bg-primary ms-1">i</span>
+            </div>
+            <div class="col-md-4">
+              <select class="form-select mb-2" id="leftPFAHeight">
+                <option value="straight" selected>Straight</option>
+                <option value="curved">Curved</option>
+                <option value="custom">Scan</option>
+                <option value="none">None</option>
+              </select>
+              <div class="input-group">
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary decrease-btn"
+                  data-target="leftPFAHeightValue"
+                >
+                  −
+                </button>
+                <input
+                  type="number"
+                  class="form-control text-center"
+                  id="leftPFAHeightValue"
+                  value="0"
+                />
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary increase-btn"
+                  data-target="leftPFAHeightValue"
+                >
+                  +
+                </button>
+                <span class="input-group-text">mm</span>
+              </div>
+            </div>
+            <div class="col-md-1"></div>
+            <div class="col-md-4">
+              <select class="form-select mb-2" id="rightPFAHeight">
+                <option value="straight" selected>Straight</option>
+                <option value="curved">Curved</option>
+                <option value="custom">Custom</option>
+              </select>
+              <div class="input-group">
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary decrease-btn"
+                  data-target="rightPFAHeightValue"
+                >
+                  −
+                </button>
+                <input
+                  type="number"
+                  class="form-control text-center"
+                  id="rightPFAHeightValue"
+                  value="0"
+                />
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary increase-btn"
+                  data-target="rightPFAHeightValue"
+                >
+                  +
+                </button>
+                <span class="input-group-text">mm</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Skive -->
+          <div class="row mb-3 align-items-center">
+            <div class="col-md-3">
+              <label class="form-label mb-0">Skive</label>
+              <span class="badge bg-primary ms-1">i</span>
+            </div>
+            <div class="col-md-4">
+              <select class="form-select mb-2" id="leftSkive">
+                <option value="none">None</option>
+                <option value="medial" selected>Medial</option>
+                <option value="lateral">Lateral</option>
+              </select>
+              <select class="form-select mb-2" id="leftSkiveMethod">
+                <option value="depth/degree" selected>
+                  Depth/Degree Method
+                </option>
+              </select>
+
+              <div class="mb-2">
+                <div class="input-group">
+                  <span class="input-group-text">Depth (mm)</span>
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary decrease-btn"
+                    data-target="leftSkiveDepth"
+                  >
+                    −
+                  </button>
+                  <input
+                    type="number"
+                    class="form-control text-center"
+                    id="leftSkiveDepth"
+                    value="0"
+                  />
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary increase-btn"
+                    data-target="leftSkiveDepth"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+
+              <div class="mb-2">
+                <div class="input-group">
+                  <span class="input-group-text">Degrees (°)</span>
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary decrease-btn"
+                    data-target="leftSkiveDegrees"
+                  >
+                    −
+                  </button>
+                  <input
+                    type="number"
+                    class="form-control text-center"
+                    id="leftSkiveDegrees"
+                    value="0"
+                  />
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary increase-btn"
+                    data-target="leftSkiveDegrees"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+
+              <select class="form-select" id="leftSkiveInclination">
+                <option value="maximum" selected>Maximum Inclination</option>
+                <option value="zero">Zero Inclination</option>
+                <option value="minimum">Spe Inclination</option>
+              </select>
+            </div>
+            <div class="col-md-1"></div>
+            <div class="col-md-4">
+              <select class="form-select mb-2" id="rightSkive">
+                <option value="none">None</option>
+                <option value="medial" selected>Medial</option>
+                <option value="lateral">Lateral</option>
+              </select>
+              <select class="form-select mb-2" id="rightSkiveMethod">
+                <option value="depth/degree" selected>
+                  Depth/Degree Method
+                </option>
+              </select>
+
+              <div class="mb-2">
+                <div class="input-group">
+                  <span class="input-group-text">Depth (mm)</span>
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary decrease-btn"
+                    data-target="rightSkiveDepth"
+                  >
+                    −
+                  </button>
+                  <input
+                    type="number"
+                    class="form-control text-center"
+                    id="rightSkiveDepth"
+                    value="0"
+                  />
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary increase-btn"
+                    data-target="rightSkiveDepth"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+
+              <div class="mb-2">
+                <div class="input-group">
+                  <span class="input-group-text">Degrees (°)</span>
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary decrease-btn"
+                    data-target="rightSkiveDegrees"
+                  >
+                    −
+                  </button>
+                  <input
+                    type="number"
+                    class="form-control text-center"
+                    id="rightSkiveDegrees"
+                    value="0"
+                  />
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary increase-btn"
+                    data-target="rightSkiveDegrees"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+
+              <select class="form-select" id="rightSkiveInclination">
+                <option value="maximum" selected>Maximum Inclination</option>
+                <option value="zero">Zero Inclination</option>
+                <option value="specific">Specific Inclination</option>
+              </select>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" data-bs-dismiss="modal">
+          Cancel
+        </button>
+        <button
+          type="button"
+          class="btn"
+          style="background-color: #3a6b6d; color: white"
+          id="saveIntrinsicAdjustmentsBtn"
+        >
+          Save Adjustments
+        </button>
+        <button
+          type="button"
+          class="btn"
+          style="background-color: #3a6b6d; color: white"
+          id="nextToOffLoadingBtn"
+        >
+          Next: Off-Loading
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Add after the intrinsicAdjustmentsModal -->
+<div
+  class="modal fade"
+  id="offLoadingModal"
+  tabindex="-1"
+  aria-labelledby="offLoadingModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="offLoadingModalLabel">Off-Loading</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form id="offLoadingForm">
+          <input type="hidden" id="offLoadingPrescriptionId" value="" />
+
+          <div class="row mb-4">
+            <div class="col-md-6 text-center bg-light py-2 rounded-3">
+              <h6>Left Foot</h6>
+            </div>
+            <div class="col-md-6 text-center bg-light py-2 rounded-3">
+              <h6>Right Foot</h6>
+            </div>
+          </div>
+
+          <!-- Cuboid Raise/Deli -->
+          <div class="row mb-3 align-items-center">
+            <div class="col-md-3">
+              <label class="form-label mb-0">Cuboid Raise/Deli</label>
+              <span class="badge bg-primary ms-1">i</span>
+              <span class="d-block small text-muted">(mm)</span>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label small">Deli</label>
+              <div class="input-group mb-2">
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary decrease-btn"
+                  data-target="leftCuboidDeli"
+                >
+                  −
+                </button>
+                <input
+                  type="number"
+                  class="form-control text-center"
+                  id="leftCuboidDeli"
+                  value="0"
+                />
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary increase-btn"
+                  data-target="leftCuboidDeli"
+                >
+                  +
+                </button>
+              </div>
+
+              <label class="form-label small">Raise</label>
+              <div class="input-group">
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary decrease-btn"
+                  data-target="leftCuboidRaise"
+                >
+                  −
+                </button>
+                <input
+                  type="number"
+                  class="form-control text-center"
+                  id="leftCuboidRaise"
+                  value="0"
+                />
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary increase-btn"
+                  data-target="leftCuboidRaise"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+            <div class="col-md-1"></div>
+            <div class="col-md-4">
+              <label class="form-label small">Deli</label>
+              <div class="input-group mb-2">
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary decrease-btn"
+                  data-target="rightCuboidDeli"
+                >
+                  −
+                </button>
+                <input
+                  type="number"
+                  class="form-control text-center"
+                  id="rightCuboidDeli"
+                  value="0"
+                />
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary increase-btn"
+                  data-target="rightCuboidDeli"
+                >
+                  +
+                </button>
+              </div>
+
+              <label class="form-label small">Raise</label>
+              <div class="input-group">
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary decrease-btn"
+                  data-target="rightCuboidRaise"
+                >
+                  −
+                </button>
+                <input
+                  type="number"
+                  class="form-control text-center"
+                  id="rightCuboidRaise"
+                  value="0"
+                />
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary increase-btn"
+                  data-target="rightCuboidRaise"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Styloid Raise/Deli -->
+          <div class="row mb-3 align-items-center">
+            <div class="col-md-3">
+              <label class="form-label mb-0">Styloid Raise/Deli</label>
+              <span class="badge bg-primary ms-1">i</span>
+              <span class="d-block small text-muted">(mm)</span>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label small">Deli</label>
+              <div class="input-group mb-2">
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary decrease-btn"
+                  data-target="leftStyloidDeli"
+                >
+                  −
+                </button>
+                <input
+                  type="number"
+                  class="form-control text-center"
+                  id="leftStyloidDeli"
+                  value="0"
+                />
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary increase-btn"
+                  data-target="leftStyloidDeli"
+                >
+                  +
+                </button>
+              </div>
+
+              <label class="form-label small">Raise</label>
+              <div class="input-group">
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary decrease-btn"
+                  data-target="leftStyloidRaise"
+                >
+                  −
+                </button>
+                <input
+                  type="number"
+                  class="form-control text-center"
+                  id="leftStyloidRaise"
+                  value="0"
+                />
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary increase-btn"
+                  data-target="leftStyloidRaise"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+            <div class="col-md-1"></div>
+            <div class="col-md-4">
+              <label class="form-label small">Deli</label>
+              <div class="input-group mb-2">
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary decrease-btn"
+                  data-target="rightStyloidDeli"
+                >
+                  −
+                </button>
+                <input
+                  type="number"
+                  class="form-control text-center"
+                  id="rightStyloidDeli"
+                  value="0"
+                />
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary increase-btn"
+                  data-target="rightStyloidDeli"
+                >
+                  +
+                </button>
+              </div>
+
+              <label class="form-label small">Raise</label>
+              <div class="input-group">
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary decrease-btn"
+                  data-target="rightStyloidRaise"
+                >
+                  −
+                </button>
+                <input
+                  type="number"
+                  class="form-control text-center"
+                  id="rightStyloidRaise"
+                  value="0"
+                />
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary increase-btn"
+                  data-target="rightStyloidRaise"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Navicular Raise/Deli -->
+          <div class="row mb-3 align-items-center">
+            <div class="col-md-3">
+              <label class="form-label mb-0">Navicular Raise/Deli</label>
+              <span class="badge bg-primary ms-1">i</span>
+              <span class="d-block small text-muted">(mm)</span>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label small">Deli</label>
+              <div class="input-group mb-2">
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary decrease-btn"
+                  data-target="leftNavicularDeli"
+                >
+                  −
+                </button>
+                <input
+                  type="number"
+                  class="form-control text-center"
+                  id="leftNavicularDeli"
+                  value="0"
+                />
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary increase-btn"
+                  data-target="leftNavicularDeli"
+                >
+                  +
+                </button>
+              </div>
+
+              <label class="form-label small">Raise</label>
+              <div class="input-group">
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary decrease-btn"
+                  data-target="leftNavicularRaise"
+                >
+                  −
+                </button>
+                <input
+                  type="number"
+                  class="form-control text-center"
+                  id="leftNavicularRaise"
+                  value="0"
+                />
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary increase-btn"
+                  data-target="leftNavicularRaise"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+            <div class="col-md-1"></div>
+            <div class="col-md-4">
+              <label class="form-label small">Deli</label>
+              <div class="input-group mb-2">
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary decrease-btn"
+                  data-target="rightNavicularDeli"
+                >
+                  −
+                </button>
+                <input
+                  type="number"
+                  class="form-control text-center"
+                  id="rightNavicularDeli"
+                  value="0"
+                />
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary increase-btn"
+                  data-target="rightNavicularDeli"
+                >
+                  +
+                </button>
+              </div>
+
+              <label class="form-label small">Raise</label>
+              <div class="input-group">
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary decrease-btn"
+                  data-target="rightNavicularRaise"
+                >
+                  −
+                </button>
+                <input
+                  type="number"
+                  class="form-control text-center"
+                  id="rightNavicularRaise"
+                  value="0"
+                />
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary increase-btn"
+                  data-target="rightNavicularRaise"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Apertures -->
+          <div class="row mb-3 align-items-center">
+            <div class="col-md-3">
+              <label class="form-label mb-0">Apertures</label>
+              <span class="badge bg-primary ms-1">i</span>
+            </div>
+            <div class="col-md-4">
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="leftApertures"
+                  id="leftAperturesNone"
+                  value="none"
+                  checked
+                />
+                <label class="form-check-label" for="leftAperturesNone"
+                  >NONE</label
+                >
+              </div>
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="leftApertures"
+                  id="leftApertures1stMPJ"
+                  value="1st_mpj"
+                />
+                <label class="form-check-label" for="leftApertures1stMPJ"
+                  >1st MPJ</label
+                >
+              </div>
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="leftApertures"
+                  id="leftApertures2ndMPJ"
+                  value="2nd_mpj"
+                />
+                <label class="form-check-label" for="leftApertures2ndMPJ"
+                  >2nd MPJ</label
+                >
+              </div>
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="leftApertures"
+                  id="leftApertures3rdMPJ"
+                  value="3rd_mpj"
+                />
+                <label class="form-check-label" for="leftApertures3rdMPJ"
+                  >3rd MPJ</label
+                >
+              </div>
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="leftApertures"
+                  id="leftApertures4thMPJ"
+                  value="4th_mpj"
+                />
+                <label class="form-check-label" for="leftApertures4thMPJ"
+                  >4th MPJ</label
+                >
+              </div>
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="leftApertures"
+                  id="leftApertures5thMPJ"
+                  value="5th_mpj"
+                />
+                <label class="form-check-label" for="leftApertures5thMPJ"
+                  >5th MPJ</label
+                >
+              </div>
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="leftApertures"
+                  id="leftAperturesHeel"
+                  value="heel"
+                />
+                <label class="form-check-label" for="leftAperturesHeel"
+                  >Heel</label
+                >
+              </div>
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  id="leftNoFill"
+                />
+                <label class="form-check-label" for="leftNoFill">No Fill</label>
+              </div>
+            </div>
+            <div class="col-md-1"></div>
+            <div class="col-md-4">
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="rightApertures"
+                  id="rightAperturesNone"
+                  value="none"
+                  checked
+                />
+                <label class="form-check-label" for="rightAperturesNone"
+                  >NONE</label
+                >
+              </div>
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="rightApertures"
+                  id="rightApertures1stMPJ"
+                  value="1st_mpj"
+                />
+                <label class="form-check-label" for="rightApertures1stMPJ"
+                  >1st MPJ</label
+                >
+              </div>
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="rightApertures"
+                  id="rightApertures2ndMPJ"
+                  value="2nd_mpj"
+                />
+                <label class="form-check-label" for="rightApertures2ndMPJ"
+                  >2nd MPJ</label
+                >
+              </div>
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="rightApertures"
+                  id="rightApertures3rdMPJ"
+                  value="3rd_mpj"
+                />
+                <label class="form-check-label" for="rightApertures3rdMPJ"
+                  >3rd MPJ</label
+                >
+              </div>
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="rightApertures"
+                  id="rightApertures4thMPJ"
+                  value="4th_mpj"
+                />
+                <label class="form-check-label" for="rightApertures4thMPJ"
+                  >4th MPJ</label
+                >
+              </div>
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="rightApertures"
+                  id="rightApertures5thMPJ"
+                  value="5th_mpj"
+                />
+                <label class="form-check-label" for="rightApertures5thMPJ"
+                  >5th MPJ</label
+                >
+              </div>
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="rightApertures"
+                  id="rightAperturesHeel"
+                  value="heel"
+                />
+                <label class="form-check-label" for="rightAperturesHeel"
+                  >Heel</label
+                >
+              </div>
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  id="rightNoFill"
+                />
+                <label class="form-check-label" for="rightNoFill"
+                  >No Fill</label
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- Poron U-Pad -->
+          <div class="row mb-3 align-items-center">
+            <div class="col-md-3">
+              <label class="form-label mb-0">Poron U-Pad</label>
+              <span class="badge bg-primary ms-1">i</span>
+            </div>
+            <div class="col-md-4">
+              <select class="form-select" id="leftPoronUPad">
+                <option value="none" selected>NONE</option>
+                <option value="eva">EVA 120 Black</option>
+                <option value="ppt">PPT (PORON) 1.6mm</option>
+                <option value="ppt-slow-release">
+                  PPT (PORON) Slow Release
+                </option>
+              </select>
+            </div>
+            <div class="col-md-1"></div>
+            <div class="col-md-4">
+              <select class="form-select" id="rightPoronUPad">
+                <option value="none" selected>NONE</option>
+                <option value="eva">EVA 120 Black</option>
+                <option value="ppt">PPT (PORON) 1.6mm</option>
+                <option value="ppt-slow-release">
+                  PPT (PORON) Slow Release
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <!-- EVA U-Pad -->
+          <div class="row mb-3 align-items-center">
+            <div class="col-md-3">
+              <label class="form-label mb-0">EVA U-Pad</label>
+              <span class="badge bg-primary ms-1">i</span>
+            </div>
+            <div class="col-md-4">
+              <select class="form-select" id="leftEVAUPad">
+                <option value="none" selected>NONE</option>
+                <option value="small">120 EVA 2mm</option>
+              </select>
+            </div>
+            <div class="col-md-1"></div>
+            <div class="col-md-4">
+              <select class="form-select" id="rightEVAUPad">
+                <option value="none" selected>NONE</option>
+                <option value="small">120 EVA 2mm</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Metatarsal Dome -->
+          <div class="row mb-3 align-items-center">
+            <div class="col-md-3">
+              <label class="form-label mb-0">Metatarsal Dome</label>
+              <span class="badge bg-primary ms-1">i</span>
+            </div>
+            <div class="col-md-4">
+              <select class="form-select" id="leftMetatarsalDome">
+                <option value="none" selected>None</option>
+                <option value="small">Small</option>
+                <option value="medium">Medium</option>
+                <option value="large">Large</option>
+              </select>
+            </div>
+            <div class="col-md-1"></div>
+            <div class="col-md-4">
+              <select class="form-select" id="rightMetatarsalDome">
+                <option value="none" selected>None</option>
+                <option value="small">Small</option>
+                <option value="medium">Medium</option>
+                <option value="large">Large</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Metatarsal Pad -->
+          <div class="row mb-3 align-items-center">
+            <div class="col-md-3">
+              <label class="form-label mb-0">Metatarsal Pad</label>
+              <span class="badge bg-primary ms-1">i</span>
+            </div>
+            <div class="col-md-4">
+              <div class="form-check form-check-inline">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="leftMetatarsalPad"
+                  id="leftMetatarsalPadNo"
+                  value="no"
+                  checked
+                />
+                <label class="form-check-label" for="leftMetatarsalPadNo"
+                  >No</label
+                >
+              </div>
+              <div class="form-check form-check-inline">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="leftMetatarsalPad"
+                  id="leftMetatarsalPadYes"
+                  value="yes"
+                />
+                <label class="form-check-label" for="leftMetatarsalPadYes"
+                  >Yes</label
+                >
+              </div>
+            </div>
+            <div class="col-md-1"></div>
+            <div class="col-md-4">
+              <div class="form-check form-check-inline">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="rightMetatarsalPad"
+                  id="rightMetatarsalPadNo"
+                  value="no"
+                  checked
+                />
+                <label class="form-check-label" for="rightMetatarsalPadNo"
+                  >No</label
+                >
+              </div>
+              <div class="form-check form-check-inline">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="rightMetatarsalPad"
+                  id="rightMetatarsalPadYes"
+                  value="yes"
+                />
+                <label class="form-check-label" for="rightMetatarsalPadYes"
+                  >Yes</label
+                >
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" data-bs-dismiss="modal">
+          Cancel
+        </button>
+        <button
+          type="button"
+          class="btn"
+          id="saveOffLoadingBtn"
+          style="background-color: #3a6b6d; color: white"
+        >
+          Save Off-Loading
+        </button>
+        <button
+          type="button"
+          class="btn"
+          id="nextToPlanterModifiersBtn"
+          style="background-color: #3a6b6d; color: white"
+        >
+          Next: Plantar Modifiers
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="toast-container" class="position-fixed bottom-0 end-0 p-3"></div>
+<!-- Full-screen 3D Preview Modal -->
+
+{% include 'orthotics_portal/plantar_modifiers.html' %}
+{% include 'orthotics_portal/posting.html' %}
+{% include 'orthotics_portal/material_selection.html' %}
+{% include 'orthotics_portal/shoe_fitting.html' %}
+{% include 'orthotics_portal/device_options.html' %}
+{% endblock %}
+{% block extra_js %}
+<script src="{% static 'js/api_service.js' %}"></script>
+<script src="{% static 'js/plantar_modifiers.js' %}"></script>
+<script src="{% static 'js/posting.js' %}"></script>
+<script src="{% static 'js/material_selection.js' %}"></script>
+<script src="{% static 'js/shoe_fitting.js' %}"></script>
+<script src="{% static 'js/device_options.js' %}"></script>
+
+<style>
+  .scan-preview {
+    border: 1px dashed #ccc;
+    border-radius: 4px;
+    padding: 20px;
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .scan-preview img {
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: contain;
+  }
+</style>
+<script type="module">
+  import * as THREE from "three";
+  import { STLLoader } from "three/examples/jsm/loaders/STLLoader";
+  import { VRMLLoader } from "three/examples/jsm/loaders/VRMLLoader";
+  import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+
+  let camera, scene, renderer, controls;
+  let object;
+
+  // Debugging
+  console.log("Script loaded successfully");
+
+  document.addEventListener("DOMContentLoaded", function () {
+    console.log("DOM fully loaded");
+    // Check if ApiService is defined
+    if (typeof ApiService === "undefined") {
+      console.error(
+        "ApiService is not defined! The api_service.js file may not have loaded correctly."
+      );
+      // Create a simple alert at the top of the page
+      const alertDiv = document.createElement("div");
+      alertDiv.className = "alert alert-danger m-3";
+      alertDiv.innerHTML =
+        "<strong>Error:</strong> API Service not loaded. This may affect the functionality of this page. Please check the console for more details.";
+      document.body.insertBefore(alertDiv, document.body.firstChild);
+    } else {
+      console.log("ApiService is defined properlyHiding existing modals");
+      initializeApp();
+      loadPatientsAndPrescriptions();
+    }
+  });
+
+  let currentPrescriptionId = null;
+
+  function initializeApp() {
+    initSavePatientHandler();
+    initSavePrescriptionHandler();
+    initViewAndEditButtons();
+    initPatientSearch();
+    initPrescriptionSearch();
+    initScanUpload();
+    initClinicalMeasuresForm();
+    initIntrinsicAdjustmentsForm();
+    initOffLoadingForm();
+  }
+
+  function initScanUpload() {
+    const leftFootScan = document.getElementById("leftFootScan");
+    const rightFootScan = document.getElementById("rightFootScan");
+    const leftFootScanLabel = document.getElementById("leftFootScanLabel");
+    const rightFootScanLabel = document.getElementById("rightFootScanLabel");
+    const leftFootPreview = document.getElementById("leftFootPreview");
+    const rightFootPreview = document.getElementById("rightFootPreview");
+    const leftFoot3DPreview = document.getElementById("leftFoot3DPreview");
+    const rightFoot3DPreview = document.getElementById("rightFoot3DPreview");
+    const saveScanBtn = document.getElementById("uploadScans");
+    const clearFilesBtn = document.getElementById("clearFiles");
+
+    async function handlePreview(inputId, imageId, previewDivId) {
+      console.log("Three.js loaded on scan handlepreview");
+      const fileInput = document.getElementById(inputId);
+      const imgPreview = document.getElementById(imageId);
+      const modelPreview = document.getElementById(previewDivId);
+
+      const file = fileInput.files[0];
+      if (!file) {
+        showToast("Please select a file first!", "warning");
+        return;
+      }
+
+      const fileType = file.name.split(".").pop().toLowerCase();
+
+      if (["png", "jpg", "jpeg", "gif"].includes(fileType)) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          imgPreview.src = e.target.result;
+          imgPreview.classList.remove("d-none");
+          if (modelPreview) modelPreview.classList.add("d-none");
+        };
+        reader.readAsDataURL(file);
+      } else if (["stl", "wrl"].includes(fileType)) {
+        console.log("Showing 3D model scan handle preview");
+        imgPreview.classList.add("d-none");
+        if (modelPreview) {
+          modelPreview.classList.remove("d-none");
+          modelPreview.innerHTML = "";
+
+          // Setup THREE.js scene
+          const scene = new THREE.Scene();
+          scene.background = new THREE.Color(0xf0f0f0);
+
+          const camera = new THREE.PerspectiveCamera(
+            70,
+            modelPreview.clientWidth / modelPreview.clientHeight,
+            0.1,
+            2000
+          );
+          camera.position.set(0, 150, 300);
+
+          const renderer = new THREE.WebGLRenderer({
+            antialias: true,
+            alpha: true,
+          });
+          renderer.setSize(modelPreview.clientWidth, modelPreview.clientHeight);
+          modelPreview.appendChild(renderer.domElement);
+
+          const controls = new OrbitControls(camera, renderer.domElement);
+          controls.enableDamping = true; // for smooth controls
+          controls.dampingFactor = 0.05;
+          controls.screenSpacePanning = true;
+          controls.minDistance = 10;
+          controls.maxDistance = 500;
+          controls.target.set(0, 0, 0);
+
+          const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 1.2);
+          scene.add(hemiLight);
+
+          const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+          dirLight.position.set(0, 200, 100);
+          scene.add(dirLight);
+
+          let object;
+
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            const loader =
+              fileType === "stl" ? new STLLoader() : new VRMLLoader();
+            const parsed = loader.parse(e.target.result);
+
+            if (fileType === "stl") {
+              const material = new THREE.MeshStandardMaterial({
+                color: 0x007bff,
+                flatShading: true,
+              });
+              object = new THREE.Mesh(parsed, material);
+            } else {
+              object = parsed;
+            }
+
+            console.log("scan handlepreview showed the stl file");
+
+            // Center and scale the model
+            const box = new THREE.Box3().setFromObject(object);
+            const center = box.getCenter(new THREE.Vector3());
+            const size = box.getSize(new THREE.Vector3());
+            const maxDim = Math.max(size.x, size.y, size.z);
+            const scale = 100 / maxDim;
+            object.scale.setScalar(scale);
+            object.position.sub(center.multiplyScalar(scale));
+
+            scene.add(object);
+          };
+
+          if (fileType === "stl") {
+            reader.readAsArrayBuffer(file);
+          } else {
+            reader.readAsText(file);
+          }
+
+          function animate() {
+            requestAnimationFrame(animate);
+            controls.update(); // only required if damping is enabled
+            renderer.render(scene, camera);
+          }
+          animate();
+
+          window.addEventListener("resize", () => {
+            camera.aspect =
+              modelPreview.clientWidth / modelPreview.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(
+              modelPreview.clientWidth,
+              modelPreview.clientHeight
+            );
+          });
+        }
+      } else {
+        showToast("Unsupported file format.", "danger");
+      }
+    }
+    if (leftFootScan) {
+      leftFootScan.addEventListener("change", async function (event) {
+        const file = event.target.files[0];
+        if (file) {
+          leftFootScanLabel.textContent = file.name;
+          // Show preview of selected image
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            leftFootPreview.src = e.target.result;
+            leftFootPreview.classList.remove("d-none");
+          };
+          reader.readAsDataURL(file);
+        }
+        await handlePreview(
+          "leftFootScan",
+          "leftFootPreview",
+          "leftFoot3DPreview"
+        );
+      });
+    }
+
+    if (rightFootScan) {
+      rightFootScan.addEventListener("change", async function (event) {
+        const file = event.target.files[0];
+        if (file) {
+          rightFootScanLabel.textContent = file.name;
+          // Show preview of selected image
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            rightFootPreview.src = e.target.result;
+            rightFootPreview.classList.remove("d-none");
+          };
+          reader.readAsDataURL(file);
+        }
+        await handlePreview(
+          "rightFootScan",
+          "rightFootPreview",
+          "rightFoot3DPreview"
+        );
+      });
+    }
+
+    function openScanUploadModal(prescriptionId) {
+      console.log(
+        "Opening scan upload modal with prescription ID:",
+        prescriptionId
+      );
+      // Reset the form
+      const leftFootScan = document.getElementById("leftFootScan");
+      const rightFootScan = document.getElementById("rightFootScan");
+      if (leftFootScan) leftFootScan.value = "";
+      if (rightFootScan) rightFootScan.value = "";
+
+      // Clear previews
+      const leftFootPreview = document.getElementById("leftFootPreview");
+      const rightFootPreview = document.getElementById("rightFootPreview");
+      const leftFoot3DPreview = document.getElementById("leftFoot3DPreview");
+      const rightFoot3DPreview = document.getElementById("rightFoot3DPreview");
+      const leftFootScanLabel = document.getElementById("leftFootScanLabel");
+      const rightFootScanLabel = document.getElementById("rightFootScanLabel");
+
+      if (leftFootPreview) leftFootPreview.classList.add("d-none");
+      if (rightFootPreview) rightFootPreview.classList.add("d-none");
+      if (leftFoot3DPreview) leftFoot3DPreview.classList.add("d-none");
+      if (rightFoot3DPreview) rightFoot3DPreview.classList.add("d-none");
+      if (leftFootScanLabel) leftFootScanLabel.textContent = "Select file";
+      if (rightFootScanLabel) rightFootScanLabel.textContent = "Select file";
+
+      // Store the prescription ID
+      const scanPrescriptionIdInput =
+        document.getElementById("scanPrescriptionId");
+      if (scanPrescriptionIdInput) {
+        scanPrescriptionIdInput.value = prescriptionId;
+        console.log("Stored prescription ID:", prescriptionId);
+      }
+
+      // Show the modal
+      const modal = new bootstrap.Modal(
+        document.getElementById("scanUploadModal")
+      );
+      modal.show();
+    }
+
+    // Handle scan upload
+    const uploadScansBtn = document.getElementById("uploadScans");
+    if (uploadScansBtn) {
+      uploadScansBtn.addEventListener("click", async function () {
+        const prescriptionId =
+          document.getElementById("scanPrescriptionId").value;
+        console.log("Uploading scans for prescription ID:", prescriptionId);
+
+        if (!prescriptionId) {
+          showToast("No prescription selected", "danger");
+          return;
+        }
+
+        const leftFootScan = document.getElementById("leftFootScan");
+        const rightFootScan = document.getElementById("rightFootScan");
+        const leftFile = leftFootScan.files[0];
+        const rightFile = rightFootScan.files[0];
+
+        if (!leftFile && !rightFile) {
+          showToast("Please select at least one scan file", "warning");
+          return;
+        }
+
+        // Disable button and show loading state
+        uploadScansBtn.disabled = true;
+        uploadScansBtn.innerHTML =
+          '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Uploading...';
+
+        try {
+          const formData = new FormData();
+          formData.append("prescription", prescriptionId); // Add prescription ID
+          if (leftFile) formData.append("left_foot", leftFile);
+          if (rightFile) formData.append("right_foot", rightFile);
+
+          const response = await ApiService.prescriptions.uploadScans(
+            prescriptionId,
+            formData
+          );
+          console.log("Scans uploaded successfully:", response);
+
+          // Close modal and show success message
+          const modal = bootstrap.Modal.getInstance(
+            document.getElementById("scanUploadModal")
+          );
+          modal.hide();
+          showToast("Scans uploaded successfully", "success");
+
+          // Reload the prescriptions table to update status
+          await loadPatientsAndPrescriptions();
+
+          // Open clinical measures modal if needed
+          const nextStepBtn = document.getElementById(
+            "nextStepBtnClinicalMeasures"
+          );
+          if (nextStepBtn) {
+            const clinicalMeasuresModal = document.getElementById(
+              "clinicalMeasuresModal"
+            );
+            if (clinicalMeasuresModal) {
+              document.getElementById("clinicalMeasuresPrescriptionId").value =
+                prescriptionId;
+              const modal = new bootstrap.Modal(clinicalMeasuresModal);
+              modal.show();
+            }
+          }
+        } catch (error) {
+          console.error("Error uploading scans:", error);
+          showToast(
+            "Error uploading scans: " + (error.message || "Unknown error"),
+            "danger"
+          );
+        } finally {
+          // Re-enable button
+          uploadScansBtn.disabled = false;
+          uploadScansBtn.innerHTML = "Upload Scans";
+        }
+      });
+    }
+
+    if (clearFilesBtn) {
+      clearFilesBtn.addEventListener("click", function () {
+        // Clear file inputs
+        leftFootScan.value = "";
+        rightFootScan.value = "";
+
+        // Clear previews
+        leftFootPreview.classList.add("d-none");
+        rightFootPreview.classList.add("d-none");
+        leftFoot3DPreview.classList.add("d-none");
+        rightFoot3DPreview.classList.add("d-none");
+        leftFootScanLabel.textContent = "Select file";
+        rightFootScanLabel.textContent = "Select file";
+      });
+    }
+    // Expose the openScanUploadModal function to window
+    window.openScanUploadModal = openScanUploadModal;
+    // Make loadExistingScans available globally too
+    // window.loadExistingScans = loadExistingScans;
+  }
+
+  // Load patients and prescriptions from API
+  async function loadPatientsAndPrescriptions() {
+    try {
+      // Load patients
+      const patientsResponse = await ApiService.patients.getAll();
+      displayPatients(patientsResponse.results || []);
+      // Load prescriptions
+      const prescriptionsResponse = await ApiService.prescriptions.getAll();
+      displayPrescriptions(prescriptionsResponse.results || []);
+    } catch (error) {
+      console.error("Error loading data:", error);
+      showToast("Failed to load data. Please try again later.", "danger");
+    }
+  }
+
+  // Display patients in the table
+  function displayPatients(patients) {
+    const patientsTableBody = document.getElementById("patientsTableBody");
+    patientsTableBody.innerHTML = "";
+    if (!patients || patients.length === 0) {
+      patientsTableBody.innerHTML = `
+        <tr>
+          <td colspan="5" class="text-center py-4">
+            No patients found. Add a patient to get started.
+          </td>
+        </tr>
+      `;
+      return;
+    }
+    patients.forEach((patient) => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${patient.external_id || patient.id}</td>
+        <td>${patient.full_name}</td>
+        <td>${formatDate(patient.date_of_birth)}</td>
+        <td>${patient.email || patient.phone || "N/A"}</td>
+        <td>
+          <button class="btn btn-sm btn-outline view-patient-btn" data-id="${
+            patient.id
+          }">
+            <i class="bi bi-eye"></i> View
+          </button>
+          <button
+            class="btn btn-sm btn-outline edit-patient-btn"
+            data-id="${patient.id}">
+            <i class="bi bi-pencil"></i> Edit
+          </button>
+          <button
+            class="btn btn-sm btn-primary create-prescription-btn" 
+            data-id="${patient.id}" 
+            data-name="${patient.full_name}">
+            <i class="bi bi-clipboard-plus"></i> Prescribe
+          </button>
+        </td>
+      `;
+      patientsTableBody.appendChild(row);
+    });
+    // Re-initialize buttons after populating the table
+    initViewAndEditButtons();
+  }
+
+  // Display prescriptions in the table
+  function displayPrescriptions(prescriptions) {
+    const prescriptionsTableBody = document.getElementById(
+      "prescriptionsTableBody"
+    );
+    prescriptionsTableBody.innerHTML = "";
+    if (!prescriptions || prescriptions.length === 0) {
+      prescriptionsTableBody.innerHTML = `
+        <tr>
+          <td colspan="5" class="text-center py-4">
+            No prescriptions found. Create a new prescription to get started.
+          </td>
+        </tr>
+      `;
+      return;
+    }
+    prescriptions.forEach((prescription) => {
+      // Add row to the table
+      const newRow = document.createElement("tr");
+      // Determine status badge class
+      let statusClass = "";
+      switch (prescription.status) {
+        case "Pending":
+          statusClass = "bg-warning";
+          break;
+        case "Approved":
+          statusClass = "bg-success";
+          break;
+        case "Completed":
+          statusClass = "bg-info";
+          break;
+        case "Cancelled":
+          statusClass = "bg-danger";
+          break;
+        default:
+          statusClass = "bg-secondary";
+      }
+      newRow.innerHTML = `
+        <td>${prescription.id}</td>
+        <td>${prescription.patient_name}</td>
+        <td>${formatDate(prescription.created_at)}</td>
+        <td>
+          <span class="badge ${statusClass}">${prescription.status}</span>
+        </td>
+        <td>
+          <button type="button" class="btn btn-sm btn-primary me-1 view-prescription-btn" data-id="${
+            prescription.id
+          }">
+            <i class="bi bi-eye"></i>
+          </button>
+          <button type="button" class="btn btn-sm btn-secondary me-1 edit-prescription-btn" data-id="${
+            prescription.id
+          }">
+            <i class="bi bi-pencil"></i>
+          </button>
+          <button type="button" class="btn btn-sm btn-success me-1 add-to-basket-btn" data-id="${
+            prescription.id
+          }">
+            <i class="bi bi-cart-plus"></i>
+          </button>
+          <button type="button" class="btn btn-sm btn-info me-1 upload-scan-btn" data-id="${
+            prescription.id
+          }" title="Upload Foot Scans">
+            <i class="bi bi-file-earmark-image"></i>
+          </button>
+          <button type="button" class="btn btn-sm btn-warning clinical-measures-btn" data-id="${
+            prescription.id
+          }" title="Clinical Measures">
+            <i class="bi bi-ruler"></i>
+          </button>
+        </td>
+      `;
+      prescriptionsTableBody.appendChild(newRow);
+    });
+    // Re-initialize buttons after populating the table
+    initViewAndEditButtons();
+  }
+
+  function initPatientSearch() {
+    const searchInput = document.getElementById("patientSearch");
+    if (searchInput) {
+      searchInput.addEventListener("input", function () {
+        const searchTerm = this.value.toLowerCase();
+        searchPatients(searchTerm);
+      });
+    }
+  }
+
+  async function searchPatients(searchTerm) {
+    if (!searchTerm) {
+      // If search term is empty, reload all patients
+      const response = await ApiService.patients.getAll();
+      displayPatients(response.results || []);
+      return;
+    }
+    // Otherwise filter the patients table client-side
+    const rows = document.querySelectorAll("#patientsTableBody tr");
+    rows.forEach((row) => {
+      const text = row.textContent.toLowerCase();
+      if (text.includes(searchTerm)) {
+        row.style.display = "";
+      } else {
+        row.style.display = "none";
+      }
+    });
+  }
+
+  function initPrescriptionSearch() {
+    const searchInput = document.getElementById("prescriptionSearch");
+    if (searchInput) {
+      searchInput.addEventListener("input", function () {
+        const searchTerm = this.value.toLowerCase();
+        searchPrescriptions(searchTerm);
+      });
+    }
+  }
+
+  async function searchPrescriptions(searchTerm) {
+    if (!searchTerm) {
+      // If search term is empty, reload all prescriptions
+      const response = await ApiService.prescriptions.getAll();
+      displayPrescriptions(response.results || []);
+      return;
+    }
+    // Otherwise filter the prescriptions table client-side
+    const rows = document.querySelectorAll("#prescriptionsTableBody tr");
+    rows.forEach((row) => {
+      const text = row.textContent.toLowerCase();
+      if (text.includes(searchTerm)) {
+        row.style.display = "";
+      } else {
+        row.style.display = "none";
+      }
+    });
+  }
+  async function updatePrescriptionPatientSelect(newPatientId, fullName) {
+    const select = document.getElementById("prescriptionPatient");
+    if (!select) return;
+
+    // Check if patient already exists (prevent duplicates)
+    let existingOption = select.querySelector(
+      `option[value="${newPatientId}"]`
+    );
+
+    if (!existingOption) {
+      const option = document.createElement("option");
+      option.value = newPatientId;
+      option.textContent = fullName;
+      select.appendChild(option);
+    }
+
+    // Select the new patient
+    select.value = newPatientId;
+  }
+
+  function initPatientForm() {
+    const savePatientBtn = document.getElementById("savePatientBtn");
+    if (!savePatientBtn) return;
+
+    savePatientBtn.addEventListener("click", async function () {
+      const form = document.getElementById("addPatientForm");
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+
+      const formData = {
+        first_name: document.getElementById("firstName").value,
+        last_name: document.getElementById("lastName").value,
+        date_of_birth: document.getElementById("dateOfBirth").value,
+        gender: document.getElementById("gender").value,
+        external_id: document.getElementById("patientId").value,
+      };
+
+      savePatientBtn.disabled = true;
+      savePatientBtn.innerHTML =
+        '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...';
+
+      try {
+        const response = await ApiService.patients.create(formData);
+        console.log("post patients response", response);
+        showToast("Patient added successfully", "success");
+
+        // Hide and reset the add patient modal
+        const modal = bootstrap.Modal.getInstance(
+          document.getElementById("addPatientModal")
+        );
+        modal.hide();
+        form.reset();
+
+        // Get the prescription ID from the response
+        const prescriptionId = response.prescription_id;
+
+        // Show the scan upload modal with the prescription ID
+        if (prescriptionId) {
+          openScanUploadModal(prescriptionId);
+        } else {
+          console.error("No prescription ID returned");
+          showToast(
+            "Patient created but couldn't get prescription ID. Please try uploading scans later.",
+            "warning"
+          );
+        }
+
+        // Reload the patients and prescriptions list
+        await loadPatientsAndPrescriptions();
+      } catch (error) {
+        console.error("Error creating patient:", error);
+        showToast(
+          "Failed to add patient: " + (error.message || "Unknown error"),
+          "danger"
+        );
+      } finally {
+        savePatientBtn.disabled = false;
+        savePatientBtn.innerHTML = "Save Patient";
+      }
+    });
+  }
+
+  function initSavePatientHandler() {
+    const addPatientModal = document.getElementById("addPatientModal");
+    if (addPatientModal) {
+      addPatientModal.addEventListener("show.bs.modal", function (event) {
+        // Clear the form when the modal is shown
+        const form = document.getElementById("addPatientForm");
+        if (form) {
+          form.reset();
+        }
+      });
+    }
+    initPatientForm();
+  }
+
+  function initPrescriptionForm() {
+    const savePrescriptionBtn = document.getElementById("savePrescriptionBtn");
+    if (savePrescriptionBtn) {
+      savePrescriptionBtn.addEventListener("click", async function () {
+        // Validate form
+        const form = document.getElementById("createPrescriptionForm");
+        if (!form.checkValidity()) {
+          form.reportValidity();
+          return;
+        }
+        const user = JSON.parse(localStorage.getItem("user_info"));
+        const clinician_id = user.id;
+        // Get form data
+        const formData = {
+          patient: document.getElementById("prescriptionPatient").value,
+          orthotic_type: document.getElementById("orthoticType").value,
+          activity_level: document.getElementById("activityLevel").value,
+          arch_support: document.getElementById("archSupport").value,
+          cushioning: document.getElementById("cushioning").value,
+          additional_notes:
+            document.getElementById("additionalNotes").value || null,
+          clinician: clinician_id,
+        };
+        // Show loading state
+        savePrescriptionBtn.disabled = true;
+        savePrescriptionBtn.innerHTML =
+          '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Creating...';
+        try {
+          // Use the API service to create a prescription
+          console.log(formData);
+          console.log("Creating prescription...");
+          const response = await ApiService.prescriptions.create(formData);
+          console.log("Prescription created:", response);
+
+          // Store the prescription ID
+          const prescriptionId = response.id;
+
+          // Show success message
+          showToast("Prescription created successfully", "success");
+
+          // Close the modal
+          const modal = bootstrap.Modal.getInstance(
+            document.getElementById("createPrescriptionModal")
+          );
+          modal.hide();
+
+          // Reload prescriptions
+          await loadPatientsAndPrescriptions();
+
+          // Reset the form
+          form.reset();
+
+          // Open the scan upload modal with the new prescription ID
+          if (prescriptionId) {
+            openScanUploadModal(prescriptionId);
+          } else {
+            console.error("No prescription ID returned from creation");
+            showToast(
+              "Created prescription but couldn't get ID. Please try uploading scans later.",
+              "warning"
+            );
+          }
+        } catch (error) {
+          console.error("Error creating prescription:", error);
+          showToast(
+            "Failed to create prescription: " +
+              (error.message || "Unknown error"),
+            "danger"
+          );
+        } finally {
+          // Re-enable the button
+          savePrescriptionBtn.disabled = false;
+          savePrescriptionBtn.innerHTML = "Create Prescription";
+        }
+      });
+    }
+  }
+
+  function initSavePrescriptionHandler() {
+    const createPrescriptionModal = document.getElementById(
+      "createPrescriptionModal"
+    );
+    if (createPrescriptionModal) {
+      createPrescriptionModal.addEventListener(
+        "show.bs.modal",
+        function (event) {
+          // Optionally, you could load patient data into the select field here if needed
+        }
+      );
+    }
+    initPrescriptionForm();
+  }
+
+  function initViewAndEditButtons() {
+    const patientTableBody = document.getElementById("patientsTableBody");
+    if (patientTableBody) {
+      patientTableBody.addEventListener("click", function (event) {
+        if (event.target.classList.contains("view-patient-btn")) {
+          const patientId = event.target.dataset.id;
+          console.log("View patient:", patientId);
+          // Implement view patient functionality (e.g., open a modal or navigate to a detail page)
+        } else if (event.target.classList.contains("edit-patient-btn")) {
+          const patientId = event.target.dataset.id;
+          console.log("Edit patient:", patientId);
+          // Implement edit patient functionality (e.g., populate a modal with patient data)
+        } else if (event.target.classList.contains("create-prescription-btn")) {
+          const patientId = event.target.dataset.id;
+          const patientName = event.target.dataset.name;
+          // Open the create prescription modal and pre-select the patient
+          const createPrescriptionModal = new bootstrap.Modal(
+            document.getElementById("createPrescriptionModal")
+          );
+          const patientSelect = document.getElementById("prescriptionPatient");
+          if (patientSelect) {
+            for (let i = 0; i < patientSelect.options.length; i++) {
+              if (patientSelect.options[i].value === patientId) {
+                patientSelect.selectedIndex = i;
+                break;
+              }
+            }
+          }
+          createPrescriptionModal.show();
+        }
+      });
+    }
+
+    const prescriptionTableBody = document.getElementById(
+      "prescriptionsTableBody"
+    );
+    if (prescriptionTableBody) {
+      prescriptionTableBody.addEventListener("click", function (event) {
+        if (event.target.classList.contains("view-prescription-btn")) {
+          const prescriptionId = event.target.dataset.id;
+          console.log("View prescription:", prescriptionId);
+          // Implement view prescription functionality
+        } else if (event.target.classList.contains("edit-prescription-btn")) {
+          const prescriptionId = event.target.dataset.id;
+          console.log("Edit prescription:", prescriptionId);
+          // Implement edit prescription functionality
+        } else if (event.target.classList.contains("add-to-basket-btn")) {
+          const prescriptionId = event.target.dataset.id;
+          console.log("Add to basket:", prescriptionId);
+          // Implement add to basket functionality
+        } else if (event.target.classList.contains("upload-scan-btn")) {
+          const prescriptionId = event.target.dataset.id;
+          // Call the globally exposed function to open the scan upload modal
+          window.openScanUploadModal(prescriptionId);
+        } else if (event.target.classList.contains("clinical-measures-btn")) {
+          const prescriptionId = event.target.dataset.id;
+          // Open the clinical measures modal
+          openClinicalMeasuresModal(prescriptionId);
+        }
+      });
+    }
+  }
+
+  function formatDate(dateString) {
+    if (!dateString) return "N/A";
+    const date = new Date(dateString);
+    const options = { year: "numeric", month: "short", day: "numeric" };
+    return date.toLocaleDateString(undefined, options);
+  }
+
+  function showToast(message, type = "success") {
+    const toastContainer = document.getElementById("toast-container");
+    if (toastContainer) {
+      const toast = document.createElement("div");
+      toast.classList.add(
+        "toast",
+        "align-items-center",
+        "text-white",
+        `bg-${type}`,
+        "border-0"
+      );
+      toast.setAttribute("role", "alert");
+      toast.setAttribute("aria-live", "assertive");
+      toast.setAttribute("aria-atomic", "true");
+      toast.innerHTML = `
+        <div class="d-flex">
+          <div class="toast-body">${message}</div>
+          <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+      `;
+      toastContainer.appendChild(toast);
+      const bsToast = new bootstrap.Toast(toast);
+      bsToast.show();
+    }
+  }
+
+  // Handle the clinical measures form
+  function initClinicalMeasuresForm() {
+    const saveClinicalMeasuresBtn = document.getElementById(
+      "saveClinicalMeasuresBtn"
+    );
+
+    // Initialize increment/decrement buttons
+    initAlignmentControls();
+
+    if (saveClinicalMeasuresBtn) {
+      saveClinicalMeasuresBtn.addEventListener("click", async function () {
+        // Get the prescription ID
+        const prescriptionId = document.getElementById(
+          "clinicalMeasuresPrescriptionId"
+        ).value;
+        if (!prescriptionId) {
+          showToast("No prescription selected", "danger");
+          return;
+        }
+
+        // Collect all form data
+        const formData = {
+          prescription: prescriptionId,
+          left_scan_angle: document.getElementById("leftScanAngle").value || 0,
+          left_forefoot_varus:
+            document.getElementById("leftForefootVarus").value || 0,
+          left_forefoot_valgus:
+            document.getElementById("leftForefootValgus").value || 0,
+          left_heel_to_mpj_centre:
+            document.getElementById("leftHeelToMPJ").value || 0,
+          left_posterior_heel_to_heel_centre:
+            document.getElementById("leftPosteriorHeel").value || 0,
+          right_scan_angle:
+            document.getElementById("rightScanAngle").value || 0,
+          right_forefoot_varus:
+            document.getElementById("rightForefootVarus").value || 0,
+          right_forefoot_valgus:
+            document.getElementById("rightForefootValgus").value || 0,
+          right_heel_to_mpj_centre:
+            document.getElementById("rightHeelToMPJ").value || 0,
+          right_posterior_heel_to_heel_centre:
+            document.getElementById("rightPosteriorHeel").value || 0,
+        };
+
+        // Show loading state
+        saveClinicalMeasuresBtn.disabled = true;
+        saveClinicalMeasuresBtn.innerHTML =
+          '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...';
+
+        try {
+          // Save the clinical measures using the API service
+          const response = await ApiService.prescriptions
+            .saveClinicalMeasures(prescriptionId, formData)
+            .then((response) => {
+              console.log("Clinical measures saved:", response);
+              showToast("Clinical measures saved successfully", "success");
+              // reset the clinical measure form
+              document.getElementById("clinicalMeasuresForm").reset();
+              const modal = bootstrap.Modal.getInstance(
+                document.getElementById("clinicalMeasuresModal")
+              );
+              if (modal) {
+                modal.hide();
+              }
+
+              // Open the intrinsic adjustments modal with the same prescription ID
+              openIntrinsicAdjustmentsModal(prescriptionId);
+            });
+        } catch (error) {
+          console.error("Error saving clinical measures:", error);
+          showToast(
+            "Failed to save clinical measures: " +
+              (error.message || "Unknown error"),
+            "danger"
+          );
+        } finally {
+          // Re-enable the button
+          saveClinicalMeasuresBtn.disabled = false;
+          saveClinicalMeasuresBtn.innerHTML = "Save Measures";
+        }
+      });
+    }
+  }
+
+  function initAlignmentControls() {
+    // Get all increment and decrement buttons
+    const decreaseBtns = document.querySelectorAll(".decrease-btn");
+    const increaseBtns = document.querySelectorAll(".increase-btn");
+
+    // Add event listeners for decrement buttons
+    decreaseBtns.forEach((btn) => {
+      btn.addEventListener("click", function () {
+        const targetId = this.getAttribute("data-target");
+        const input = document.getElementById(targetId);
+        if (input) {
+          let value = parseInt(input.value) || 0;
+          input.value = Math.max(value - 1, -180); // Prevent going below -180 degrees
+        }
+      });
+    });
+
+    // Add event listeners for increment buttons
+    increaseBtns.forEach((btn) => {
+      btn.addEventListener("click", function () {
+        const targetId = this.getAttribute("data-target");
+        const input = document.getElementById(targetId);
+        if (input) {
+          let value = parseInt(input.value) || 0;
+          input.value = Math.min(value + 1, 180); // Prevent going above 180 degrees
+        }
+      });
+    });
+  }
+
+  async function loadExistingClinicalMeasures(prescriptionId) {
+    try {
+      // Fetch existing clinical measures from the API
+      const response = await ApiService.prescriptions.getClinicalMeasures(
+        prescriptionId
+      );
+      console.log("Loaded clinical measures:", response);
+
+      if (response) {
+        // Populate the form with the retrieved data
+        document.getElementById("weight").value = response.weight || "";
+        document.getElementById("height").value = response.height || "";
+
+        // Left foot measurements
+        if (response.left_foot) {
+          document.getElementById("leftFootLength").value =
+            response.left_foot.length || "";
+          document.getElementById("leftFootWidth").value =
+            response.left_foot.width || "";
+          document.getElementById("leftArchHeight").value =
+            response.left_foot.arch_height || "";
+
+          // Set alignment measurements for left foot
+          document.getElementById("leftScanAngle").value =
+            response.left_foot.scan_angle || 0;
+          document.getElementById("leftForefootVarus").value =
+            response.left_foot.forefoot_varus || 0;
+          document.getElementById("leftForefootValgus").value =
+            response.left_foot.forefoot_valgus || 0;
+          document.getElementById("leftHeelToMPJ").value =
+            response.left_foot.heel_to_mpj || 0;
+          document.getElementById("leftPosteriorHeel").value =
+            response.left_foot.posterior_heel || 0;
+        }
+
+        // Right foot measurements
+        if (response.right_foot) {
+          document.getElementById("rightFootLength").value =
+            response.right_foot.length || "";
+          document.getElementById("rightFootWidth").value =
+            response.right_foot.width || "";
+          document.getElementById("rightArchHeight").value =
+            response.right_foot.arch_height || "";
+
+          // Set alignment measurements for right foot
+          document.getElementById("rightScanAngle").value =
+            response.right_foot.scan_angle || 0;
+          document.getElementById("rightForefootVarus").value =
+            response.right_foot.forefoot_varus || 0;
+          document.getElementById("rightForefootValgus").value =
+            response.right_foot.forefoot_valgus || 0;
+          document.getElementById("rightHeelToMPJ").value =
+            response.right_foot.heel_to_mpj || 0;
+          document.getElementById("rightPosteriorHeel").value =
+            response.right_foot.posterior_heel || 0;
+        }
+
+        // Gait analysis
+        if (response.gait_type) {
+          setSelectValue("gaitType", response.gait_type);
+        }
+
+        if (response.weight_distribution) {
+          setSelectValue("weightDistribution", response.weight_distribution);
+        }
+
+        // Clinical observations
+        if (response.pressure_points && response.pressure_points.length > 0) {
+          setMultiSelectValues("footPressurePoints", response.pressure_points);
+        }
+
+        if (response.foot_conditions && response.foot_conditions.length > 0) {
+          setMultiSelectValues("footConditions", response.foot_conditions);
+        }
+
+        // Notes
+        document.getElementById("clinicalNotes").value =
+          response.clinical_notes || "";
+      }
+    } catch (error) {
+      console.error("Error loading clinical measures:", error);
+      // Don't show a toast here as it might be the first time the user is accessing clinical measures
+    }
+  }
+
+  function setSelectValue(selectId, value) {
+    const select = document.getElementById(selectId);
+    for (let i = 0; i < select.options.length; i++) {
+      if (select.options[i].value === value) {
+        select.selectedIndex = i;
+        break;
+      }
+    }
+  }
+
+  function setMultiSelectValues(selectId, values) {
+    const select = document.getElementById(selectId);
+    for (let i = 0; i < select.options.length; i++) {
+      select.options[i].selected = values.includes(select.options[i].value);
+    }
+  }
+
+  function getMultiSelectValues(selectId) {
+    const select = document.getElementById(selectId);
+    return Array.from(select.selectedOptions).map((option) => option.value);
+  }
+
+  function openClinicalMeasuresModal(prescriptionId) {
+    // Set the prescription ID
+    document.getElementById("clinicalMeasuresPrescriptionId").value =
+      prescriptionId;
+
+    // Clear form fields
+    document.getElementById("clinicalMeasuresForm").reset();
+
+    // Load existing clinical measures
+    loadExistingClinicalMeasures(prescriptionId);
+
+    // Show the modal
+    const modal = new bootstrap.Modal(
+      document.getElementById("clinicalMeasuresModal")
+    );
+    modal.show();
+  }
+
+  // Add after the initClinicalMeasuresForm function
+  function initIntrinsicAdjustmentsForm() {
+    const saveIntrinsicAdjustmentsBtn = document.getElementById(
+      "saveIntrinsicAdjustmentsBtn"
+    );
+
+    // Initialize the "Next" button in the clinical measures modal to open the intrinsic adjustments modal
+    const nextStepBtnIntrinsicAdjustments = document.getElementById(
+      "nextStepBtnIntrinsicAdjustments"
+    );
+    if (nextStepBtnIntrinsicAdjustments) {
+      nextStepBtnIntrinsicAdjustments.addEventListener("click", function () {
+        // First close the clinical measures modal
+        const clinicalMeasuresModal = bootstrap.Modal.getInstance(
+          document.getElementById("clinicalMeasuresModal")
+        );
+        if (clinicalMeasuresModal) {
+          clinicalMeasuresModal.hide();
+        }
+
+        // Get the prescription ID from the clinical measures form
+        const prescriptionId = document.getElementById(
+          "clinicalMeasuresPrescriptionId"
+        ).value;
+
+        const intrinsicAdjustmentsModal = new bootstrap.Modal(
+          document.getElementById("intrinsicAdjustmentsModal")
+        );
+        if (intrinsicAdjustmentsModal) {
+          document.getElementById("intrinsicAdjustmentsPrescriptionId").value =
+            prescriptionId;
+          // Clear form fields
+          document.getElementById("intrinsicAdjustmentsForm").reset();
+          // Load existing intrinsic adjustments
+          loadExistingIntrinsicAdjustments(prescriptionId);
+          intrinsicAdjustmentsModal.show();
+        }
+      });
+    }
+
+    // Initialize increment/decrement buttons for numeric fields
+    initIntrinsicAdjustmentControls();
+
+    if (saveIntrinsicAdjustmentsBtn) {
+      saveIntrinsicAdjustmentsBtn.addEventListener("click", async function () {
+        // Get the prescription ID
+        const prescriptionId = document.getElementById(
+          "intrinsicAdjustmentsPrescriptionId"
+        ).value;
+        if (!prescriptionId) {
+          showToast("No prescription selected", "danger");
+          return;
+        }
+
+        // Show loading state
+        saveIntrinsicAdjustmentsBtn.disabled = true;
+        saveIntrinsicAdjustmentsBtn.innerHTML =
+          '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...';
+
+        try {
+          // Collect all form data
+          const formData = {
+            prescription: prescriptionId,
+            left_foot: {
+              arch_expansion:
+                document.getElementById("leftArchExpansion").value || "none",
+              heel_expansion:
+                document.getElementById("leftHeelExpansion").value || "none",
+              shell_width:
+                document.getElementById("leftShellWidth").value || "standard",
+              shell_length:
+                document.getElementById("leftShellLength").value || "standard",
+              pfa_height: {
+                type:
+                  document.getElementById("leftPFAHeight").value || "straight",
+                value:
+                  parseFloat(
+                    document.getElementById("leftPFAHeightValue").value
+                  ) || 0,
+              },
+              skive: {
+                type: document.getElementById("leftSkive").value || "medial",
+                method:
+                  document.getElementById("leftSkiveMethod").value ||
+                  "depth/degree",
+                depth:
+                  parseFloat(document.getElementById("leftSkiveDepth").value) ||
+                  0,
+                degrees:
+                  parseFloat(
+                    document.getElementById("leftSkiveDegrees").value
+                  ) || 0,
+                inclination:
+                  document.getElementById("leftSkiveInclination").value ||
+                  "maximum",
+              },
+            },
+            right_foot: {
+              arch_expansion:
+                document.getElementById("rightArchExpansion").value || "none",
+              heel_expansion:
+                document.getElementById("rightHeelExpansion").value || "none",
+              shell_width:
+                document.getElementById("rightShellWidth").value || "standard",
+              shell_length:
+                document.getElementById("rightShellLength").value || "standard",
+              pfa_height: {
+                type:
+                  document.getElementById("rightPFAHeight").value || "straight",
+                value:
+                  parseFloat(
+                    document.getElementById("rightPFAHeightValue").value
+                  ) || 0,
+              },
+              skive: {
+                type: document.getElementById("rightSkive").value || "medial",
+                method:
+                  document.getElementById("rightSkiveMethod").value ||
+                  "depth/degree",
+                depth:
+                  parseFloat(
+                    document.getElementById("rightSkiveDepth").value
+                  ) || 0,
+                degrees:
+                  parseFloat(
+                    document.getElementById("rightSkiveDegrees").value
+                  ) || 0,
+                inclination:
+                  document.getElementById("rightSkiveInclination").value ||
+                  "maximum",
+              },
+            },
+          };
+
+          // Save the intrinsic adjustments
+          const response =
+            await ApiService.prescriptions.saveIntrinsicAdjustments(
+              prescriptionId,
+              formData
+            );
+          console.log("Intrinsic adjustments saved:", response);
+          showToast("Intrinsic adjustments saved successfully", "success");
+
+          // Get the modal instance
+          const modal = bootstrap.Modal.getInstance(
+            document.getElementById("intrinsicAdjustmentsModal")
+          );
+          if (modal) {
+            modal.hide();
+          }
+
+          // Open the off-loading modal
+          openOffLoadingModal(prescriptionId);
+        } catch (error) {
+          console.error("Error saving intrinsic adjustments:", error);
+          showToast(
+            "Failed to save intrinsic adjustments: " +
+              (error.response?.data?.error || error.message || "Unknown error"),
+            "danger"
+          );
+        } finally {
+          // Re-enable the button
+          saveIntrinsicAdjustmentsBtn.disabled = false;
+          saveIntrinsicAdjustmentsBtn.innerHTML = "Save Adjustments";
+        }
+      });
+    }
+
+    // Handle the Finalize button
+    const finalizeBtn = document.getElementById("finalizeBtn");
+    if (finalizeBtn) {
+      finalizeBtn.addEventListener("click", function () {
+        // Save the form first
+        saveIntrinsicAdjustmentsBtn.click();
+
+        // We could navigate to a summary page or submit the final prescription here
+        setTimeout(() => {
+          showToast("Prescription finalized successfully!", "success");
+        }, 1000);
+      });
+    }
+  }
+
+  function initIntrinsicAdjustmentControls() {
+    // Get all increment and decrement buttons
+    const decreaseBtns = document.querySelectorAll(".decrease-btn");
+    const increaseBtns = document.querySelectorAll(".increase-btn");
+
+    // Add event listeners for decrement buttons
+    decreaseBtns.forEach((btn) => {
+      btn.addEventListener("click", function () {
+        const targetId = this.getAttribute("data-target");
+        const input = document.getElementById(targetId);
+        if (input) {
+          let value = parseInt(input.value) || 0;
+          input.value = Math.max(value - 1, 0); // Prevent negative values
+        }
+      });
+    });
+
+    // Add event listeners for increment buttons
+    increaseBtns.forEach((btn) => {
+      btn.addEventListener("click", function () {
+        const targetId = this.getAttribute("data-target");
+        const input = document.getElementById(targetId);
+        if (input) {
+          let value = parseInt(input.value) || 0;
+          input.value = Math.min(value + 1, 100); // Set a reasonable maximum
+        }
+      });
+    });
+  }
+
+  async function loadExistingIntrinsicAdjustments(prescriptionId) {
+    try {
+      // Here we would fetch existing intrinsic adjustments from the API
+      // For now, we'll leave this as a placeholder
+      console.log(
+        "Loading intrinsic adjustments for prescription:",
+        prescriptionId
+      );
+
+      // Example of how you might populate the form if you had data:
+      /*
+      const response = await ApiService.prescriptions.getIntrinsicAdjustments(prescriptionId);
+      if (response) {
+        // Left foot
+        document.getElementById("leftArchExpansion").value = response.left_foot.arch_expansion || 'none';
+        document.getElementById("leftHeelExpansion").value = response.left_foot.heel_expansion || 'none';
+        document.getElementById("leftShellWidth").value = response.left_foot.shell_width || 'standard';
+        document.getElementById("leftShellLength").value = response.left_foot.shell_length || 'standard';
+        
+        if (response.left_foot.pfa_height) {
+          document.getElementById("leftPFAHeight").value = response.left_foot.pfa_height.type || 'straight';
+          document.getElementById("leftPFAHeightValue").value = response.left_foot.pfa_height.value || 0;
+        }
+        
+        if (response.left_foot.skive) {
+          document.getElementById("leftSkive").value = response.left_foot.skive.type || 'medial';
+          document.getElementById("leftSkiveMethod").value = response.left_foot.skive.method || 'depth/degree';
+          document.getElementById("leftSkiveDepth").value = response.left_foot.skive.depth || 0;
+          document.getElementById("leftSkiveDegrees").value = response.left_foot.skive.degrees || 0;
+          document.getElementById("leftSkiveInclination").value = response.left_foot.skive.inclination || 'maximum';
+        }
+        
+        // Right foot
+        document.getElementById("rightArchExpansion").value = response.right_foot.arch_expansion || 'none';
+        document.getElementById("rightHeelExpansion").value = response.right_foot.heel_expansion || 'none';
+        document.getElementById("rightShellWidth").value = response.right_foot.shell_width || 'standard';
+        document.getElementById("rightShellLength").value = response.right_foot.shell_length || 'standard';
+        
+        if (response.right_foot.pfa_height) {
+          document.getElementById("rightPFAHeight").value = response.right_foot.pfa_height.type || 'straight';
+          document.getElementById("rightPFAHeightValue").value = response.right_foot.pfa_height.value || 0;
+        }
+        
+        if (response.right_foot.skive) {
+          document.getElementById("rightSkive").value = response.right_foot.skive.type || 'medial';
+          document.getElementById("rightSkiveMethod").value = response.right_foot.skive.method || 'depth/degree';
+          document.getElementById("rightSkiveDepth").value = response.right_foot.skive.depth || 0;
+          document.getElementById("rightSkiveDegrees").value = response.right_foot.skive.degrees || 0;
+          document.getElementById("rightSkiveInclination").value = response.right_foot.skive.inclination || 'maximum';
+        }
+      }
+      */
+    } catch (error) {
+      console.error("Error loading intrinsic adjustments:", error);
+    }
+  }
+
+  function openIntrinsicAdjustmentsModal(prescriptionId) {
+    // Set the prescription ID
+    document.getElementById("intrinsicAdjustmentsPrescriptionId").value =
+      prescriptionId;
+
+    // Clear form fields
+    document.getElementById("intrinsicAdjustmentsForm").reset();
+
+    // Load existing intrinsic adjustments if available
+    loadExistingIntrinsicAdjustments(prescriptionId);
+
+    // Show the modal
+    const modal = new bootstrap.Modal(
+      document.getElementById("intrinsicAdjustmentsModal")
+    );
+    modal.show();
+  }
+
+  function initOffLoadingForm() {
+    const saveOffLoadingBtn = document.getElementById("saveOffLoadingBtn");
+    const nextToPlanterModifiersBtn = document.getElementById(
+      "nextToPlanterModifiersBtn"
+    );
+
+    // Initialize the "Next" button in the intrinsic adjustments modal to open the off-loading modal
+    const nextToOffLoadingBtn = document.getElementById("nextToOffLoadingBtn");
+    if (nextToOffLoadingBtn) {
+      nextToOffLoadingBtn.addEventListener("click", function () {
+        // First save the intrinsic adjustments
+        document.getElementById("saveIntrinsicAdjustmentsBtn").click();
+
+        // Wait a bit for the save to complete
+        setTimeout(() => {
+          // Close the intrinsic adjustments modal
+          const intrinsicModal = bootstrap.Modal.getInstance(
+            document.getElementById("intrinsicAdjustmentsModal")
+          );
+          if (intrinsicModal) {
+            intrinsicModal.hide();
+          }
+
+          // Get the prescription ID from the intrinsic adjustments form
+          const prescriptionId = document.getElementById(
+            "intrinsicAdjustmentsPrescriptionId"
+          ).value;
+          // Open the off-loading modal with the same prescription ID
+          openOffLoadingModal(prescriptionId);
+        }, 800);
+      });
+    }
+
+    // Initialize increment/decrement buttons for numeric fields
+    initOffLoadingControls();
+
+    if (saveOffLoadingBtn) {
+      saveOffLoadingBtn.addEventListener("click", async function () {
+        // Get the prescription ID
+        const prescriptionId = document.getElementById(
+          "offLoadingPrescriptionId"
+        ).value;
+        if (!prescriptionId) {
+          showToast("No prescription selected", "danger");
+          return;
+        }
+
+        // Collect all form data
+        const formData = {
+          prescription: prescriptionId,
+          left_foot: {
+            cuboid: {
+              raise: document.getElementById("leftCuboidRaise").value || 0,
+              deli: document.getElementById("leftCuboidDeli").value || 0,
+            },
+            styloid: {
+              raise: document.getElementById("leftStyloidRaise").value || 0,
+              deli: document.getElementById("leftStyloidDeli").value || 0,
+            },
+            navicular: {
+              raise: document.getElementById("leftNavicularRaise").value || 0,
+              deli: document.getElementById("leftNavicularDeli").value || 0,
+            },
+            apertures: document.querySelector(
+              'input[name="leftApertures"]:checked'
+            ).value,
+            no_fill: document.getElementById("leftNoFill").checked,
+            poron_u_pad: document.getElementById("leftPoronUPad").value,
+            eva_u_pad: document.getElementById("leftEVAUPad").value,
+            metatarsal_dome:
+              document.getElementById("leftMetatarsalDome").value,
+            metatarsal_pad:
+              document.querySelector('input[name="leftMetatarsalPad"]:checked')
+                .value === "yes",
+          },
+          right_foot: {
+            cuboid: {
+              raise: document.getElementById("rightCuboidRaise").value || 0,
+              deli: document.getElementById("rightCuboidDeli").value || 0,
+            },
+            styloid: {
+              raise: document.getElementById("rightStyloidRaise").value || 0,
+              deli: document.getElementById("rightStyloidDeli").value || 0,
+            },
+            navicular: {
+              raise: document.getElementById("rightNavicularRaise").value || 0,
+              deli: document.getElementById("rightNavicularDeli").value || 0,
+            },
+            apertures: document.querySelector(
+              'input[name="rightApertures"]:checked'
+            ).value,
+            no_fill: document.getElementById("rightNoFill").checked,
+            poron_u_pad: document.getElementById("rightPoronUPad").value,
+            eva_u_pad: document.getElementById("rightEVAUPad").value,
+            metatarsal_dome: document.getElementById("rightMetatarsalDome")
+              .value,
+            metatarsal_pad:
+              document.querySelector('input[name="rightMetatarsalPad"]:checked')
+                .value === "yes",
+          },
+        };
+
+        // Show loading state
+        saveOffLoadingBtn.disabled = true;
+        saveOffLoadingBtn.innerHTML =
+          '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...';
+
+        try {
+          // Save the off-loading using the API service
+          // For now, we'll simulate a successful save since the API endpoint might not exist yet
+          console.log("Saving off-loading:", formData);
+
+          // let save it to the backend
+          const response = await ApiService.prescriptions
+            .saveOffLoading(prescriptionId, formData)
+            .then((response) => {
+              console.log("Off-loading saved:", response);
+              showToast("Off-loading saved successfully", "success");
+
+              // Close the modal
+              const modal = bootstrap.Modal.getInstance(
+                document.getElementById("offLoadingModal")
+              );
+              if (modal) {
+                modal.hide();
+              }
+
+              // Open the Plantar Modifiers modal
+              console.log("Opening Plantar Modifiers modal");
+              document.getElementById("planterModifiersPrescriptionId").value =
+                prescriptionId;
+              openPlanterModifierModal(prescriptionId);
+            });
+        } catch (error) {
+          console.error("Error saving off-loading:", error);
+          showToast(
+            "Failed to save off-loading: " + (error.message || "Unknown error"),
+            "danger"
+          );
+        } finally {
+          // Re-enable the button
+          saveOffLoadingBtn.disabled = false;
+          saveOffLoadingBtn.innerHTML = "Save Off-Loading";
+        }
+      });
+    }
+
+    // Handle the Finalize button
+    const finalizeOffLoadingBtn = document.getElementById(
+      "finalizeOffLoadingBtn"
+    );
+    if (finalizeOffLoadingBtn) {
+      finalizeOffLoadingBtn.addEventListener("click", function () {
+        // Save the form first
+        saveOffLoadingBtn.click();
+
+        // We could navigate to a summary page or submit the final prescription here
+        setTimeout(() => {
+          showToast(
+            "Prescription finalized and ready for production!",
+            "success"
+          );
+        }, 1000);
+      });
+    }
+
+    // Handle the Next to Plantar Modifiers button
+    if (nextToPlanterModifiersBtn) {
+      nextToPlanterModifiersBtn.addEventListener("click", function () {
+        // First save the off-loading data
+        saveOffLoadingBtn.click();
+
+        // Wait a bit for the save to complete
+        setTimeout(() => {
+          // Close the off-loading modal
+          const offLoadingModal = bootstrap.Modal.getInstance(
+            document.getElementById("offLoadingModal")
+          );
+          if (offLoadingModal) {
+            offLoadingModal.hide();
+          }
+
+          // Get the prescription ID
+          const prescriptionId = document.getElementById(
+            "offLoadingPrescriptionId"
+          ).value;
+
+          // Open the Plantar Modifiers modal using the module's method
+          if (window.PlanterModifiersModule) {
+            const planterModal = new bootstrap.Modal(
+              document.getElementById("planterModifierModal")
+            );
+            planterModal.show();
+            PlanterModifiersModule.openPlanterModifiersModal(prescriptionId);
+          } else {
+            console.error("PlanterModifiersModule not found");
+            showToast(
+              "Error: Could not load Plantar Modifiers module",
+              "danger"
+            );
+          }
+        }, 800);
+      });
+    }
+  }
+
+  function initOffLoadingControls() {
+    // Get all increment and decrement buttons
+    const decreaseBtns = document.querySelectorAll(".decrease-btn");
+    const increaseBtns = document.querySelectorAll(".increase-btn");
+
+    // Add event listeners for decrement buttons
+    decreaseBtns.forEach((btn) => {
+      btn.addEventListener("click", function () {
+        const targetId = this.getAttribute("data-target");
+        const input = document.getElementById(targetId);
+        if (input) {
+          let value = parseInt(input.value) || 0;
+          input.value = Math.max(value - 1, 0); // Prevent negative values
+        }
+      });
+    });
+
+    // Add event listeners for increment buttons
+    increaseBtns.forEach((btn) => {
+      btn.addEventListener("click", function () {
+        const targetId = this.getAttribute("data-target");
+        const input = document.getElementById(targetId);
+        if (input) {
+          let value = parseInt(input.value) || 0;
+          input.value = Math.min(value + 1, 100); // Set a reasonable maximum
+        }
+      });
+    });
+  }
+
+  async function loadExistingOffLoading(prescriptionId) {
+    try {
+      // Here we would fetch existing off-loading from the API
+      // For now, we'll leave this as a placeholder
+      console.log("Loading off-loading for prescription:", prescriptionId);
+
+      // Example of how you might populate the form if you had data:
+      /*
+      const response = await ApiService.prescriptions.getOffLoading(prescriptionId);
+      if (response) {
+        // Left foot
+        if (response.left_foot) {
+          if (response.left_foot.cuboid) {
+            document.getElementById("leftCuboidRaise").value = response.left_foot.cuboid.raise || 0;
+            document.getElementById("leftCuboidDeli").value = response.left_foot.cuboid.deli || 0;
+          }
+          
+          if (response.left_foot.styloid) {
+            document.getElementById("leftStyloidRaise").value = response.left_foot.styloid.raise || 0;
+            document.getElementById("leftStyloidDeli").value = response.left_foot.styloid.deli || 0;
+          }
+          
+          if (response.left_foot.navicular) {
+            document.getElementById("leftNavicularRaise").value = response.left_foot.navicular.raise || 0;
+            document.getElementById("leftNavicularDeli").value = response.left_foot.navicular.deli || 0;
+          }
+          
+          // Set the apertures radio button
+          if (response.left_foot.apertures) {
+            const apertureRadio = document.querySelector(`input[name="leftApertures"][value="${response.left_foot.apertures}"]`);
+            if (apertureRadio) {
+              apertureRadio.checked = true;
+            }
+          }
+          
+          // Set the no fill checkbox
+          if (response.left_foot.no_fill) {
+            document.getElementById("leftNoFill").checked = response.left_foot.no_fill;
+          }
+          
+          // Set the poron u-pad
+          if (response.left_foot.poron_u_pad) {
+            document.getElementById("leftPoronUPad").value = response.left_foot.poron_u_pad;
+          }
+          
+          // Set the eva u-pad
+          if (response.left_foot.eva_u_pad) {
+            document.getElementById("leftEVAUPad").value = response.left_foot.eva_u_pad;
+          }
+          
+          // Set the metatarsal dome
+          if (response.left_foot.metatarsal_dome) {
+            document.getElementById("leftMetatarsalDome").value = response.left_foot.metatarsal_dome;
+          }
+          
+          // Set the metatarsal pad
+          if (response.left_foot.metatarsal_pad) {
+            document.getElementById("leftMetatarsalPadYes").checked = true;
+          } else {
+            document.getElementById("leftMetatarsalPadNo").checked = true;
+          }
+        }
+        
+        // Right foot (similar to left foot)
+        // ...
+      }
+      */
+    } catch (error) {
+      console.error("Error loading off-loading:", error);
+    }
+  }
+
+  function openOffLoadingModal(prescriptionId) {
+    // Set the prescription ID
+    document.getElementById("offLoadingPrescriptionId").value = prescriptionId;
+
+    // Clear form fields
+    document.getElementById("offLoadingForm").reset();
+
+    // Load existing off-loading if available
+    loadExistingOffLoading(prescriptionId);
+
+    // Show the modal
+    const modal = new bootstrap.Modal(
+      document.getElementById("offLoadingModal")
+    );
+    modal.show();
+  }
+
+  function openPlanterModifierModal(prescriptionId) {
+    if (!prescriptionId) {
+      console.error("No prescription ID provided to openPlanterModifierModal");
+      return;
+    }
+
+    console.log(
+      "Opening Planter Modifier modal for prescription:",
+      prescriptionId
+    );
+
+    // Show the modal first
+    const modal = new bootstrap.Modal(
+      document.getElementById("planterModifierModal")
+    );
+    modal.show();
+
+    // Then initialize the module with the prescription ID
+    if (window.PlanterModifiersModule) {
+      PlanterModifiersModule.openPlanterModifiersModal(prescriptionId);
+    } else {
+      console.error("PlanterModifiersModule not found");
+      showToast("Error: Could not load Plantar Modifiers module", "danger");
+    }
+  }
+
+  // Add button click handler in the prescription steps
+  function addPlanterModifierButton(prescriptionId) {
+    return `
+        <button type="button" 
+                class="btn btn-primary btn-sm" 
+                onclick="openPlanterModifierModal('${prescriptionId}')">
+            <i class="fas fa-shoe-prints me-1"></i>
+            Plantar Modifiers
+        </button>
+    `;
+  }
+
+  function addMaterialSelectionButton(prescriptionId) {
+    return `
+        <button type="button" 
+                class="btn btn-primary btn-sm" 
+                onclick="openMaterialSelectionModal('${prescriptionId}')">
+            <i class="fas fa-shoe-prints me-1"></i>
+            Material Selection
+        </button>
+    `;
+  }
+
+  function addShoeFittingButton(prescriptionId) {
+    return `
+        <button type="button" 
+                class="btn btn-primary btn-sm" 
+                onclick="openShoeFittingModal('${prescriptionId}')">
+            <i class="fas fa-shoe-prints me-1"></i>
+            Shoe Fitting
+        </button>
+    `;
+  }
+
+  function addPostingButton(prescriptionId) {
+    return `
+        <button type="button" 
+                class="btn btn-primary btn-sm" 
+                onclick="openPostingModal('${prescriptionId}')">
+            <i class="fas fa-shoe-prints me-1"></i>
+            Posting
+        </button>
+    `;
+  }
+
+  function addDeviceOptionsButton(prescriptionId) {
+    return `
+      <button type="button" 
+              class="btn btn-primary btn-sm" 
+              onclick="openDeviceOptionsModal('${prescriptionId}')">
+          <i class="fas fa-cog me-1"></i>
+          Device Options
+      </button>
+    `;
+  }
+
+  function openDeviceOptionsModal(prescriptionId) {
+    if (!prescriptionId) {
+      console.error("No prescription ID provided");
+      return;
+    }
+
+    // close any other open modals if needed
+    const otherModals = document.querySelectorAll(".modal");
+    otherModals.forEach((modal) => {
+      const instance = bootstrap.Modal.getInstance(modal);
+      if (instance) {
+        instance.hide();
+      }
+    });
+
+    const modal = new bootstrap.Modal(
+      document.getElementById("deviceOptionsModal")
+    );
+    modal.show();
+
+    if (window.deviceOptions) {
+      window.deviceOptions.initialize(prescriptionId);
+    } else {
+      console.error("Device options module not found");
+      showToast("error", "Device options module not initialized");
+    }
+  }
+
+  // Update the renderPrescriptionCard function to include the Plantar Modifiers button
+  function renderPrescriptionCard(prescription) {
+    return `
+        <div class="card mb-3">
+            <div class="card-body">
+                // ... existing prescription card content ...
+                <div class="btn-group" role="group">
+                    ${addScanButton(prescription.id)}
+                    ${addClinicalMeasuresButton(prescription.id)}
+                    ${addOffLoadingButton(prescription.id)}
+                    ${addPlanterModifierButton(prescription.id)} 
+                    ${addMaterialSelectionButton(prescription.id)}
+                    ${addShoeFittingButton(prescription.id)}
+                    ${addDeviceOptionsButton(prescription.id)}
+                    ${addPostingButton(prescription.id)}
+                    
+                </div>
+            </div>
+        </div>
+    `;
+  }
+
+  function openPostingModal(prescriptionId) {
+    console.log("Opening posting modal for prescription:", prescriptionId);
+    if (!prescriptionId) {
+      showToast("error", "No prescription ID provided");
+      return;
+    }
+
+    try {
+      if (!window.PostingModule) {
+        console.error("PostingModule not found");
+        showToast("error", "Posting module not initialized");
+        return;
+      }
+
+      // close the material selection modal
+      const materialSelectionModal = bootstrap.Modal.getInstance(
+        document.getElementById("materialSelectionModal")
+      );
+      if (materialSelectionModal) {
+        materialSelectionModal.hide();
+      }
+
+      const modal = new bootstrap.Modal(
+        document.getElementById("postingModal")
+      );
+      modal.show();
+
+      if (window.PostingModule) {
+        window.PostingModule.init(prescriptionId);
+      } else {
+        console.error("PostingModule not found");
+        showToast("error", "Posting module not initialized");
+      }
+    } catch (error) {
+      console.error("Error opening posting modal:", error);
+      showToast("error", "Failed to open posting modal");
+    }
+  }
+
+  function openMaterialSelectionModal(prescriptionId) {
+    if (!prescriptionId) {
+      console.error(
+        "No prescription ID provided for opening material selection modal"
+      );
+      return;
+    }
+
+    try {
+      // close posting modal
+      const postingModal = bootstrap.Modal.getInstance(
+        document.getElementById("postingModal")
+      );
+      if (postingModal) {
+        postingModal.hide();
+      }
+
+      const modal = new bootstrap.Modal(
+        document.getElementById("materialSelectionModal")
+      );
+      if (!modal) {
+        throw new Error("Material selection modal not found");
+      }
+
+      if (!window.MaterialSelectionModule) {
+        throw new Error("Material selection module not found");
+      }
+
+      // Show the modal
+      modal.show();
+
+      if (window.MaterialSelectionModule) {
+        window.MaterialSelectionModule.init(prescriptionId);
+      } else {
+        console.error("Material selection module not found");
+        showToast("error", "Material selection module not initialized");
+      }
+    } catch (error) {
+      console.error("Error opening material selection modal:", error);
+      showErrorToast("Failed to open material selection modal");
+    }
+  }
+
+  function openShoeFittingModal(prescriptionId) {
+    if (!prescriptionId) {
+      console.error("No prescription ID provided");
+      return;
+    }
+
+    // close the material selection modal
+    const materialSelectionModal = bootstrap.Modal.getInstance(
+      document.getElementById("materialSelectionModal")
+    );
+    if (materialSelectionModal) {
+      materialSelectionModal.hide();
+    }
+
+    if (!window.ShoeFittingModule) {
+      console.error("ShoeFittingModule not found");
+      return;
+    }
+
+    const modal = new bootstrap.Modal(
+      document.getElementById("shoeFittingModal")
+    );
+    modal.show();
+
+    if (window.ShoeFittingModule) {
+      window.ShoeFittingModule.init(prescriptionId);
+    } else {
+      console.error("ShoeFittingModule not found");
+      showToast("error", "Shoe fitting module not initialized");
+    }
+  }
+</script>
+{% endblock %}

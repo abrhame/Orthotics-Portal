@@ -1,0 +1,203 @@
+<!-- Material Selection Modal -->
+<div
+  class="modal fade"
+  id="materialSelectionModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="materialSelectionModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="materialSelectionModalLabel">
+          Material Selection
+        </h5>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="materialSelectionForm">
+          <!-- Shell Material -->
+          <div class="form-group">
+            <label>Shell Material</label>
+            <select
+              class="form-control"
+              id="shellMaterial"
+              name="shell_material"
+            >
+              <option value="pa11_nylon">PA-11 Nylon</option>
+            </select>
+          </div>
+
+          <!-- Shell Thickness -->
+          <div class="form-group">
+            <label>Shell Thickness</label>
+            <select
+              class="form-control"
+              id="shellThickness"
+              name="shell_thickness"
+            >
+              <option value="2.0mm">2.0mm (Minimum)</option>
+              <option value="2.5mm">2.5mm</option>
+              <option value="3.0mm">3.0mm</option>
+              <option value="4.0mm">4.0mm</option>
+              <option value="4.5mm">4.5mm (Maximum)</option>
+            </select>
+          </div>
+
+          <!-- Top Cover -->
+          <div class="form-group">
+            <label>Top Cover</label>
+            <select class="form-control" id="topCover" name="top_cover">
+              <option value="none">None</option>
+              <option value="eva_120_black_2mm">EVA 120 (Black) - 2.0mm</option>
+              <option value="eva_120_black_3mm">EVA 120 (Black) - 3.0mm</option>
+              <option value="eva_120_red_2mm">EVA 120 (Red) - 2.0mm</option>
+              <option value="eva_120_red_3mm">EVA 120 (Red) - 3.0mm</option>
+              <option value="eva_120_jelly_bean">
+                EVA 120 (Jelly Bean) - 2.0mm
+              </option>
+              <option value="microfibre_black">Microfibre (Black)</option>
+              <option value="microfibre_blue">Microfibre (Blue)</option>
+              <option value="ppt_poron_1_6mm">PPT (PORON) - 1.6mm</option>
+              <option value="ppt_poron_3_2mm">PPT (PORON) - 3.2mm</option>
+              <option value="poron_general">Poron (general)</option>
+              <option value="slow_release_poron">Slow Release Poron</option>
+            </select>
+          </div>
+
+          <!-- Second Cover -->
+          <div class="form-group">
+            <label>Second Cover</label>
+            <select class="form-control" id="secondCover" name="second_cover">
+              <option value="none">None</option>
+              <option value="eva_120_black_2mm">EVA 120 (Black) - 2.0mm</option>
+              <option value="eva_120_black_3mm">EVA 120 (Black) - 3.0mm</option>
+              <option value="eva_120_red_2mm">EVA 120 (Red) - 2.0mm</option>
+              <option value="eva_120_red_3mm">EVA 120 (Red) - 3.0mm</option>
+              <option value="eva_120_jelly_bean">
+                EVA 120 (Jelly Bean) - 2.0mm
+              </option>
+              <option value="microfibre_black">Microfibre (Black)</option>
+              <option value="microfibre_blue">Microfibre (Blue)</option>
+              <option value="ppt_poron_1_6mm">PPT (PORON) - 1.6mm</option>
+              <option value="ppt_poron_3_2mm">PPT (PORON) - 3.2mm</option>
+              <option value="poron_general">Poron (general)</option>
+              <option value="slow_release_poron">Slow Release Poron</option>
+            </select>
+          </div>
+
+          <!-- Third Cover -->
+          <div class="form-group">
+            <label>Third Cover</label>
+            <select class="form-control" id="thirdCover" name="third_cover">
+              <option value="none">None</option>
+              <option value="eva_120_black_2mm">EVA 120 (Black) - 2.0mm</option>
+              <option value="eva_120_black_3mm">EVA 120 (Black) - 3.0mm</option>
+              <option value="eva_120_red_2mm">EVA 120 (Red) - 2.0mm</option>
+              <option value="eva_120_red_3mm">EVA 120 (Red) - 3.0mm</option>
+              <option value="eva_120_jelly_bean">
+                EVA 120 (Jelly Bean) - 2.0mm
+              </option>
+              <option value="microfibre_black">Microfibre (Black)</option>
+              <option value="microfibre_blue">Microfibre (Blue)</option>
+              <option value="ppt_poron_1_6mm">PPT (PORON) - 1.6mm</option>
+              <option value="ppt_poron_3_2mm">PPT (PORON) - 3.2mm</option>
+              <option value="poron_general">Poron (general)</option>
+              <option value="slow_release_poron">Slow Release Poron</option>
+            </select>
+          </div>
+
+          <!-- Full Length Plantar Cover -->
+          <div class="form-group">
+            <label>Full Length Plantar Cover</label>
+            <select
+              class="form-control"
+              id="fullLengthPlantar"
+              name="full_length_plantar_cover"
+            >
+              <option value="none">None</option>
+              <option value="cambrille">Cambrille</option>
+            </select>
+          </div>
+
+          <!-- Cover Length -->
+          <div class="form-group">
+            <label>Cover Length</label>
+            <select class="form-control" id="coverLength" name="cover_length">
+              <option value="full">Full</option>
+              <option value="sulcus">Sulcus</option>
+              <option value="met">Met</option>
+            </select>
+          </div>
+
+          <!-- Extensions -->
+          <div class="form-group">
+            <label>Extensions</label>
+            <div class="custom-control custom-checkbox">
+              <input
+                type="checkbox"
+                class="custom-control-input"
+                id="extensionForefoot"
+                name="extension_forefoot"
+              />
+              <label class="custom-control-label" for="extensionForefoot"
+                >Forefoot</label
+              >
+            </div>
+            <div class="custom-control custom-checkbox">
+              <input
+                type="checkbox"
+                class="custom-control-input"
+                id="extensionMidfootMedial"
+                name="extension_midfoot_medial"
+              />
+              <label class="custom-control-label" for="extensionMidfootMedial"
+                >Midfoot Medial</label
+              >
+            </div>
+            <div class="custom-control custom-checkbox">
+              <input
+                type="checkbox"
+                class="custom-control-input"
+                id="extensionMidfootLateral"
+                name="extension_midfoot_lateral"
+              />
+              <label class="custom-control-label" for="extensionMidfootLateral"
+                >Midfoot Lateral</label
+              >
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+          Cancel
+        </button>
+        <button
+          type="button"
+          class="btn"
+          id="saveMaterialSelectionBtn"
+          style="background-color: #3a6b6d; color: white"
+        >
+          Save Material Selection
+        </button>
+        <button
+          type="button"
+          class="btn"
+          id="nextMaterialSelectionBtn"
+          style="background-color: #3a6b6d; color: white"
+        >
+          Next
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

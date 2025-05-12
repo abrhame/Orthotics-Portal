@@ -1,0 +1,296 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register - Orthotics Prescription Portal</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css"
+    />
+    <link rel="stylesheet" href="{% static 'css/luxury-styles.css' %}" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* Additional responsive fixes */
+      @media (max-width: 768px) {
+        .card-body {
+          padding: 20px !important;
+        }
+      }
+      .register-container {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+      .card {
+        width: 100%;
+        max-width: 800px;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      }
+      .form-label {
+        font-weight: 500;
+      }
+      .section-title {
+        color: var(--primary-color);
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--light-gray);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="register-container">
+      <div class="card shadow">
+        <div class="card-body p-4 p-md-5">
+          <div class="text-center mb-4">
+            <h1 class="h3">Orthotics Prescription Portal</h1>
+            <p class="text-muted">Create your account</p>
+          </div>
+
+          {% if messages %}
+          <div class="alert alert-danger">
+            {% for message in messages %}
+            <p class="mb-0">{{ message }}</p>
+            {% endfor %}
+          </div>
+          {% endif %}
+
+          <form method="post" action="{% url 'register' %}" id="register-form">
+            {% csrf_token %}
+
+            <div class="row">
+              <div class="col-12">
+                <h4 class="section-title">Personal Information</h4>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="first_name" class="form-label">First Name</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="first_name"
+                  name="first_name"
+                  required
+                />
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="last_name" class="form-label">Last Name</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="last_name"
+                  name="last_name"
+                  required
+                />
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="email" class="form-label">Email Address</label>
+                <input
+                  type="email"
+                  class="form-control"
+                  id="email"
+                  name="email"
+                  required
+                />
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="phone" class="form-label">Phone Number</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="phone"
+                  name="phone"
+                  required
+                />
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="password1" class="form-label">Password</label>
+                <input
+                  type="password"
+                  class="form-control"
+                  id="password1"
+                  name="password1"
+                  required
+                />
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="password2" class="form-label"
+                  >Confirm Password</label
+                >
+                <input
+                  type="password"
+                  class="form-control"
+                  id="password2"
+                  name="password2"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="row mt-4">
+              <div class="col-12">
+                <h4 class="section-title">Clinic Information</h4>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="clinic_name" class="form-label">Clinic Name</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="clinic_name"
+                  name="clinic_name"
+                  required
+                />
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="clinic_phone" class="form-label"
+                  >Clinic Phone</label
+                >
+                <input
+                  type="text"
+                  class="form-control"
+                  id="clinic_phone"
+                  name="clinic_phone"
+                  required
+                />
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="clinic_email" class="form-label"
+                  >Clinic Email</label
+                >
+                <input
+                  type="email"
+                  class="form-control"
+                  id="clinic_email"
+                  name="clinic_email"
+                  required
+                />
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="clinic_address" class="form-label"
+                  >Clinic Address</label
+                >
+                <input
+                  type="text"
+                  class="form-control"
+                  id="clinic_address"
+                  name="clinic_address"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="d-grid mt-4">
+              <button
+                type="submit"
+                class="btn btn-primary"
+                id="register-button"
+              >
+                Register
+              </button>
+            </div>
+
+            <div class="text-center mt-3">
+              <p>
+                Already have an account?
+                <a href="{% url 'login' %}" class="text-decoration-none"
+                  >Sign in</a
+                >
+              </p>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- <div class="text-center mt-4">
+        <p class="text-muted small">
+          &copy; {% now "Y" %} Orthotics Prescription Portal. All rights
+          reserved.
+        </p>
+      </div> -->
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const form = document.getElementById("register-form");
+        const csrfToken = document.querySelector(
+          "[name=csrfmiddlewaretoken]"
+        ).value;
+
+        if (form) {
+          form.addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            const password1 = document.getElementById("password1");
+            const password2 = document.getElementById("password2");
+
+            // Basic validation
+            if (password1.value !== password2.value) {
+              alert("Passwords do not match!");
+              return false;
+            }
+
+            const formData = {
+              name: `${document.getElementById("first_name").value} ${
+                document.getElementById("last_name").value
+              }`,
+              email: document.getElementById("email").value,
+              phone: document.getElementById("phone").value,
+              password: password1.value,
+              password_confirm: password2.value,
+              clinic_name: document.getElementById("clinic_name").value,
+              clinic_phone: document.getElementById("clinic_phone").value,
+              clinic_email: document.getElementById("clinic_email").value,
+              clinic_address: document.getElementById("clinic_address").value,
+            };
+
+            // Disable submit button
+            const submitButton = document.getElementById("register-button");
+            submitButton.disabled = true;
+            submitButton.innerHTML = "Registering...";
+
+            fetch("/api/users/register/", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrfToken,
+              },
+              body: JSON.stringify(formData),
+              credentials: "same-origin",
+            })
+              .then((response) => response.json())
+              .then((data) => {
+                if (data.user) {
+                  // Registration successful
+                  window.location.href = "/"; // Redirect to home page
+                } else {
+                  // Show error message
+                  alert(data.error || "Registration failed. Please try again.");
+                  submitButton.disabled = false;
+                  submitButton.innerHTML = "Register";
+                }
+              })
+              .catch((error) => {
+                console.error("Registration error:", error);
+                alert("Registration failed. Please try again.");
+                submitButton.disabled = false;
+                submitButton.innerHTML = "Register";
+              });
+          });
+        }
+      });
+    </script>
+  </body>
+</html>

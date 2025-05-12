@@ -1,0 +1,17 @@
+[Unit]
+Description=Orthotics Portal Gunicorn Daemon
+After=network.target
+
+[Service]
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/home/ubuntu/Orthotics-Portal/backend
+Environment="PATH=/home/ubuntu/Orthotics-Portal/venv/bin"
+Environment="DJANGO_SETTINGS_MODULE=core.settings"
+Environment="PYTHONPATH=/home/ubuntu/Orthotics-Portal/backend"
+ExecStart=/home/ubuntu/Orthotics-Portal/venv/bin/gunicorn \
+    --config /home/ubuntu/Orthotics-Portal/backend/gunicorn.conf.py \
+    core.wsgi:application
+
+[Install]
+WantedBy=multi-user.target 

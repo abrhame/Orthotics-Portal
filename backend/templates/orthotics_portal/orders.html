@@ -1,0 +1,244 @@
+{% extends 'orthotics_portal/base.html' %}
+{% load static %}
+
+{% block title %}
+Orders | Orthotics Prescription Portal
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+  <h1 class="mt-4">Orders</h1>
+  <ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item"><a href="{% url 'home' %}">Dashboard</a></li>
+    <li class="breadcrumb-item active">Orders</li>
+  </ol>
+
+  <div class="card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <div>
+        <i class="fas fa-shopping-cart me-1"></i>
+        My Orders
+      </div>
+      <div>
+        <a href="{% url 'prescriptions' %}" class="btn btn-primary btn-sm">
+          <i class="fas fa-plus me-1"></i> New Order
+        </a>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-bordered" id="ordersTable" width="100%" cellspacing="0">
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Date</th>
+              <th>Prescriptions</th>
+              <th>Total</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="orders-list">
+            <!-- Orders will be loaded here via JavaScript -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Order Details Modal -->
+  <div class="modal fade" id="orderDetailsModal" tabindex="-1" aria-labelledby="orderDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="orderDetailsModalLabel">Order Details</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="order-info mb-4">
+            <div class="row">
+              <div class="col-md-6">
+                <p><strong>Order ID:</strong> <span id="modal-order-id"></span></p>
+                <p><strong>Date:</strong> <span id="modal-order-date"></span></p>
+                <p><strong>Status:</strong> <span id="modal-order-status"></span></p>
+              </div>
+              <div class="col-md-6">
+                <p><strong>Total:</strong> <span id="modal-order-total"></span></p>
+                <p><strong>Shipping Method:</strong> <span id="modal-shipping-method">Standard</span></p>
+              </div>
+            </div>
+          </div>
+
+          <h6 class="fw-bold">Prescriptions</h6>
+          <div class="table-responsive">
+            <table class="table table-bordered" id="orderItemsTable">
+              <thead>
+                <tr>
+                  <th>Patient</th>
+                  <th>Orthotic Type</th>
+                  <th>Price</th>
+                </tr>
+              </thead>
+              <tbody id="order-items-list">
+                <!-- Order items will be loaded here via JavaScript -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-danger" id="cancelOrderBtn" style="display: none;">Cancel Order</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize DataTable
+    const ordersTable = $('#ordersTable').DataTable({
+        dom: 'Bfrtip',
+        searching: true,
+        ordering: true,
+        paging: true,
+        info: true,
+        responsive: true,
+        columnDefs: [{ orderable: false, targets: [5] }],
+        language: {
+            search: "Search orders:",
+            zeroRecords: "No orders found"
+        }
+    });
+
+    fetchOrders();
+
+    function fetchOrders() {
+        fetch('/api/orders/')
+            .then(response => {
+                if (!response.ok) throw new Error('Failed to fetch orders');
+                return response.json();
+            })
+            .then(data => {
+                ordersTable.clear();
+                data.forEach(order => {
+                    const actions = `
+                      <button class="btn btn-sm btn-outline view-order-btn" data-id="${order.id}">
+                          <i class="bi bi-eye"></i> View
+                      </button>
+                      ${order.status === 'pending' ? `
+                      <button class="btn btn-sm btn-outline-danger cancel-order-btn" data-id="${order.id}">
+                          <i class="bi bi-x-circle"></i> Cancel
+                      </button>` : ''}
+                      ${order.has_invoices ? `
+                      <a href="/invoices/?order_id=${order.id}" class="btn btn-sm btn-outline-primary">
+                          <i class="bi bi-receipt"></i> Invoices
+                      </a>` : ''}
+                    `;
+
+                    ordersTable.row.add([
+                        order.id,
+                        new Date(order.created_at).toLocaleDateString(),
+                        order.prescriptions_count,
+                        `$${order.total_amount.toFixed(2)}`,
+                        `<span class="badge bg-${getStatusBadge(order.status)}">${order.status_display}</span>`,
+                        actions
+                    ]).draw(false);
+                });
+
+                initActionButtons();
+            })
+            .catch(error => {
+                console.error(error);
+                alert('Failed to load orders.');
+            });
+    }
+
+    function getStatusBadge(status) {
+        if (status === 'delivered') return 'success';
+        if (status === 'shipped') return 'info';
+        if (status === 'processing') return 'warning';
+        return 'secondary';
+    }
+
+    function initActionButtons() {
+        // View Order
+        document.querySelectorAll('.view-order-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const orderId = this.dataset.id;
+                fetch(`/api/orders/${orderId}/`)
+                    .then(response => response.json())
+                    .then(data => {
+                        document.getElementById('modal-order-id').textContent = data.id;
+                        document.getElementById('modal-order-date').textContent = new Date(data.created_at).toLocaleDateString();
+                        document.getElementById('modal-order-status').textContent = data.status;
+                        document.getElementById('modal-order-total').textContent = `$${data.total_amount.toFixed(2)}`;
+                        document.getElementById('modal-shipping-method').textContent = data.shipping_method || 'Standard';
+
+                        const itemsList = document.getElementById('order-items-list');
+                        itemsList.innerHTML = '';
+                        data.items.forEach(item => {
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td>${item.patient_name}</td>
+                                <td>${item.orthotic_type}</td>
+                                <td>$${item.price.toFixed(2)}</td>
+                            `;
+                            itemsList.appendChild(row);
+                        });
+
+                        new bootstrap.Modal(document.getElementById('orderDetailsModal')).show();
+                    });
+            });
+        });
+
+        // Cancel Order
+        document.querySelectorAll('.cancel-order-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const orderId = this.dataset.id;
+                if (confirm('Are you sure you want to cancel this order?')) {
+                    fetch(`/api/orders/${orderId}/cancel/`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': getCookie('csrftoken')
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('Order cancelled successfully.');
+                            fetchOrders();
+                        } else {
+                            alert(data.error || 'Failed to cancel order.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error(error);
+                        alert('An error occurred while cancelling the order.');
+                    });
+                }
+            });
+        });
+    }
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.startsWith(name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+});
+</script>
+{% endblock %}

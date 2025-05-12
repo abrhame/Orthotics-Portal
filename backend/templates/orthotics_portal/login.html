@@ -1,0 +1,262 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - Orthotics Prescription Portal</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css"
+    />
+    <link rel="stylesheet" href="{% static 'css/luxury-styles.css' %}" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      @media (max-width: 576px) {
+        .card {
+          margin: 0 10px;
+        }
+        .card-body {
+          padding: 20px !important;
+        }
+      }
+      .login-container {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+      .card {
+        width: 100%;
+        max-width: 500px;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="login-container">
+      <div class="card shadow">
+        <div class="card-body p-4 p-md-5">
+          <div class="text-center mb-4">
+            <h1 class="h3">Orthotics Prescription Portal</h1>
+            <p class="text-muted">Sign in to your account</p>
+          </div>
+
+          {% if form.errors %}
+          <div class="alert alert-danger">
+            <p class="mb-0">
+              Your username and password didn't match. Please try again.
+            </p>
+          </div>
+          {% endif %} {% if messages %}
+          <div class="alert alert-info">
+            {% for message in messages %}
+            <p class="mb-0">{{ message }}</p>
+            {% endfor %}
+          </div>
+          {% endif %}
+
+          <div id="error-message" class="alert alert-danger d-none"></div>
+
+          <form method="post" action="{% url 'login' %}" id="login-form">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label for="id_username" class="form-label">Email Address</label>
+              <div class="input-group">
+                <span class="input-group-text"
+                  ><i class="bi bi-envelope"></i
+                ></span>
+                <input
+                  type="email"
+                  name="username"
+                  id="id_username"
+                  class="form-control"
+                  placeholder="Enter your email"
+                  required
+                  autofocus
+                />
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <div class="d-flex justify-content-between">
+                <label for="id_password" class="form-label">Password</label>
+                <a href="#" class="small">Forgot password?</a>
+              </div>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                <input
+                  type="password"
+                  name="password"
+                  id="id_password"
+                  class="form-control"
+                  placeholder="Enter your password"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="mb-3 form-check">
+              <input
+                type="checkbox"
+                class="form-check-input"
+                id="remember-me"
+                name="remember"
+              />
+              <label class="form-check-label" for="remember-me"
+                >Remember me</label
+              >
+            </div>
+
+            {% if next %}
+            <input type="hidden" name="next" value="{{ next }}" />
+            {% else %}
+            <input
+              type="hidden"
+              name="next"
+              value="{% url 'prescriptions' %}"
+            />
+            {% endif %}
+
+            <div class="d-grid">
+              <button type="submit" class="btn btn-primary" id="login-button">
+                Sign In
+              </button>
+            </div>
+
+            <div class="text-center mt-3">
+              <p>
+                Don't have an account?
+                <a href="{% url 'register' %}" class="text-decoration-none"
+                  >Create one now</a
+                >
+              </p>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- <div class="text-center mt-4">
+        <p class="text-muted small">
+          &copy; {% now "Y" %} Orthotics Prescription Portal. All rights
+          reserved.
+        </p>
+      </div> -->
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const form = document.getElementById("login-form");
+        const errorMessage = document.getElementById("error-message");
+        const loginButton = document.getElementById("login-button");
+
+        if (form) {
+          form.addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            const email = document.getElementById("id_username").value;
+            const password = document.getElementById("id_password").value;
+            const csrfToken = document.querySelector(
+              "[name=csrfmiddlewaretoken]"
+            ).value;
+            const nextUrl = document.querySelector("[name=next]").value;
+
+            loginButton.disabled = true;
+            loginButton.innerHTML = "Signing In...";
+            errorMessage.classList.add("d-none");
+
+            // Try API auth directly - it will establish a Django session
+            fetch("/api/users/login/", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrfToken,
+              },
+              body: JSON.stringify({
+                email: email,
+                password: password,
+              }),
+              credentials: "same-origin",
+            })
+              .then((response) => {
+                if (response.ok) {
+                  return response.json().then((data) => {
+                    // Store tokens
+                    localStorage.setItem("access_token", data.access);
+                    localStorage.setItem("refresh_token", data.refresh);
+                    localStorage.setItem(
+                      "user_info",
+                      JSON.stringify(data.user)
+                    );
+
+                    console.log("Login successful, redirecting to:", nextUrl);
+                    window.location.href = nextUrl || "/prescriptions/";
+                  });
+                } else if (response.status === 401) {
+                  // Fall back to Django's auth as a backup
+                  return response.json().then((errorData) => {
+                    console.log("API auth failed, trying Django auth");
+                    return fetch(form.action, {
+                      method: "POST",
+                      headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                        "X-CSRFToken": csrfToken,
+                      },
+                      body: new URLSearchParams({
+                        username: email,
+                        password: password,
+                        next: nextUrl,
+                        csrfmiddlewaretoken: csrfToken,
+                      }),
+                      credentials: "same-origin",
+                      redirect: "manual",
+                    }).then((djangoResponse) => {
+                      if (djangoResponse.type === "opaqueredirect") {
+                        console.log("Django auth successful");
+                        window.location.href = nextUrl || "/prescriptions/";
+                        return null;
+                      } else {
+                        throw new Error("Authentication failed");
+                      }
+                    });
+                  });
+                } else {
+                  return response.json().then((errorData) => {
+                    throw new Error(errorData.error || "Login failed");
+                  });
+                }
+              })
+              .catch((error) => {
+                console.error("Error during login:", error);
+                errorMessage.innerHTML =
+                  error.message ||
+                  "A server error occurred. Please try again later.";
+                errorMessage.classList.remove("d-none");
+                loginButton.disabled = false;
+                loginButton.innerHTML = "Sign In";
+              });
+          });
+
+          console.log("Login form initialized");
+          document.querySelector(".debug-form").style.borderColor = "#00ff00"; // green border for debug
+        } else {
+          console.error("Login form not found!");
+        }
+      });
+    </script>
+  </body>
+</html>

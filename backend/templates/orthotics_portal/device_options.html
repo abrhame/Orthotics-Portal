@@ -1,0 +1,646 @@
+<!-- Device Options Modal -->
+<div
+  class="modal fade"
+  id="deviceOptionsModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="deviceOptionsModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deviceOptionsModalLabel">
+          <span class="text-primary">Device</span> Options
+        </h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form id="deviceOptionsForm">
+          <div class="row">
+            <!-- Left Foot Column -->
+            <div class="col-md-6">
+              <div class="bg-light p-3 rounded mb-3">
+                <h6 class="text-center">Left Foot</h6>
+
+                <!-- Medial Arch Height -->
+                <div class="mb-3">
+                  <label class="form-label d-flex align-items-center">
+                    Medial Arch Height
+                    <span
+                      class="ms-1 badge bg-info"
+                      data-bs-toggle="tooltip"
+                      title="Height of the medial arch"
+                      >mm</span
+                    >
+                  </label>
+                  <div class="input-group">
+                    <button
+                      type="button"
+                      class="btn btn-outline-secondary decrease-btn"
+                      data-target="leftMedialArchHeight"
+                    >
+                      -
+                    </button>
+                    <input
+                      type="number"
+                      class="form-control text-center"
+                      id="leftMedialArchHeight"
+                      name="left_medial_arch_height"
+                      value="0"
+                      min="0"
+                      max="50"
+                      step="1"
+                    />
+                    <button
+                      type="button"
+                      class="btn btn-outline-secondary increase-btn"
+                      data-target="leftMedialArchHeight"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Lateral Arch Height -->
+                <div class="mb-3">
+                  <label class="form-label d-flex align-items-center">
+                    Lateral Arch Height
+                    <span
+                      class="ms-1 badge bg-info"
+                      data-bs-toggle="tooltip"
+                      title="Height of the lateral arch"
+                      >mm</span
+                    >
+                  </label>
+                  <div class="input-group">
+                    <button
+                      type="button"
+                      class="btn btn-outline-secondary decrease-btn"
+                      data-target="leftLateralArchHeight"
+                    >
+                      -
+                    </button>
+                    <input
+                      type="number"
+                      class="form-control text-center"
+                      id="leftLateralArchHeight"
+                      name="left_lateral_arch_height"
+                      value="0"
+                      min="0"
+                      max="50"
+                      step="1"
+                    />
+                    <button
+                      type="button"
+                      class="btn btn-outline-secondary increase-btn"
+                      data-target="leftLateralArchHeight"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Medial Heel Height -->
+                <div class="mb-3">
+                  <label class="form-label d-flex align-items-center">
+                    Medial Heel Height
+                    <span
+                      class="ms-1 badge bg-info"
+                      data-bs-toggle="tooltip"
+                      title="Height of the medial heel"
+                      >mm</span
+                    >
+                  </label>
+                  <div class="input-group">
+                    <button
+                      type="button"
+                      class="btn btn-outline-secondary decrease-btn"
+                      data-target="leftMedialHeelHeight"
+                    >
+                      -
+                    </button>
+                    <input
+                      type="number"
+                      class="form-control text-center"
+                      id="leftMedialHeelHeight"
+                      name="left_medial_heel_height"
+                      value="0"
+                      min="0"
+                      max="50"
+                      step="1"
+                    />
+                    <button
+                      type="button"
+                      class="btn btn-outline-secondary increase-btn"
+                      data-target="leftMedialHeelHeight"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Lateral Heel Height -->
+                <div class="mb-3">
+                  <label class="form-label d-flex align-items-center">
+                    Lateral Heel Height
+                    <span
+                      class="ms-1 badge bg-info"
+                      data-bs-toggle="tooltip"
+                      title="Height of the lateral heel"
+                      >mm</span
+                    >
+                  </label>
+                  <div class="input-group">
+                    <button
+                      type="button"
+                      class="btn btn-outline-secondary decrease-btn"
+                      data-target="leftLateralHeelHeight"
+                    >
+                      -
+                    </button>
+                    <input
+                      type="number"
+                      class="form-control text-center"
+                      id="leftLateralHeelHeight"
+                      name="left_lateral_heel_height"
+                      value="0"
+                      min="0"
+                      max="50"
+                      step="1"
+                    />
+                    <button
+                      type="button"
+                      class="btn btn-outline-secondary increase-btn"
+                      data-target="leftLateralHeelHeight"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Heel Width -->
+                <div class="mb-3">
+                  <label class="form-label d-flex align-items-center">
+                    Heel Width
+                    <span
+                      class="ms-1 badge bg-info"
+                      data-bs-toggle="tooltip"
+                      title="Width of the heel"
+                      >mm</span
+                    >
+                  </label>
+                  <div class="input-group">
+                    <button
+                      type="button"
+                      class="btn btn-outline-secondary decrease-btn"
+                      data-target="leftHeelWidth"
+                    >
+                      -
+                    </button>
+                    <input
+                      type="number"
+                      class="form-control text-center"
+                      id="leftHeelWidth"
+                      name="left_heel_width"
+                      value="0"
+                      min="0"
+                      max="100"
+                      step="1"
+                    />
+                    <button
+                      type="button"
+                      class="btn btn-outline-secondary increase-btn"
+                      data-target="leftHeelWidth"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Midfoot Width -->
+                <div class="mb-3">
+                  <label class="form-label d-flex align-items-center">
+                    Midfoot Width
+                    <span
+                      class="ms-1 badge bg-info"
+                      data-bs-toggle="tooltip"
+                      title="Width of the midfoot"
+                      >mm</span
+                    >
+                  </label>
+                  <div class="input-group">
+                    <button
+                      type="button"
+                      class="btn btn-outline-secondary decrease-btn"
+                      data-target="leftMidfootWidth"
+                    >
+                      -
+                    </button>
+                    <input
+                      type="number"
+                      class="form-control text-center"
+                      id="leftMidfootWidth"
+                      name="left_midfoot_width"
+                      value="0"
+                      min="0"
+                      max="100"
+                      step="1"
+                    />
+                    <button
+                      type="button"
+                      class="btn btn-outline-secondary increase-btn"
+                      data-target="leftMidfootWidth"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Forefoot Width -->
+                <div class="mb-3">
+                  <label class="form-label d-flex align-items-center">
+                    Forefoot Width
+                    <span
+                      class="ms-1 badge bg-info"
+                      data-bs-toggle="tooltip"
+                      title="Width of the forefoot"
+                      >mm</span
+                    >
+                  </label>
+                  <div class="input-group">
+                    <button
+                      type="button"
+                      class="btn btn-outline-secondary decrease-btn"
+                      data-target="leftForefootWidth"
+                    >
+                      -
+                    </button>
+                    <input
+                      type="number"
+                      class="form-control text-center"
+                      id="leftForefootWidth"
+                      name="left_forefoot_width"
+                      value="0"
+                      min="0"
+                      max="100"
+                      step="1"
+                    />
+                    <button
+                      type="button"
+                      class="btn btn-outline-secondary increase-btn"
+                      data-target="leftForefootWidth"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Foot Column -->
+            <div class="col-md-6">
+              <div class="bg-light p-3 rounded mb-3">
+                <h6 class="text-center">Right Foot</h6>
+
+                <!-- Medial Arch Height -->
+                <div class="mb-3">
+                  <label class="form-label d-flex align-items-center">
+                    Medial Arch Height
+                    <span
+                      class="ms-1 badge bg-info"
+                      data-bs-toggle="tooltip"
+                      title="Height of the medial arch"
+                      >mm</span
+                    >
+                  </label>
+                  <div class="input-group">
+                    <button
+                      type="button"
+                      class="btn btn-outline-secondary decrease-btn"
+                      data-target="rightMedialArchHeight"
+                    >
+                      -
+                    </button>
+                    <input
+                      type="number"
+                      class="form-control text-center"
+                      id="rightMedialArchHeight"
+                      name="right_medial_arch_height"
+                      value="0"
+                      min="0"
+                      max="50"
+                      step="1"
+                    />
+                    <button
+                      type="button"
+                      class="btn btn-outline-secondary increase-btn"
+                      data-target="rightMedialArchHeight"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Lateral Arch Height -->
+                <div class="mb-3">
+                  <label class="form-label d-flex align-items-center">
+                    Lateral Arch Height
+                    <span
+                      class="ms-1 badge bg-info"
+                      data-bs-toggle="tooltip"
+                      title="Height of the lateral arch"
+                      >mm</span
+                    >
+                  </label>
+                  <div class="input-group">
+                    <button
+                      type="button"
+                      class="btn btn-outline-secondary decrease-btn"
+                      data-target="rightLateralArchHeight"
+                    >
+                      -
+                    </button>
+                    <input
+                      type="number"
+                      class="form-control text-center"
+                      id="rightLateralArchHeight"
+                      name="right_lateral_arch_height"
+                      value="0"
+                      min="0"
+                      max="50"
+                      step="1"
+                    />
+                    <button
+                      type="button"
+                      class="btn btn-outline-secondary increase-btn"
+                      data-target="rightLateralArchHeight"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Medial Heel Height -->
+                <div class="mb-3">
+                  <label class="form-label d-flex align-items-center">
+                    Medial Heel Height
+                    <span
+                      class="ms-1 badge bg-info"
+                      data-bs-toggle="tooltip"
+                      title="Height of the medial heel"
+                      >mm</span
+                    >
+                  </label>
+                  <div class="input-group">
+                    <button
+                      type="button"
+                      class="btn btn-outline-secondary decrease-btn"
+                      data-target="rightMedialHeelHeight"
+                    >
+                      -
+                    </button>
+                    <input
+                      type="number"
+                      class="form-control text-center"
+                      id="rightMedialHeelHeight"
+                      name="right_medial_heel_height"
+                      value="0"
+                      min="0"
+                      max="50"
+                      step="1"
+                    />
+                    <button
+                      type="button"
+                      class="btn btn-outline-secondary increase-btn"
+                      data-target="rightMedialHeelHeight"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Lateral Heel Height -->
+                <div class="mb-3">
+                  <label class="form-label d-flex align-items-center">
+                    Lateral Heel Height
+                    <span
+                      class="ms-1 badge bg-info"
+                      data-bs-toggle="tooltip"
+                      title="Height of the lateral heel"
+                      >mm</span
+                    >
+                  </label>
+                  <div class="input-group">
+                    <button
+                      type="button"
+                      class="btn btn-outline-secondary decrease-btn"
+                      data-target="rightLateralHeelHeight"
+                    >
+                      -
+                    </button>
+                    <input
+                      type="number"
+                      class="form-control text-center"
+                      id="rightLateralHeelHeight"
+                      name="right_lateral_heel_height"
+                      value="0"
+                      min="0"
+                      max="50"
+                      step="1"
+                    />
+                    <button
+                      type="button"
+                      class="btn btn-outline-secondary increase-btn"
+                      data-target="rightLateralHeelHeight"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Heel Width -->
+                <div class="mb-3">
+                  <label class="form-label d-flex align-items-center">
+                    Heel Width
+                    <span
+                      class="ms-1 badge bg-info"
+                      data-bs-toggle="tooltip"
+                      title="Width of the heel"
+                      >mm</span
+                    >
+                  </label>
+                  <div class="input-group">
+                    <button
+                      type="button"
+                      class="btn btn-outline-secondary decrease-btn"
+                      data-target="rightHeelWidth"
+                    >
+                      -
+                    </button>
+                    <input
+                      type="number"
+                      class="form-control text-center"
+                      id="rightHeelWidth"
+                      name="right_heel_width"
+                      value="0"
+                      min="0"
+                      max="100"
+                      step="1"
+                    />
+                    <button
+                      type="button"
+                      class="btn btn-outline-secondary increase-btn"
+                      data-target="rightHeelWidth"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Midfoot Width -->
+                <div class="mb-3">
+                  <label class="form-label d-flex align-items-center">
+                    Midfoot Width
+                    <span
+                      class="ms-1 badge bg-info"
+                      data-bs-toggle="tooltip"
+                      title="Width of the midfoot"
+                      >mm</span
+                    >
+                  </label>
+                  <div class="input-group">
+                    <button
+                      type="button"
+                      class="btn btn-outline-secondary decrease-btn"
+                      data-target="rightMidfootWidth"
+                    >
+                      -
+                    </button>
+                    <input
+                      type="number"
+                      class="form-control text-center"
+                      id="rightMidfootWidth"
+                      name="right_midfoot_width"
+                      value="0"
+                      min="0"
+                      max="100"
+                      step="1"
+                    />
+                    <button
+                      type="button"
+                      class="btn btn-outline-secondary increase-btn"
+                      data-target="rightMidfootWidth"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Forefoot Width -->
+                <div class="mb-3">
+                  <label class="form-label d-flex align-items-center">
+                    Forefoot Width
+                    <span
+                      class="ms-1 badge bg-info"
+                      data-bs-toggle="tooltip"
+                      title="Width of the forefoot"
+                      >mm</span
+                    >
+                  </label>
+                  <div class="input-group">
+                    <button
+                      type="button"
+                      class="btn btn-outline-secondary decrease-btn"
+                      data-target="rightForefootWidth"
+                    >
+                      -
+                    </button>
+                    <input
+                      type="number"
+                      class="form-control text-center"
+                      id="rightForefootWidth"
+                      name="right_forefoot_width"
+                      value="0"
+                      min="0"
+                      max="100"
+                      step="1"
+                    />
+                    <button
+                      type="button"
+                      class="btn btn-outline-secondary increase-btn"
+                      data-target="rightForefootWidth"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-outline-secondary"
+          data-bs-dismiss="modal"
+        >
+          Cancel
+        </button>
+        <button
+          type="button"
+          class="btn"
+          style="background-color: #3a6b6d; color: white"
+          id="saveDeviceOptionsBtn"
+        >
+          Save Options
+        </button>
+        <button
+          type="button"
+          class="btn"
+          style="background-color: #3a6b6d; color: white"
+          id="nextDeviceOptionsBtn"
+        >
+          Save & Next
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .input-group .form-control {
+    text-align: center;
+  }
+  .badge.bg-info {
+    cursor: help;
+  }
+  .modal-lg {
+    max-width: 900px;
+  }
+  #deviceOptionsModal {
+    z-index: 1060 !important;
+  }
+  #deviceOptionsModal .modal-dialog {
+    z-index: 1070 !important;
+  }
+  .modal-backdrop {
+    z-index: 1050 !important;
+  }
+  #deviceOptionsModal .modal-content {
+    position: relative;
+    z-index: 1070 !important;
+  }
+  #deviceOptionsModal .form-control,
+  #deviceOptionsModal .btn,
+  #deviceOptionsModal .form-check-input {
+    position: relative;
+    z-index: 1;
+  }
+</style>

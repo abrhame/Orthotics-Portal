@@ -1,0 +1,494 @@
+{% extends 'orthotics_portal/base.html' %} {% load static %} {% block title %}
+Basket - Orthotics Prescription Portal {% endblock %} {% block extra_css %}
+<style>
+  #basketTableBody .btn-outline-danger {
+    color: var(--danger-color);
+    border-color: var(--danger-color);
+  }
+  #basketTableBody .btn-outline-danger:hover {
+    background-color: var(--danger-color);
+    color: white;
+  }
+</style>
+{% endblock %} {% block content %}
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-12">
+      <h1>Your Basket</h1>
+      <p class="lead">Review your items and proceed to checkout.</p>
+    </div>
+  </div>
+
+  <div class="row mt-4">
+    <div class="col-lg-8">
+      <div class="card mb-4">
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <thead>
+                <tr>
+                  <th>Item</th>
+                  <th>Patient</th>
+                  <th>Type</th>
+                  <th>Price</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="basketTableBody">
+                <!-- Basket items will be populated here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div id="emptyBasketMessage" class="text-center py-5">
+        <i
+          class="bi bi-cart"
+          style="font-size: 3rem; color: var(--secondary-color)"
+        ></i>
+        <h3 class="mt-3">Your Basket is Empty</h3>
+        <p class="text-muted">
+          Add items to your basket by creating prescriptions.
+        </p>
+        <a href="{% url 'prescriptions' %}" class="btn btn-primary mt-3"
+          >Create Prescription</a
+        >
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="card mb-4" id="orderSummaryCard">
+        <div class="card-body">
+          <h5 class="card-title">Order Summary</h5>
+          <div class="d-flex justify-content-between mb-2">
+            <span>Subtotal</span>
+            <span id="subtotal">$0.00</span>
+          </div>
+          <div class="d-flex justify-content-between mb-2">
+            <span>Shipping</span>
+            <span id="shipping">$0.00</span>
+          </div>
+          <div class="d-flex justify-content-between mb-2">
+            <span>Tax (9%)</span>
+            <span id="tax">$0.00</span>
+          </div>
+          <hr />
+          <div class="d-flex justify-content-between mb-3">
+            <strong>Total</strong>
+            <strong id="total">$0.00</strong>
+          </div>
+
+          <div class="payment-methods mb-3">
+            <h6>Payment Method</h6>
+            <div class="form-check mb-2">
+              <input
+                class="form-check-input"
+                type="radio"
+                name="paymentMethod"
+                id="creditCard"
+                checked
+              />
+              <label class="form-check-label" for="creditCard">
+                Credit Card
+              </label>
+            </div>
+            <div class="form-check">
+              <input
+                class="form-check-input"
+                type="radio"
+                name="paymentMethod"
+                id="bankTransfer"
+              />
+              <label class="form-check-label" for="bankTransfer">
+                Bank Transfer
+              </label>
+            </div>
+          </div>
+
+          <div id="creditCardForm">
+            <div class="mb-3">
+              <label for="cardNumber" class="form-label">Card Number</label>
+              <input
+                type="text"
+                class="form-control"
+                id="cardNumber"
+                placeholder="1234 5678 9012 3456"
+              />
+            </div>
+            <div class="row mb-3">
+              <div class="col-6">
+                <label for="expiryDate" class="form-label">Expiry Date</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="expiryDate"
+                  placeholder="MM/YY"
+                />
+              </div>
+              <div class="col-6">
+                <label for="cvv" class="form-label">CVV</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="cvv"
+                  placeholder="123"
+                />
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="cardName" class="form-label">Name on Card</label>
+              <input
+                type="text"
+                class="form-control"
+                id="cardName"
+                placeholder="John Doe"
+              />
+            </div>
+          </div>
+
+          <div id="bankTransferForm" style="display: none">
+            <div class="alert alert-info">
+              <p class="mb-0">
+                Please use the following details for bank transfer:
+              </p>
+              <p class="mb-0">
+                <strong>Account Name:</strong> Orthotics Portal Ltd
+              </p>
+              <p class="mb-0"><strong>Account Number:</strong> 12345678</p>
+              <p class="mb-0"><strong>Sort Code:</strong> 12-34-56</p>
+              <p class="mb-0">
+                <strong>Reference:</strong>
+                <span id="orderReference">ORD-</span>
+              </p>
+            </div>
+            <p class="small text-muted">
+              Your order will be processed once payment is received.
+            </p>
+          </div>
+
+          <button
+            type="button"
+            class="btn btn-primary w-100 mt-3"
+            id="checkoutBtn"
+          >
+            Proceed to Checkout
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Checkout Success Modal -->
+<div
+  class="modal fade"
+  id="checkoutSuccessModal"
+  tabindex="-1"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-body text-center py-4">
+        <i
+          class="bi bi-check-circle"
+          style="font-size: 4rem; color: var(--success-color)"
+        ></i>
+        <h3 class="mt-3">Order Placed Successfully!</h3>
+        <p>Your order has been placed and is now being processed.</p>
+        <p>Order ID: <span id="successOrderId"></span></p>
+        <div class="d-flex justify-content-center gap-2 mt-4">
+          <a href="{% url 'orders' %}" class="btn btn-primary">View Orders</a>
+          <a href="{% url 'home' %}" class="btn btn-outline">Return Home</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} {% block extra_js %}
+<script src="{% static 'js/api-service.js' %}"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // Initialize basket
+    initBasket();
+
+    // Initialize payment method toggle
+    initPaymentMethodToggle();
+
+    // Initialize checkout button
+    initCheckoutButton();
+
+    // Generate random order reference
+    generateOrderReference();
+  });
+
+  function initBasket() {
+    const basketTableBody = document.getElementById("basketTableBody");
+    const emptyBasketMessage = document.getElementById("emptyBasketMessage");
+    const orderSummaryCard = document.getElementById("orderSummaryCard");
+
+    // Get basket items from localStorage
+    const basketItems =
+      JSON.parse(localStorage.getItem("orthoticsBasket")) || [];
+
+    if (basketItems.length === 0) {
+      // Show empty message
+      basketTableBody.closest(".card").style.display = "none";
+      emptyBasketMessage.style.display = "block";
+      orderSummaryCard.style.display = "none";
+    } else {
+      // Hide empty message
+      basketTableBody.closest(".card").style.display = "block";
+      emptyBasketMessage.style.display = "none";
+      orderSummaryCard.style.display = "block";
+
+      // Clear table
+      basketTableBody.innerHTML = "";
+
+      // Add items to table
+      let subtotal = 0;
+
+      basketItems.forEach((item, index) => {
+        const row = document.createElement("tr");
+
+        row.innerHTML = `
+                <td>Custom Orthotic</td>
+                <td>${item.patientName || "N/A"}</td>
+                <td>${item.type || "Custom"}</td>
+                <td>$${item.price.toFixed(2)}</td>
+                <td>
+                    <button class="btn btn-sm btn-outline-danger remove-item-btn" data-index="${index}">
+                        <i class="bi bi-trash"></i> Remove
+                    </button>
+                </td>
+            `;
+
+        basketTableBody.appendChild(row);
+        subtotal += item.price;
+      });
+
+      // Add event listeners to remove buttons
+      document.querySelectorAll(".remove-item-btn").forEach((btn) => {
+        btn.addEventListener("click", function () {
+          const index = parseInt(this.dataset.index);
+          removeBasketItem(index);
+        });
+      });
+
+      // Update order summary
+      updateOrderSummary(subtotal);
+    }
+  }
+
+  function removeBasketItem(index) {
+    // Get basket items from localStorage
+    const basketItems =
+      JSON.parse(localStorage.getItem("orthoticsBasket")) || [];
+
+    // Remove item at index
+    basketItems.splice(index, 1);
+
+    // Save updated basket to localStorage
+    localStorage.setItem("orthoticsBasket", JSON.stringify(basketItems));
+
+    // Reinitialize basket
+    initBasket();
+  }
+
+  function updateOrderSummary(subtotal) {
+    const shipping = subtotal > 0 ? 15 : 0;
+    const tax = subtotal * 0.09;
+    const total = subtotal + shipping + tax;
+
+    document.getElementById("subtotal").textContent = `$${subtotal.toFixed(2)}`;
+    document.getElementById("shipping").textContent = `$${shipping.toFixed(2)}`;
+    document.getElementById("tax").textContent = `$${tax.toFixed(2)}`;
+    document.getElementById("total").textContent = `$${total.toFixed(2)}`;
+  }
+
+  function initPaymentMethodToggle() {
+    const creditCardRadio = document.getElementById("creditCard");
+    const bankTransferRadio = document.getElementById("bankTransfer");
+    const creditCardForm = document.getElementById("creditCardForm");
+    const bankTransferForm = document.getElementById("bankTransferForm");
+
+    creditCardRadio.addEventListener("change", function () {
+      if (this.checked) {
+        creditCardForm.style.display = "block";
+        bankTransferForm.style.display = "none";
+      }
+    });
+
+    bankTransferRadio.addEventListener("change", function () {
+      if (this.checked) {
+        creditCardForm.style.display = "none";
+        bankTransferForm.style.display = "block";
+      }
+    });
+  }
+
+  function generateOrderReference() {
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    let reference = "ORD-";
+
+    for (let i = 0; i < 8; i++) {
+      reference += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+
+    document.getElementById("orderReference").textContent = reference;
+  }
+
+  function initCheckoutButton() {
+    const checkoutBtn = document.getElementById("checkoutBtn");
+
+    checkoutBtn.addEventListener("click", async function () {
+      // Get basket items
+      const basketItems =
+        JSON.parse(localStorage.getItem("orthoticsBasket")) || [];
+
+      if (basketItems.length === 0) {
+        showToast("Your basket is empty", "warning");
+        return;
+      }
+
+      // Get payment method
+      const paymentMethod = document.querySelector(
+        'input[name="paymentMethod"]:checked'
+      ).id;
+
+      // Validate form based on payment method
+      if (paymentMethod === "creditCard") {
+        const cardNumber = document.getElementById("cardNumber").value;
+        const expiryDate = document.getElementById("expiryDate").value;
+        const cvv = document.getElementById("cvv").value;
+        const cardName = document.getElementById("cardName").value;
+
+        if (!cardNumber || !expiryDate || !cvv || !cardName) {
+          showToast("Please fill in all credit card details", "warning");
+          return;
+        }
+      }
+
+      // Process order
+      try {
+        await processOrder(paymentMethod);
+      } catch (error) {
+        console.error("Error processing order:", error);
+        showToast("Error processing your order. Please try again.", "error");
+      }
+    });
+  }
+
+  async function processOrder(paymentMethod) {
+    // Get basket items
+    const basketItems =
+      JSON.parse(localStorage.getItem("orthoticsBasket")) || [];
+
+    // Calculate totals
+    let subtotal = 0;
+    basketItems.forEach((item) => {
+      subtotal += item.price;
+    });
+
+    const shipping = 15;
+    const tax = subtotal * 0.09;
+    const total = subtotal + shipping + tax;
+
+    // Create order data
+    const orderData = {
+      status: paymentMethod === "creditCard" ? "processing" : "pending",
+      notes: `Payment method: ${paymentMethod}`,
+      prescriptions: basketItems.map((item) => item.prescriptionId),
+      items: basketItems.map((item) => ({
+        description: `Custom Orthotic (${item.type || "Custom"})`,
+        price: item.price,
+      })),
+    };
+
+    try {
+      // Create order via API
+      const order = await ApiService.orders.create(orderData);
+
+      // If credit card payment, create invoice
+      if (paymentMethod === "creditCard") {
+        const invoiceData = {
+          user: order.user,
+          order: order.id,
+          invoice_number: `INV-${Date.now().toString().slice(-8)}`,
+          amount: total.toString(),
+          status: "paid",
+          due_date: new Date().toISOString().split("T")[0],
+          notes: "Paid by credit card",
+        };
+
+        const invoice = await ApiService.invoices.create(invoiceData);
+
+        // Add items to invoice
+        for (const item of basketItems) {
+          await ApiService.invoices.addItem(invoice.id, {
+            description: `Custom Orthotic (${item.type || "Custom"})`,
+            price: item.price.toString(),
+            quantity: 1,
+          });
+        }
+      }
+
+      // Clear basket
+      localStorage.setItem("orthoticsBasket", JSON.stringify([]));
+
+      // Show success modal
+      document.getElementById("successOrderId").textContent = order.id;
+      const modal = new bootstrap.Modal(
+        document.getElementById("checkoutSuccessModal")
+      );
+      modal.show();
+    } catch (error) {
+      console.error("Error creating order:", error);
+      throw error;
+    }
+  }
+
+  function showToast(message, type = "info") {
+    // Create toast container if it doesn't exist
+    let toastContainer = document.querySelector(".toast-container");
+    if (!toastContainer) {
+      toastContainer = document.createElement("div");
+      toastContainer.className =
+        "toast-container position-fixed bottom-0 end-0 p-3";
+      document.body.appendChild(toastContainer);
+    }
+
+    // Create toast element
+    const toastEl = document.createElement("div");
+    toastEl.className = `toast align-items-center text-white bg-${type}`;
+    toastEl.setAttribute("role", "alert");
+    toastEl.setAttribute("aria-live", "assertive");
+    toastEl.setAttribute("aria-atomic", "true");
+
+    // Toast content
+    toastEl.innerHTML = `
+      <div class="d-flex">
+        <div class="toast-body">
+          ${message}
+        </div>
+        <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+    `;
+
+    // Add to container
+    toastContainer.appendChild(toastEl);
+
+    // Initialize and show toast
+    const toast = new bootstrap.Toast(toastEl, { delay: 3000 });
+    toast.show();
+
+    // Remove toast after it's hidden
+    toastEl.addEventListener("hidden.bs.toast", function () {
+      toastContainer.removeChild(toastEl);
+      if (toastContainer.children.length === 0) {
+        document.body.removeChild(toastContainer);
+      }
+    });
+  }
+</script>
+{% endblock %}

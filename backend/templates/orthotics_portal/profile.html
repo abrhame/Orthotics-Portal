@@ -1,0 +1,587 @@
+{% extends 'orthotics_portal/base.html' %} 
+{% load static %} 
+{% block title %}
+Your Profile - Orthotics Prescription Portal
+{% endblock %} 
+{% block extra_css %}
+<style>
+  .profile-section {
+    border-radius: 15px;
+    margin-bottom: 30px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  }
+  .profile-header {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 20px;
+    border-radius: 15px 15px 0 0;
+  }
+  .profile-content {
+    padding: 30px;
+  }
+  .profile-field {
+    margin-bottom: 20px;
+  }
+  .field-label {
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: var(--dark-gray);
+  }
+  .field-value {
+    font-size: 1.1rem;
+  }
+  .edit-button,
+  .save-button,
+  .cancel-button {
+    margin-top: 15px;
+  }
+
+  @media (max-width: 768px) {
+    .profile-content {
+      padding: 20px;
+    }
+  }
+</style>
+{% endblock %} {% block content %}
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-12">
+      <h1 class="mb-4">Your Profile</h1>
+    </div>
+  </div>
+
+  <!-- Account Information Section -->
+  <div class="row">
+    <div class="col-12">
+      <div class="profile-section">
+        <div
+          class="profile-header d-flex justify-content-between align-items-center"
+        >
+          <h3 class="mb-0">Account Information</h3>
+          <button type="button" class="btn btn-light" id="edit-account-btn">
+            <i class="bi bi-pencil"></i> Edit
+          </button>
+        </div>
+        <div class="profile-content">
+          <form
+            id="account-form"
+            data-ajax="true"
+            action="{% url 'update_profile' %}"
+            method="POST"
+          >
+            {% csrf_token %}
+            <div class="row">
+              <div class="col-md-6">
+                <div class="profile-field">
+                  <div class="field-label">First Name</div>
+                  <input
+                    type="text"
+                    class="form-control field-value"
+                    name="first_name"
+                    id="first_name"
+                    value="{{ user.first_name }}"
+                    readonly
+                  />
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="profile-field">
+                  <div class="field-label">Last Name</div>
+                  <input
+                    type="text"
+                    class="form-control field-value"
+                    name="last_name"
+                    id="last_name"
+                    value="{{ user.last_name }}"
+                    readonly
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="profile-field">
+                  <div class="field-label">Email</div>
+                  <input
+                    type="email"
+                    class="form-control field-value"
+                    name="email"
+                    id="email"
+                    value="{{ user.email }}"
+                    readonly
+                  />
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="profile-field">
+                  <div class="field-label">Phone Number</div>
+                  <input
+                    type="text"
+                    class="form-control field-value"
+                    name="phone"
+                    id="phone"
+                    value="{{ user.phone }}"
+                    readonly
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="profile-field">
+                  <div class="field-label">Role</div>
+                  <input
+                    type="text"
+                    class="form-control field-value"
+                    name="role"
+                    id="role"
+                    value="{{ user.get_role_display }}"
+                    readonly
+                  />
+                </div>
+              </div>
+              <div class="col-md-6 text-end">
+                <button
+                  type="button"
+                  class="btn btn-link"
+                  data-bs-toggle="modal"
+                  data-bs-target="#changePasswordModal"
+                >
+                  Change Password
+                </button>
+              </div>
+            </div>
+
+            <div class="account-buttons d-none">
+              <button type="submit" class="btn btn-primary save-button">
+                Save Changes
+              </button>
+              <button
+                type="button"
+                class="btn btn-outline-secondary cancel-button"
+                id="cancel-account-btn"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Clinic Information Section -->
+  <div class="row">
+    <div class="col-12">
+      <div class="profile-section">
+        <div
+          class="profile-header d-flex justify-content-between align-items-center"
+        >
+          <h3 class="mb-0">Clinic Information</h3>
+          <button type="button" class="btn btn-light" id="edit-clinic-btn">
+            <i class="bi bi-pencil"></i> Edit
+          </button>
+        </div>
+        <div class="profile-content">
+          <form
+            id="clinic-form"
+            data-ajax="true"
+            action="{% url 'update_clinic' %}"
+            method="POST"
+          >
+            {% csrf_token %}
+            <div class="row">
+              <div class="col-md-6">
+                <div class="profile-field">
+                  <div class="field-label">Clinic Name</div>
+                  <input
+                    type="text"
+                    class="form-control field-value"
+                    name="clinic_name"
+                    id="clinic_name"
+                    value="{{ user.clinic.name }}"
+                    readonly
+                  />
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="profile-field">
+                  <div class="field-label">Clinic Phone</div>
+                  <input
+                    type="text"
+                    class="form-control field-value"
+                    name="clinic_phone"
+                    id="clinic_phone"
+                    value="{{ user.clinic.phone }}"
+                    readonly
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="profile-field">
+                  <div class="field-label">Clinic Email</div>
+                  <input
+                    type="email"
+                    class="form-control field-value"
+                    name="clinic_email"
+                    id="clinic_email"
+                    value="{{ user.clinic.email }}"
+                    readonly
+                  />
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="profile-field">
+                  <div class="field-label">Clinic Address</div>
+                  <input
+                    type="text"
+                    class="form-control field-value"
+                    name="clinic_address"
+                    id="clinic_address"
+                    value="{{ user.clinic.address }}"
+                    readonly
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div class="clinic-buttons d-none">
+              <button type="submit" class="btn btn-primary save-button">
+                Save Changes
+              </button>
+              <button
+                type="button"
+                class="btn btn-outline-secondary cancel-button"
+                id="cancel-clinic-btn"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Change Password Modal -->
+<div
+  class="modal fade"
+  id="changePasswordModal"
+  tabindex="-1"
+  aria-labelledby="changePasswordModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="changePasswordModalLabel">
+          Change Password
+        </h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form
+          id="change-password-form"
+          data-ajax="true"
+          action="{% url 'change_password' %}"
+          method="POST"
+        >
+          {% csrf_token %}
+          <div class="mb-3">
+            <label for="current_password" class="form-label"
+              >Current Password</label
+            >
+            <input
+              type="password"
+              class="form-control"
+              id="current_password"
+              name="current_password"
+              required
+            />
+          </div>
+          <div class="mb-3">
+            <label for="new_password" class="form-label">New Password</label>
+            <input
+              type="password"
+              class="form-control"
+              id="new_password"
+              name="new_password"
+              required
+            />
+          </div>
+          <div class="mb-3">
+            <label for="confirm_password" class="form-label"
+              >Confirm New Password</label
+            >
+            <input
+              type="password"
+              class="form-control"
+              id="confirm_password"
+              name="confirm_password"
+              required
+            />
+          </div>
+          <div class="d-grid">
+            <button type="submit" class="btn btn-primary">
+              Change Password
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast for success messages -->
+<div
+  class="toast-container position-fixed bottom-0 end-0 p-3"
+  style="z-index: 11"
+>
+  <div
+    id="successToast"
+    class="toast"
+    role="alert"
+    aria-live="assertive"
+    aria-atomic="true"
+  >
+    <div class="toast-header bg-success text-white">
+      <strong class="me-auto">Success</strong>
+      <button
+        type="button"
+        class="btn-close btn-close-white"
+        data-bs-dismiss="toast"
+        aria-label="Close"
+      ></button>
+    </div>
+    <div class="toast-body" id="successToastMessage">
+      Changes saved successfully!
+    </div>
+  </div>
+</div>
+{% endblock %} {% block extra_js %}
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // Account section edit functionality
+    const editAccountBtn = document.getElementById("edit-account-btn");
+    const cancelAccountBtn = document.getElementById("cancel-account-btn");
+    const accountForm = document.getElementById("account-form");
+
+    if (editAccountBtn && cancelAccountBtn && accountForm) {
+      const accountInputs = accountForm.querySelectorAll(
+        'input:not([name="role"])'
+      );
+      const accountButtons = accountForm.querySelector(".account-buttons");
+
+      // Enable editing
+      editAccountBtn.addEventListener("click", function () {
+        accountInputs.forEach((input) => {
+          input.readOnly = false;
+          input.classList.add("form-control-focus");
+        });
+        accountButtons.classList.remove("d-none");
+        editAccountBtn.classList.add("d-none");
+      });
+
+      // Cancel editing
+      cancelAccountBtn.addEventListener("click", function () {
+        accountInputs.forEach((input) => {
+          input.readOnly = true;
+          input.classList.remove("form-control-focus");
+          input.value = input.defaultValue; // Reset to original value
+        });
+        accountButtons.classList.add("d-none");
+        editAccountBtn.classList.remove("d-none");
+      });
+
+      // Handle form submission
+      accountForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const formData = new FormData(accountForm);
+
+        fetch(accountForm.action, {
+          method: "POST",
+          body: formData,
+          headers: {
+            "X-Requested-With": "XMLHttpRequest",
+          },
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              // Update the display values
+              accountInputs.forEach((input) => {
+                input.defaultValue = input.value;
+                input.readOnly = true;
+                input.classList.remove("form-control-focus");
+              });
+
+              accountButtons.classList.add("d-none");
+              editAccountBtn.classList.remove("d-none");
+
+              // Show success message
+              showSuccessToast(data.message || "Profile updated successfully!");
+            } else {
+              alert(data.message || "Error updating profile.");
+            }
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+            alert("An unexpected error occurred.");
+          });
+      });
+    }
+
+    // Clinic section edit functionality
+    const editClinicBtn = document.getElementById("edit-clinic-btn");
+    const cancelClinicBtn = document.getElementById("cancel-clinic-btn");
+    const clinicForm = document.getElementById("clinic-form");
+
+    if (editClinicBtn && cancelClinicBtn && clinicForm) {
+      const clinicInputs = clinicForm.querySelectorAll("input");
+      const clinicButtons = clinicForm.querySelector(".clinic-buttons");
+
+      // Enable editing
+      editClinicBtn.addEventListener("click", function () {
+        clinicInputs.forEach((input) => {
+          input.readOnly = false;
+          input.classList.add("form-control-focus");
+        });
+        clinicButtons.classList.remove("d-none");
+        editClinicBtn.classList.add("d-none");
+      });
+
+      // Cancel editing
+      cancelClinicBtn.addEventListener("click", function () {
+        clinicInputs.forEach((input) => {
+          input.readOnly = true;
+          input.classList.remove("form-control-focus");
+          input.value = input.defaultValue; // Reset to original value
+        });
+        clinicButtons.classList.add("d-none");
+        editClinicBtn.classList.remove("d-none");
+      });
+
+      // Handle form submission
+      clinicForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const formData = new FormData(clinicForm);
+
+        fetch(clinicForm.action, {
+          method: "POST",
+          body: formData,
+          headers: {
+            "X-Requested-With": "XMLHttpRequest",
+          },
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              // Update the display values
+              clinicInputs.forEach((input) => {
+                input.defaultValue = input.value;
+                input.readOnly = true;
+                input.classList.remove("form-control-focus");
+              });
+
+              clinicButtons.classList.add("d-none");
+              editClinicBtn.classList.remove("d-none");
+
+              // Show success message
+              showSuccessToast(
+                data.message || "Clinic information updated successfully!"
+              );
+            } else {
+              alert(data.message || "Error updating clinic information.");
+            }
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+            alert("An unexpected error occurred.");
+          });
+      });
+    }
+
+    // Change password functionality
+    const changePasswordForm = document.getElementById("change-password-form");
+
+    if (changePasswordForm) {
+      changePasswordForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const currentPassword =
+          document.getElementById("current_password").value;
+        const newPassword = document.getElementById("new_password").value;
+        const confirmPassword =
+          document.getElementById("confirm_password").value;
+
+        // Simple validation
+        if (!currentPassword || !newPassword || !confirmPassword) {
+          alert("All fields are required");
+          return;
+        }
+
+        if (newPassword !== confirmPassword) {
+          alert("New passwords do not match");
+          return;
+        }
+
+        const formData = new FormData(changePasswordForm);
+
+        fetch(changePasswordForm.action, {
+          method: "POST",
+          body: formData,
+          headers: {
+            "X-Requested-With": "XMLHttpRequest",
+          },
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              // Reset form and close modal
+              changePasswordForm.reset();
+              const modal = bootstrap.Modal.getInstance(
+                document.getElementById("changePasswordModal")
+              );
+              modal.hide();
+
+              // Show success message
+              showSuccessToast(
+                data.message || "Password changed successfully!"
+              );
+            } else {
+              alert(data.message || "Error changing password.");
+            }
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+            alert("An unexpected error occurred.");
+          });
+      });
+    }
+
+    // Function to show success toast
+    function showSuccessToast(message) {
+      const successToast = document.getElementById("successToast");
+      const successToastMessage = document.getElementById(
+        "successToastMessage"
+      );
+
+      if (successToast && successToastMessage) {
+        successToastMessage.textContent = message;
+        const toast = new bootstrap.Toast(successToast);
+        toast.show();
+      }
+    }
+  });
+</script>
+{% endblock %}

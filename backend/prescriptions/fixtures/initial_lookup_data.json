@@ -1,0 +1,248 @@
+[
+  {
+    "model": "prescriptions.prescriptionstatus",
+    "pk": 1,
+    "fields": {
+      "name": "Draft",
+      "description": "Prescription is in draft mode and not submitted yet",
+      "color": "secondary",
+      "order": 1,
+      "is_active": true,
+      "created_at": "2023-01-01T00:00:00Z",
+      "updated_at": "2023-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "prescriptions.prescriptionstatus",
+    "pk": 2,
+    "fields": {
+      "name": "Submitted",
+      "description": "Prescription has been submitted for processing",
+      "color": "primary",
+      "order": 2,
+      "is_active": true,
+      "created_at": "2023-01-01T00:00:00Z",
+      "updated_at": "2023-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "prescriptions.prescriptionstatus",
+    "pk": 3,
+    "fields": {
+      "name": "In Production",
+      "description": "Prescription is being manufactured",
+      "color": "info",
+      "order": 3,
+      "is_active": true,
+      "created_at": "2023-01-01T00:00:00Z",
+      "updated_at": "2023-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "prescriptions.prescriptionstatus",
+    "pk": 4,
+    "fields": {
+      "name": "Completed",
+      "description": "Prescription has been completed and is ready for delivery",
+      "color": "success",
+      "order": 4,
+      "is_active": true,
+      "created_at": "2023-01-01T00:00:00Z",
+      "updated_at": "2023-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "prescriptions.prescriptionstatus",
+    "pk": 5,
+    "fields": {
+      "name": "Delivered",
+      "description": "Prescription has been delivered to the patient",
+      "color": "dark",
+      "order": 5,
+      "is_active": true,
+      "created_at": "2023-01-01T00:00:00Z",
+      "updated_at": "2023-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "prescriptions.prescriptionstatus",
+    "pk": 6,
+    "fields": {
+      "name": "Cancelled",
+      "description": "Prescription has been cancelled",
+      "color": "danger",
+      "order": 6,
+      "is_active": true,
+      "created_at": "2023-01-01T00:00:00Z",
+      "updated_at": "2023-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "prescriptions.foottype",
+    "pk": 1,
+    "fields": {
+      "name": "Pronated",
+      "description": "Foot rolls inward when walking or running",
+      "order": 1,
+      "is_active": true,
+      "created_at": "2023-01-01T00:00:00Z",
+      "updated_at": "2023-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "prescriptions.foottype",
+    "pk": 2,
+    "fields": {
+      "name": "Supinated",
+      "description": "Foot rolls outward when walking or running",
+      "order": 2,
+      "is_active": true,
+      "created_at": "2023-01-01T00:00:00Z",
+      "updated_at": "2023-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "prescriptions.foottype",
+    "pk": 3,
+    "fields": {
+      "name": "Neutral",
+      "description": "Normal foot alignment",
+      "order": 3,
+      "is_active": true,
+      "created_at": "2023-01-01T00:00:00Z",
+      "updated_at": "2023-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "prescriptions.foottype",
+    "pk": 4,
+    "fields": {
+      "name": "Flat Foot",
+      "description": "Low or no arch",
+      "order": 4,
+      "is_active": true,
+      "created_at": "2023-01-01T00:00:00Z",
+      "updated_at": "2023-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "prescriptions.foottype",
+    "pk": 5,
+    "fields": {
+      "name": "High Arch",
+      "description": "Unusually high foot arch",
+      "order": 5,
+      "is_active": true,
+      "created_at": "2023-01-01T00:00:00Z",
+      "updated_at": "2023-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "prescriptions.weartime",
+    "pk": 1,
+    "fields": {
+      "name": "Daily (8+ hours)",
+      "description": "To be worn daily for 8 or more hours",
+      "order": 1,
+      "is_active": true,
+      "created_at": "2023-01-01T00:00:00Z",
+      "updated_at": "2023-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "prescriptions.weartime",
+    "pk": 2,
+    "fields": {
+      "name": "Part-time (4-8 hours)",
+      "description": "To be worn 4-8 hours per day",
+      "order": 2,
+      "is_active": true,
+      "created_at": "2023-01-01T00:00:00Z",
+      "updated_at": "2023-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "prescriptions.weartime",
+    "pk": 3,
+    "fields": {
+      "name": "Occasional (as needed)",
+      "description": "To be worn as needed or for specific activities only",
+      "order": 3,
+      "is_active": true,
+      "created_at": "2023-01-01T00:00:00Z",
+      "updated_at": "2023-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "prescriptions.weartime",
+    "pk": 4,
+    "fields": {
+      "name": "Night-time only",
+      "description": "To be worn only during sleep",
+      "order": 4,
+      "is_active": true,
+      "created_at": "2023-01-01T00:00:00Z",
+      "updated_at": "2023-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "prescriptions.activity",
+    "pk": 1,
+    "fields": {
+      "name": "Sedentary",
+      "description": "Little to no physical activity",
+      "order": 1,
+      "is_active": true,
+      "created_at": "2023-01-01T00:00:00Z",
+      "updated_at": "2023-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "prescriptions.activity",
+    "pk": 2,
+    "fields": {
+      "name": "Light",
+      "description": "Light walking, casual activities",
+      "order": 2,
+      "is_active": true,
+      "created_at": "2023-01-01T00:00:00Z",
+      "updated_at": "2023-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "prescriptions.activity",
+    "pk": 3,
+    "fields": {
+      "name": "Moderate",
+      "description": "Regular walking, light exercise",
+      "order": 3,
+      "is_active": true,
+      "created_at": "2023-01-01T00:00:00Z",
+      "updated_at": "2023-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "prescriptions.activity",
+    "pk": 4,
+    "fields": {
+      "name": "Active",
+      "description": "Regular exercise, recreational sports",
+      "order": 4,
+      "is_active": true,
+      "created_at": "2023-01-01T00:00:00Z",
+      "updated_at": "2023-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "prescriptions.activity",
+    "pk": 5,
+    "fields": {
+      "name": "High Performance",
+      "description": "Competitive sports, intense training",
+      "order": 5,
+      "is_active": true,
+      "created_at": "2023-01-01T00:00:00Z",
+      "updated_at": "2023-01-01T00:00:00Z"
+    }
+  }
+]

@@ -1,0 +1,94 @@
+{% extends 'orthotics_portal/base.html' %} 
+{% load static %} 
+{% block title%}
+Home - Orthotics Prescription Portal
+{% endblock %} 
+{% block content %}
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8 text-center">
+      <h1>Welcome to the Orthotics Prescription Portal</h1>
+      <p class="lead">Create custom orthotics with precision and ease</p>
+    </div>
+  </div>
+
+  <div class="row mt-5 justify-content-center">
+    <div class="col-md-4">
+      <div class="card mb-4">
+        <div class="card-body text-center">
+          <i
+            class="bi bi-clipboard-plus"
+            style="font-size: 3rem; color: var(--primary-color)"
+          ></i>
+          <h3 class="mt-3">Create Prescriptions</h3>
+          <p>
+            Design custom orthotics with precise parameters for your patient's
+            unique needs.
+          </p>
+          <a href="{% url 'prescriptions' %}" class="btn mt-2" style="background-color: #3a6b6d; color: white;"
+            >Start Prescribing</a
+          >
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card mb-4">
+        <div class="card-body text-center">
+          <i
+            class="bi bi-box-seam"
+            style="font-size: 3rem; color: var(--primary-color)"
+          ></i>
+          <h3 class="mt-3">Manage Orders</h3>
+          <p>Track the status of your orders from design to delivery.</p>
+          <a href="{% url 'orders' %}" class="btn mt-2" style="background-color: #3a6b6d; color: white;"
+            >View Orders</a
+          >
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card mb-4">
+        <div class="card-body text-center">
+          <i
+            class="bi bi-receipt"
+            style="font-size: 3rem; color: var(--primary-color)"
+          ></i>
+          <h3 class="mt-3">View Invoices</h3>
+          <p>Access and download invoices for all your completed orders.</p>
+          <a href="{% url 'invoices' %}" class="btn mt-2" style="background-color: #3a6b6d; color: white;"
+            >View Invoices</a
+          >
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mt-5">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <h3>About Our Orthotics</h3>
+          <p>
+            Our custom orthotics are designed to provide optimal support and
+            comfort for your patients. With our advanced prescription system,
+            you can create orthotics tailored to address specific foot
+            conditions and biomechanical issues.
+          </p>
+          <p>
+            Each orthotic is crafted with precision using high-quality materials
+            to ensure durability and effectiveness. Our streamlined ordering
+            process makes it easy to prescribe, order, and track your custom
+            orthotics.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} {% block extra_js %}
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    updateBasketCount();
+  });
+</script>
+{% endblock %}
