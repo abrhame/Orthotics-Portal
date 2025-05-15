@@ -72,7 +72,11 @@ class PatientViewSet(viewsets.ModelViewSet):
         Set the clinic and template when creating a patient.
         """
         user = self.request.user
+        logger.info(f"Creating patient for user: {user.email}")
+        logger.info(f"User clinic direct: {getattr(user, 'clinic', None)}")
+        
         template_id = self.request.data.get('template_id')
+        logger.info(f"Template ID from request: {template_id}")
 
         # add default template_id if not provided
         if not template_id:
@@ -80,14 +84,19 @@ class PatientViewSet(viewsets.ModelViewSet):
             default_template = Template.objects.filter(is_active=True).first()
             if default_template:
                 template_id = default_template.id
+                logger.info(f"Using default template: {template_id}")
 
         # First try direct relationship
         if hasattr(user, 'clinic') and user.clinic:
+            logger.info(f"Using direct clinic relationship: {user.clinic}")
             patient = serializer.save(clinic=user.clinic)
         else:
             # Alternative method using the reverse relationship
+            logger.info("Direct clinic not found, trying reverse relationship")
             clinic = Clinic.objects.filter(users=user).first()
+            logger.info(f"Found clinic through reverse lookup: {clinic}")
             if not clinic:
+                logger.error(f"No clinic found for user {user.email}")
                 raise serializers.ValidationError({"clinic": "User does not have an associated clinic"})
             patient = serializer.save(clinic=clinic)
 

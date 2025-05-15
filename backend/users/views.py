@@ -50,60 +50,42 @@ class LoginView(views.APIView):
         }
     )
     def post(self, request, *args, **kwargs):
-        logger.info(f"Login attempt received: {request.data}")
-        serializer = self.serializer_class(data=request.data)
+        email = request.data.get('email')
+        password = request.data.get('password')
         
-        if not serializer.is_valid():
-            logger.warning(f"Login validation failed: {serializer.errors}")
-            return Response(
-                {"error": "Invalid request data", "details": serializer.errors},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        
-        email = serializer.validated_data['email']
-        password = serializer.validated_data['password']
-        
-        logger.info(f"Attempting to authenticate user with email: {email}")
-        
-        # Try to get the user directly first to provide better debugging
-        try:
-            user_exists = User.objects.filter(email=email).exists()
-            if not user_exists:
-                logger.warning(f"No user found with email: {email}")
-                return Response(
-                    {"error": "No user found with this email"}, 
-                    status=status.HTTP_401_UNAUTHORIZED
-                )
-        except Exception as e:
-            logger.error(f"Error checking user existence: {str(e)}")
+        logger.info(f"Login attempt for user: {email}")
         
         user = authenticate(request, username=email, password=password)
         
-        if user is None:
-            logger.warning(f"Authentication failed for email: {email}")
+        if user is not None:
+            django_login(request, user)
+            logger.info(f"User authenticated: {user.email}")
+            logger.info(f"User clinic: {getattr(user, 'clinic', None)}")
+            logger.info(f"User clinic through reverse lookup: {Clinic.objects.filter(users=user).first()}")
+            
+            refresh = RefreshToken.for_user(user)
+            access_token = str(refresh.access_token)
+            
+            response_data = {
+                'access': access_token,
+                'refresh': str(refresh),
+                'user': {
+                    'id': str(user.id),
+                    'email': user.email,
+                    'first_name': user.first_name,
+                    'last_name': user.last_name,
+                    'role': user.role,
+                    'clinic': str(user.clinic.id) if user.clinic else None
+                }
+            }
+            
+            return Response(response_data)
+        else:
+            logger.error(f"Authentication failed for user: {email}")
             return Response(
-                {"error": "Invalid email or password"}, 
+                {'error': 'Invalid credentials'}, 
                 status=status.HTTP_401_UNAUTHORIZED
             )
-        
-        logger.info(f"User authenticated successfully: {user.email} (ID: {user.id})")
-        
-        # Create Django session - this is critical for web pages like prescriptions
-        django_login(request, user)
-        logger.info(f"Django session created for user: {user.email}")
-        
-        refresh = RefreshToken.for_user(user)
-        
-        return Response({
-            'refresh': str(refresh),
-            'access': str(refresh.access_token),
-            'user': {
-                'id': str(user.id),
-                'email': user.email,
-                'name': user.get_full_name(),
-                'role': user.role,
-            }
-        })
 
 
 class RegisterView(generics.CreateAPIView):
