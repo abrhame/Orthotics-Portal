@@ -270,7 +270,14 @@
               body: JSON.stringify(formData),
               credentials: "same-origin",
             })
-              .then((response) => response.json())
+              .then((response) => {
+                if (!response.ok) {
+                  return response.json().then((data) => {
+                    throw new Error(data.error || "Registration failed");
+                  });
+                }
+                return response.json();
+              })
               .then((data) => {
                 if (data.user) {
                   // Registration successful
@@ -284,7 +291,9 @@
               })
               .catch((error) => {
                 console.error("Registration error:", error);
-                alert("Registration failed. Please try again.");
+                alert(
+                  error.message || "Registration failed. Please try again."
+                );
                 submitButton.disabled = false;
                 submitButton.innerHTML = "Register";
               });
