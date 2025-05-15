@@ -161,25 +161,34 @@
     <script>
       document.addEventListener("DOMContentLoaded", function () {
         const form = document.getElementById("login-form");
-        const errorMessage = document.getElementById("error-message");
         const loginButton = document.getElementById("login-button");
+        const errorMessage = document.createElement("div");
+        errorMessage.className = "alert alert-danger d-none mt-3";
+        form.insertBefore(errorMessage, form.firstChild);
 
         if (form) {
           form.addEventListener("submit", function (e) {
             e.preventDefault();
 
+            // Clear previous error
+            errorMessage.classList.add("d-none");
+            errorMessage.innerHTML = "";
+
+            // Get form data
             const email = document.getElementById("id_username").value;
             const password = document.getElementById("id_password").value;
             const csrfToken = document.querySelector(
               "[name=csrfmiddlewaretoken]"
             ).value;
-            const nextUrl = document.querySelector("[name=next]").value;
+            const nextUrl =
+              document.querySelector("[name=next]")?.value || "/prescriptions/";
 
+            // Disable login button
             loginButton.disabled = true;
-            loginButton.innerHTML = "Signing In...";
-            errorMessage.classList.add("d-none");
+            loginButton.innerHTML =
+              '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Signing in...';
 
-            // Try API auth directly - it will establish a Django session
+            // Try API login first
             fetch("/api/users/login/", {
               method: "POST",
               headers: {
@@ -203,40 +212,12 @@
                       JSON.stringify(data.user)
                     );
 
-                    console.log("Login successful, redirecting to:", nextUrl);
-                    window.location.href = nextUrl || "/prescriptions/";
-                  });
-                } else if (response.status === 401) {
-                  // Fall back to Django's auth as a backup
-                  return response.json().then((errorData) => {
-                    console.log("API auth failed, trying Django auth");
-                    return fetch(form.action, {
-                      method: "POST",
-                      headers: {
-                        "Content-Type": "application/x-www-form-urlencoded",
-                        "X-CSRFToken": csrfToken,
-                      },
-                      body: new URLSearchParams({
-                        username: email,
-                        password: password,
-                        next: nextUrl,
-                        csrfmiddlewaretoken: csrfToken,
-                      }),
-                      credentials: "same-origin",
-                      redirect: "manual",
-                    }).then((djangoResponse) => {
-                      if (djangoResponse.type === "opaqueredirect") {
-                        console.log("Django auth successful");
-                        window.location.href = nextUrl || "/prescriptions/";
-                        return null;
-                      } else {
-                        throw new Error("Authentication failed");
-                      }
-                    });
+                    // Redirect
+                    window.location.href = nextUrl;
                   });
                 } else {
                   return response.json().then((errorData) => {
-                    throw new Error(errorData.error || "Login failed");
+                    throw new Error(errorData.error || "Invalid credentials");
                   });
                 }
               })
@@ -250,11 +231,6 @@
                 loginButton.innerHTML = "Sign In";
               });
           });
-
-          console.log("Login form initialized");
-          document.querySelector(".debug-form").style.borderColor = "#00ff00"; // green border for debug
-        } else {
-          console.error("Login form not found!");
         }
       });
     </script>

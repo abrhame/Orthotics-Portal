@@ -8,6 +8,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
 from django.contrib.auth import get_user_model, authenticate, login as django_login
 from .serializers import UserSerializer, UserRegistrationSerializer, LoginSerializer
+from .models import Clinic
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 import logging
@@ -50,41 +51,58 @@ class LoginView(views.APIView):
         }
     )
     def post(self, request, *args, **kwargs):
-        email = request.data.get('email')
-        password = request.data.get('password')
-        
-        logger.info(f"Login attempt for user: {email}")
-        
-        user = authenticate(request, username=email, password=password)
-        
-        if user is not None:
-            django_login(request, user)
-            logger.info(f"User authenticated: {user.email}")
-            logger.info(f"User clinic: {getattr(user, 'clinic', None)}")
-            logger.info(f"User clinic through reverse lookup: {Clinic.objects.filter(users=user).first()}")
+        try:
+            email = request.data.get('email')
+            password = request.data.get('password')
             
-            refresh = RefreshToken.for_user(user)
-            access_token = str(refresh.access_token)
+            if not email or not password:
+                return Response(
+                    {'error': 'Email and password are required'}, 
+                    status=status.HTTP_400_BAD_REQUEST
+                )
             
-            response_data = {
-                'access': access_token,
-                'refresh': str(refresh),
-                'user': {
-                    'id': str(user.id),
-                    'email': user.email,
-                    'first_name': user.first_name,
-                    'last_name': user.last_name,
-                    'role': user.role,
-                    'clinic': str(user.clinic.id) if user.clinic else None
+            logger.info(f"Login attempt for user: {email}")
+            
+            user = authenticate(request, username=email, password=password)
+            
+            if user is not None:
+                django_login(request, user)
+                logger.info(f"User authenticated: {user.email}")
+                
+                # Get clinic info
+                clinic = getattr(user, 'clinic', None)
+                if not clinic:
+                    clinic = Clinic.objects.filter(users=user).first()
+                logger.info(f"User clinic: {clinic}")
+                
+                refresh = RefreshToken.for_user(user)
+                access_token = str(refresh.access_token)
+                
+                response_data = {
+                    'access': access_token,
+                    'refresh': str(refresh),
+                    'user': {
+                        'id': str(user.id),
+                        'email': user.email,
+                        'first_name': user.first_name,
+                        'last_name': user.last_name,
+                        'role': user.role,
+                        'clinic': str(clinic.id) if clinic else None
+                    }
                 }
-            }
-            
-            return Response(response_data)
-        else:
-            logger.error(f"Authentication failed for user: {email}")
+                
+                return Response(response_data)
+            else:
+                logger.error(f"Authentication failed for user: {email}")
+                return Response(
+                    {'error': 'Invalid credentials'}, 
+                    status=status.HTTP_401_UNAUTHORIZED
+                )
+        except Exception as e:
+            logger.error(f"Login error: {str(e)}")
             return Response(
-                {'error': 'Invalid credentials'}, 
-                status=status.HTTP_401_UNAUTHORIZED
+                {'error': 'An error occurred during login'}, 
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
 
