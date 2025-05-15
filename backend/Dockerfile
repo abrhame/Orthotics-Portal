@@ -1,56 +1,35 @@
-FROM python:3.11-slim
-
-# Set working directory
-WORKDIR /app
+# Use Python 3.9 slim image
+FROM python:3.9-slim
 
 # Set environment variables
-ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1 \
-    DEBIAN_FRONTEND=noninteractive \
-    APP_USER_ID=1000 \
-    APP_GROUP_ID=1000
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+# Set work directory
+WORKDIR /app
 
 # Install system dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential \
-    libpq-dev \
-    gettext \
-    netcat-openbsd \
+RUN apt-get update && apt-get install -y \
     postgresql-client \
-    && apt-get clean \
+    netcat-traditional \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
 COPY requirements.txt /app/
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Create a non-root user to run the app
-RUN addgroup --system --gid ${APP_GROUP_ID} app && \
-    adduser --system --uid ${APP_USER_ID} --gid ${APP_GROUP_ID} app
-
-# Create directories for the app
-RUN mkdir -p /app/media/scans/left /app/media/scans/right /app/staticfiles /app/scripts \
-    && chown -R ${APP_USER_ID}:${APP_GROUP_ID} /app \
-    && chmod -R 755 /app/media \
-    && chmod -R 777 /app/staticfiles
-
-# Copy the project
+# Copy project
 COPY . /app/
-RUN chmod +x /app/scripts/*.sh
 
-# Create a script to fix collation issues
-RUN echo '#!/bin/bash\n\
-echo "Fixing database collation..."\n\
-PGPASSWORD=$DB_PASSWORD psql -h $DB_HOST -U $DB_USER -d $DB_NAME -c "ALTER DATABASE $DB_NAME REFRESH COLLATION VERSION;"\n\
-' > /app/scripts/fix_collation.sh \
-    && chmod +x /app/scripts/fix_collation.sh
+# Create directories for static and media files
+RUN mkdir -p /app/staticfiles /app/mediafiles
 
-# Set proper permissions
-RUN chown -R ${APP_USER_ID}:${APP_GROUP_ID} /app \
-    && chmod -R 777 /app/staticfiles
+# Make scripts executable
+RUN chmod +x /app/scripts/*
 
-# Switch to non-root user
-USER app
+# Create a non-root user
+RUN useradd -m appuser && chown -R appuser:appuser /app
+USER appuser
 
 # Expose the port
 EXPOSE 8000
