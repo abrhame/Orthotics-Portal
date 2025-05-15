@@ -1,78 +1,36 @@
 {% extends 'orthotics_portal/base.html' %} {% load static %} {% block title %}
-Invoices - Orthotics Prescription Portal {% endblock %} {% block content %}
-<div class="container mt-4">
-  <div class="row">
-    <div class="col-12">
-      <h1>Invoices</h1>
-      <p class="lead">View and download invoices for your completed orders.</p>
-    </div>
-  </div>
-
-  <div class="row mb-4">
-    <div class="col-md-6">
-      <div class="input-group">
-        <input
-          type="text"
-          class="form-control"
-          placeholder="Search invoices..."
-          id="invoiceSearch"
-        />
-        <button class="btn btn-outline" type="button">
-          <i class="bi bi-search"></i>
-        </button>
-      </div>
-    </div>
-    <div class="col-md-6 d-flex justify-content-md-end mt-3 mt-md-0">
-      <div class="btn-group">
-        <button type="button" class="btn btn-outline active" data-filter="all">
-          All
-        </button>
-        <button type="button" class="btn btn-outline" data-filter="paid">
-          Paid
-        </button>
-        <button type="button" class="btn btn-outline" data-filter="pending">
-          Pending
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="col-12">
-      <div class="card mb-4">
-        <div class="card-body p-0">
-          <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-              <thead>
-                <tr>
-                  <th>Invoice #</th>
-                  <th>Order ID</th>
-                  <th>Date</th>
-                  <th>Amount</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody id="invoicesTableBody">
-                <!-- Invoices will be populated here -->
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <div id="emptyInvoicesMessage" class="text-center py-5">
-        <i
-          class="bi bi-receipt"
-          style="font-size: 3rem; color: var(--secondary-color)"
-        ></i>
-        <h3 class="mt-3">No Invoices Yet</h3>
-        <p class="text-muted">
-          Your invoices will appear here once you've completed orders.
-        </p>
-        <a href="{% url 'prescriptions' %}" class="btn btn-primary mt-3"
-          >Create Prescription</a
-        >
+Invoices - Orthotics Prescription Portal {% endblock %} {% block extra_css %}
+<!-- DataTables CSS -->
+<link
+  rel="stylesheet"
+  type="text/css"
+  href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css"
+/>
+<link
+  rel="stylesheet"
+  type="text/css"
+  href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.dataTables.min.css"
+/>
+{% endblock %} {% block content %}
+<div class="container-fluid">
+  <h1 class="h3 mb-2 text-gray-800">Invoices</h1>
+  <div class="card shadow mb-4">
+    <div class="card-body">
+      <div class="table-responsive">
+        <table id="invoicesTable" class="table table-bordered">
+          <thead>
+            <tr>
+              <th>Invoice ID</th>
+              <th>Order ID</th>
+              <th>Patient</th>
+              <th>Amount</th>
+              <th>Status</th>
+              <th>Created</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
       </div>
     </div>
   </div>
@@ -164,307 +122,71 @@ Invoices - Orthotics Prescription Portal {% endblock %} {% block content %}
   </div>
 </div>
 {% endblock %} {% block extra_js %}
-<script src="{% static 'js/api-service.js' %}"></script>
+<!-- DataTables JavaScript -->
+<script
+  type="text/javascript"
+  src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"
+></script>
+<script
+  type="text/javascript"
+  src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"
+></script>
+
 <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    loadInvoices();
-    initFilterButtons();
-    initInvoiceSearch();
-    initViewDetailsButtons();
+  $(document).ready(function () {
+    let table = $("#invoicesTable").DataTable({
+      responsive: true,
+      processing: true,
+      serverSide: false,
+      ajax: {
+        url: "/api/invoices/",
+        dataSrc: "data",
+      },
+      columns: [
+        { data: "id" },
+        { data: "order.id" },
+        {
+          data: "order",
+          render: function (data) {
+            return data?.prescriptions?.[0]?.patient?.full_name || "N/A";
+          },
+        },
+        {
+          data: "total_amount",
+          render: function (data) {
+            return `$${parseFloat(data).toFixed(2)}`;
+          },
+        },
+        { data: "status" },
+        {
+          data: "created_at",
+          render: function (data) {
+            return new Date(data).toLocaleDateString();
+          },
+        },
+        {
+          data: "id",
+          render: function (data) {
+            return `
+              <button class="btn btn-sm btn-primary view-invoice" data-id="${data}">View</button>
+              <button class="btn btn-sm btn-success generate-pdf" data-id="${data}">PDF</button>
+            `;
+          },
+        },
+      ],
+    });
+
+    // Handle view invoice button click
+    $("#invoicesTable").on("click", ".view-invoice", function () {
+      const invoiceId = $(this).data("id");
+      window.location.href = `/invoices/${invoiceId}`;
+    });
+
+    // Handle generate PDF button click
+    $("#invoicesTable").on("click", ".generate-pdf", function () {
+      const invoiceId = $(this).data("id");
+      window.open(`/api/invoices/${invoiceId}/generate-pdf/`, "_blank");
+    });
   });
-
-  // Load invoices from API
-  async function loadInvoices() {
-    try {
-      const invoices = await ApiService.invoices.getAll();
-      displayInvoices(invoices.results || []);
-    } catch (error) {
-      console.error("Error loading invoices:", error);
-      showToast(
-        "Error",
-        "Failed to load invoices. Please try again later.",
-        "error"
-      );
-    }
-  }
-
-  // Display invoices in the table
-  function displayInvoices(invoices) {
-    const invoicesTableBody = document.getElementById("invoicesTableBody");
-    const emptyInvoicesMessage = document.getElementById(
-      "emptyInvoicesMessage"
-    );
-
-    if (!invoices || invoices.length === 0) {
-      if (invoicesTableBody.closest(".card")) {
-        invoicesTableBody.closest(".card").style.display = "none";
-      }
-      if (emptyInvoicesMessage) {
-        emptyInvoicesMessage.style.display = "block";
-      }
-      return;
-    }
-
-    if (invoicesTableBody.closest(".card")) {
-      invoicesTableBody.closest(".card").style.display = "block";
-    }
-    if (emptyInvoicesMessage) {
-      emptyInvoicesMessage.style.display = "none";
-    }
-
-    invoicesTableBody.innerHTML = "";
-
-    invoices.forEach((invoice) => {
-      const row = document.createElement("tr");
-      row.setAttribute("data-status", invoice.status.toLowerCase());
-      row.setAttribute("data-id", invoice.id);
-
-      row.innerHTML = `
-        <td>${invoice.invoice_number}</td>
-        <td>${invoice.order}</td>
-        <td>${formatDate(invoice.created_at)}</td>
-        <td>$${parseFloat(invoice.amount).toFixed(2)}</td>
-        <td>
-          <span class="badge bg-${
-            invoice.status.toLowerCase() === "paid" ? "success" : "warning"
-          }">
-            ${invoice.status}
-          </span>
-        </td>
-        <td>
-          <button class="btn btn-sm btn-outline view-details-btn" data-id="${
-            invoice.id
-          }">
-            <i class="bi bi-eye"></i> View
-          </button>
-          <a href="/api/invoices/${
-            invoice.id
-          }/generate_pdf/" class="btn btn-sm btn-outline download-btn">
-            <i class="bi bi-download"></i> PDF
-          </a>
-        </td>
-      `;
-
-      invoicesTableBody.appendChild(row);
-    });
-
-    // Re-initialize view detail buttons
-    initViewDetailsButtons();
-  }
-
-  // Initialize filter buttons
-  function initFilterButtons() {
-    const filterButtons = document.querySelectorAll("[data-filter]");
-
-    filterButtons.forEach((button) => {
-      button.addEventListener("click", function () {
-        // Remove active class from all buttons
-        filterButtons.forEach((btn) => btn.classList.remove("active"));
-
-        // Add active class to clicked button
-        this.classList.add("active");
-
-        const filter = this.getAttribute("data-filter");
-        filterInvoices(filter);
-      });
-    });
-  }
-
-  // Filter invoices
-  function filterInvoices(filter) {
-    const rows = document.querySelectorAll("#invoicesTableBody tr");
-
-    rows.forEach((row) => {
-      const status = row.getAttribute("data-status");
-
-      if (filter === "all" || status === filter) {
-        row.style.display = "";
-      } else {
-        row.style.display = "none";
-      }
-    });
-  }
-
-  // Initialize invoice search
-  function initInvoiceSearch() {
-    const searchInput = document.getElementById("invoiceSearch");
-
-    if (searchInput) {
-      searchInput.addEventListener("keyup", function () {
-        const searchValue = this.value.toLowerCase();
-        searchInvoices(searchValue);
-      });
-    }
-  }
-
-  // Search invoices
-  function searchInvoices(searchValue) {
-    const rows = document.querySelectorAll("#invoicesTableBody tr");
-
-    rows.forEach((row) => {
-      const text = row.textContent.toLowerCase();
-
-      if (text.includes(searchValue)) {
-        row.style.display = "";
-      } else {
-        row.style.display = "none";
-      }
-    });
-  }
-
-  // Initialize view details buttons
-  function initViewDetailsButtons() {
-    const viewButtons = document.querySelectorAll(".view-details-btn");
-
-    viewButtons.forEach((button) => {
-      button.addEventListener("click", function () {
-        const invoiceId = this.getAttribute("data-id");
-        showInvoiceDetails(invoiceId);
-      });
-    });
-
-    // Initialize print button
-    const printInvoiceBtn = document.getElementById("printInvoiceBtn");
-    if (printInvoiceBtn) {
-      printInvoiceBtn.addEventListener("click", function () {
-        const invoiceId = document.getElementById("modalInvoiceId").textContent;
-        window.open(
-          `/api/invoices/${invoiceId}/generate_pdf/?print=true`,
-          "_blank"
-        );
-      });
-    }
-  }
-
-  // Show invoice details in modal
-  async function showInvoiceDetails(invoiceId) {
-    try {
-      // Load invoice details
-      const invoice = await ApiService.invoices.getById(invoiceId);
-
-      // Load invoice items
-      const items = await ApiService.invoices.getItems(invoiceId);
-
-      // Populate modal with invoice data
-      document.getElementById("modalInvoiceId").textContent =
-        invoice.invoice_number;
-      document.getElementById("modalInvoiceDate").textContent = formatDate(
-        invoice.created_at
-      );
-
-      const statusElement = document.getElementById("modalInvoiceStatus");
-      statusElement.textContent = invoice.status;
-      statusElement.className = `badge bg-${
-        invoice.status.toLowerCase() === "paid" ? "success" : "warning"
-      }`;
-
-      document.getElementById("modalOrderId").textContent = invoice.order;
-      document.getElementById("modalPatientName").textContent =
-        "Patient information"; // This would need to be fetched from the order
-
-      // Populate items
-      const itemsContainer = document.getElementById("modalInvoiceItems");
-      itemsContainer.innerHTML = "";
-
-      let subtotal = 0;
-
-      items.forEach((item) => {
-        const row = document.createElement("tr");
-        const itemTotal = parseFloat(item.price) * (item.quantity || 1);
-        subtotal += itemTotal;
-
-        row.innerHTML = `
-          <td>${item.description}</td>
-          <td class="text-end">$${parseFloat(item.price).toFixed(2)} × ${
-          item.quantity || 1
-        }</td>
-        `;
-
-        itemsContainer.appendChild(row);
-      });
-
-      // Set amounts
-      const shipping = 10.0; // Example shipping cost
-      const taxRate = 0.09;
-      const tax = subtotal * taxRate;
-      const total = subtotal + shipping + tax;
-
-      document.getElementById(
-        "modalSubtotal"
-      ).textContent = `$${subtotal.toFixed(2)}`;
-      document.getElementById(
-        "modalShipping"
-      ).textContent = `$${shipping.toFixed(2)}`;
-      document.getElementById("modalTax").textContent = `$${tax.toFixed(2)}`;
-      document.getElementById("modalTotal").textContent = `$${total.toFixed(
-        2
-      )}`;
-
-      // Set download link
-      const downloadBtn = document.getElementById("downloadInvoiceBtn");
-      downloadBtn.href = `/api/invoices/${invoiceId}/generate_pdf/`;
-
-      // Show modal
-      const modal = new bootstrap.Modal(
-        document.getElementById("invoiceDetailsModal")
-      );
-      modal.show();
-    } catch (error) {
-      console.error("Error fetching invoice details:", error);
-      showToast(
-        "Error",
-        "Failed to load invoice details. Please try again later.",
-        "error"
-      );
-    }
-  }
-
-  // Helper function to format dates
-  function formatDate(dateString) {
-    const date = new Date(dateString);
-    const options = { year: "numeric", month: "short", day: "numeric" };
-    return date.toLocaleDateString("en-US", options);
-  }
-
-  // Helper function to show a toast notification
-  function showToast(title, message, type = "info") {
-    // Create toast container if it doesn't exist
-    let toastContainer = document.querySelector(".toast-container");
-    if (!toastContainer) {
-      toastContainer = document.createElement("div");
-      toastContainer.className =
-        "toast-container position-fixed bottom-0 end-0 p-3";
-      document.body.appendChild(toastContainer);
-    }
-
-    // Create toast element
-    const toastEl = document.createElement("div");
-    toastEl.className = `toast align-items-center text-white bg-${type}`;
-    toastEl.setAttribute("role", "alert");
-    toastEl.setAttribute("aria-live", "assertive");
-    toastEl.setAttribute("aria-atomic", "true");
-
-    // Toast content
-    toastEl.innerHTML = `
-      <div class="d-flex">
-        <div class="toast-body">
-          <strong>${title}</strong>: ${message}
-        </div>
-        <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-      </div>
-    `;
-
-    // Add to container
-    toastContainer.appendChild(toastEl);
-
-    // Initialize and show toast
-    const toast = new bootstrap.Toast(toastEl);
-    toast.show();
-
-    // Remove toast after it's hidden
-    toastEl.addEventListener("hidden.bs.toast", function () {
-      toastEl.remove();
-    });
-  }
 </script>
 {% endblock %}

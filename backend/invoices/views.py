@@ -9,7 +9,7 @@ from django.http import HttpResponse, FileResponse
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from .models import Invoice, InvoiceItem
-from .serializers import InvoiceSerializer, InvoiceItemSerializer
+from .serializers import InvoiceSerializer, InvoiceItemSerializer, InvoiceDetailSerializer
 import logging
 from datetime import datetime
 import os
@@ -28,63 +28,66 @@ logger = logging.getLogger(__name__)
 
 class InvoiceViewSet(viewsets.ModelViewSet):
     """
-    API endpoint for invoices.
+    ViewSet for managing invoices.
     """
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = InvoiceSerializer
     
     def get_queryset(self):
         """
-        Filter invoices by the user's clinic if not staff.
+        Filter invoices to only include those belonging to the current user's clinic.
         """
         user = self.request.user
         if user.is_staff:
-            return Invoice.objects.all()
-        
-        # Get the user's clinic
-        clinic = Clinic.objects.filter(users=user).first()
-        if clinic:
-            return Invoice.objects.filter(order__prescription__patient__clinic=clinic)
+            return Invoice.objects.all().order_by('-created_at')
+        elif hasattr(user, 'clinic') and user.clinic:
+            return Invoice.objects.filter(
+                order__prescriptions__patient__clinic=user.clinic
+            ).distinct().order_by('-created_at')
         return Invoice.objects.none()
     
-    @action(detail=True, methods=['get'])
-    def generate_pdf(self, request, invoice_id=None, *args, **kwargs):
+    def get_serializer_class(self):
         """
-        Generate a PDF for the invoice.
+        Return different serializers based on the action.
         """
-        invoice = get_object_or_404(self.get_queryset(), id=invoice_id)
-        logger.info(f"Generating PDF for invoice {invoice.id}")
-        
-        # If WeasyPrint is not available, return an error
-        if not HTML_TO_PDF_AVAILABLE:
-            return Response(
-                {"error": "PDF generation is not available."},
-                status=status.HTTP_501_NOT_IMPLEMENTED
-            )
-        
+        if self.action == 'retrieve':
+            return InvoiceDetailSerializer
+        return InvoiceSerializer
+    
+    def list(self, request, *args, **kwargs):
+        """
+        Override list method to handle DataTables request and return data in the expected format.
+        """
         try:
-            # Render the HTML template
-            context = {
-                'invoice': invoice,
-                'items': invoice.items.all(),
-                'date': datetime.now().strftime('%B %d, %Y'),
-                'is_pdf': True
+            queryset = self.get_queryset()
+            serializer = self.get_serializer(queryset, many=True)
+            data = {
+                'data': serializer.data,  # DataTables expects data in a 'data' key
+                'recordsTotal': queryset.count(),
+                'recordsFiltered': queryset.count(),
+                'draw': request.GET.get('draw', 1)
             }
-            html_string = render_to_string('orthotics_portal/invoice_print.html', context)
-            
-            # Convert HTML to PDF
-            html = weasyprint.HTML(string=html_string)
-            pdf = html.write_pdf()
-            
-            # Create response with PDF
-            response = HttpResponse(pdf, content_type='application/pdf')
-            response['Content-Disposition'] = f'inline; filename="invoice_{invoice.id}.pdf"'
-            
-            return response
+            return Response(data)
+        except Exception as e:
+            logger.error(f"Error in invoice list view: {str(e)}")
+            return Response(
+                {"error": f"Error retrieving invoices: {str(e)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+    
+    @action(detail=True, methods=['get'])
+    def generate_pdf(self, request, pk=None):
+        """
+        Generate a PDF version of the invoice.
+        """
+        try:
+            invoice = self.get_object()
+            # Add your PDF generation logic here
+            return Response({"url": f"/invoices/{invoice.id}/pdf/"})
         except Exception as e:
             logger.error(f"Error generating PDF: {str(e)}")
             return Response(
-                {"error": "Error generating PDF."},
+                {"error": f"Error generating PDF: {str(e)}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
     

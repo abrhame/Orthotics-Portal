@@ -1,124 +1,11 @@
 {% extends 'orthotics_portal/base.html' %} {% load static %} {# Include all
 required modals #} {% include 'orthotics_portal/plantar_modifiers.html' %} {%
 include 'orthotics_portal/posting.html' %} {% block title %} Prescriptions -
-Orthotics Prescription Portal {% endblock %} {% block content %}
+Orthotics Prescription Portal {% endblock %} {% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/notes_attachments.css' %}" />
+{% endblock %} {% block content %}
 <div class="container mt-4">
-  <div class="row">
-    <div class="col-12">
-      <h1>Prescriptions</h1>
-      <p class="lead">
-        Create and manage orthotic prescriptions for your patients.
-      </p>
-    </div>
-  </div>
-  <div class="row mb-4">
-    <div class="col-md-6">
-      <div class="input-group">
-        <input
-          type="text"
-          class="form-control"
-          placeholder="Search prescriptions..."
-          id="prescriptionSearch"
-        />
-        <button class="btn btn-outline" type="button">
-          <i class="bi bi-search"></i>
-        </button>
-      </div>
-    </div>
-    <div class="col-md-6 d-flex justify-content-md-end mt-3 mt-md-0">
-      <button
-        type="button"
-        class="btn btn-primary"
-        data-bs-toggle="modal"
-        data-bs-target="#createPrescriptionModal"
-      >
-        <i class="bi bi-plus-circle"></i> New Prescription
-      </button>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-12">
-      <div class="card mb-4">
-        <div class="card-body p-0">
-          <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-              <thead>
-                <tr>
-                  <th>Prescription ID</th>
-                  <th>Patient</th>
-                  <th>Date</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody id="prescriptionsTableBody">
-                {% for prescription in prescriptions %}
-                <tr>
-                  <td>{{ prescription.id }}</td>
-                  <td>{{ prescription.patient.full_name }}</td>
-                  <td>{{ prescription.created_at|date:"M d, Y" }}</td>
-                  <td>
-                    <span
-                      class="badge bg-{% if prescription.status == 'completed' %}success{% elif prescription.status == 'pending' %}warning{% else %}info{% endif %}"
-                    >
-                      {{ prescription.get_status_display }}
-                    </span>
-                  </td>
-                  <td>
-                    <button
-                      type="button"
-                      class="btn btn-sm btn-primary me-1 view-prescription-btn"
-                      data-id="{{ prescription.id }}"
-                    >
-                      <i class="bi bi-eye"></i>
-                    </button>
-                    <button
-                      type="button"
-                      class="btn btn-sm btn-secondary me-1 edit-prescription-btn"
-                      data-id="{{ prescription.id }}"
-                    >
-                      <i class="bi bi-pencil"></i>
-                    </button>
-                    <button
-                      type="button"
-                      class="btn btn-sm btn-success me-1 add-to-basket-btn"
-                      data-id="{{ prescription.id }}"
-                    >
-                      <i class="bi bi-cart-plus"></i>
-                    </button>
-                    <button
-                      type="button"
-                      class="btn btn-sm btn-info upload-scan-btn"
-                      data-id="{{ prescription.id }}"
-                      title="Upload Foot Scans"
-                    >
-                      <i class="bi bi-file-earmark-image"></i>
-                    </button>
-                    <button
-                      type="button"
-                      class="btn btn-sm btn-warning clinical-measures-btn"
-                      data-id="{{ prescription.id }}"
-                      title="Clinical Measures"
-                    >
-                      <i class="bi bi-ruler"></i>
-                    </button>
-                  </td>
-                </tr>
-                {% empty %}
-                <tr>
-                  <td colspan="5" class="text-center py-4">
-                    No prescriptions found. Create a new prescription to get
-                    started.
-                  </td>
-                </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+
   <div class="row mt-5">
     <div class="col-12">
       <h2>Patient Management</h2>
@@ -170,7 +57,7 @@ Orthotics Prescription Portal {% endblock %} {% block content %}
                 {% for patient in patients %}
                 <tr>
                   <td>{{ patient.external_id|default:patient.id }}</td>
-                  <td>{{ patient.full_name }}</td>
+                  <td>{{ patient.first_name }} {{ patient.last_name }}</td>
                   <td>{{ patient.date_of_birth|date:"M d, Y" }}</td>
                   <td>{{ patient.email }}</td>
                   <td>
@@ -220,7 +107,9 @@ Orthotics Prescription Portal {% endblock %} {% block content %}
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="addPatientModalLabel">Add New Patient</h5>
+        <h5 class="modal-title" id="addPatientModalLabel" style="color: #ffffff">
+          Add New Patient
+        </h5>
         <button
           type="button"
           class="btn-close"
@@ -1915,19 +1804,23 @@ Orthotics Prescription Portal {% endblock %} {% block content %}
 <div id="toast-container" class="position-fixed bottom-0 end-0 p-3"></div>
 <!-- Full-screen 3D Preview Modal -->
 
-{% include 'orthotics_portal/plantar_modifiers.html' %}
-{% include 'orthotics_portal/posting.html' %}
-{% include 'orthotics_portal/material_selection.html' %}
-{% include 'orthotics_portal/shoe_fitting.html' %}
+{% include 'orthotics_portal/plantar_modifiers.html' %} 
+{% include 'orthotics_portal/posting.html' %} 
+{% include 'orthotics_portal/material_selection.html' %} 
+{% include 'orthotics_portal/shoe_fitting.html' %} 
 {% include 'orthotics_portal/device_options.html' %}
-{% endblock %}
+
+<!-- Notes & Attachments Section -->
+{% include 'orthotics_portal/notes_attachments.html' %} 
+{% endblock %} 
 {% block extra_js %}
-<script src="{% static 'js/api_service.js' %}"></script>
+
 <script src="{% static 'js/plantar_modifiers.js' %}"></script>
 <script src="{% static 'js/posting.js' %}"></script>
 <script src="{% static 'js/material_selection.js' %}"></script>
 <script src="{% static 'js/shoe_fitting.js' %}"></script>
 <script src="{% static 'js/device_options.js' %}"></script>
+<script src="{% static 'js/notes_attachments.js' %}"></script>
 
 <style>
   .scan-preview {
@@ -2315,10 +2208,11 @@ Orthotics Prescription Portal {% endblock %} {% block content %}
     try {
       // Load patients
       const patientsResponse = await ApiService.patients.getAll();
+      console.log(patientsResponse);
       displayPatients(patientsResponse.results || []);
       // Load prescriptions
       const prescriptionsResponse = await ApiService.prescriptions.getAll();
-      displayPrescriptions(prescriptionsResponse.results || []);
+      // displayPrescriptions(prescriptionsResponse.results || []);
     } catch (error) {
       console.error("Error loading data:", error);
       showToast("Failed to load data. Please try again later.", "danger");
@@ -3890,5 +3784,13 @@ Orthotics Prescription Portal {% endblock %} {% block content %}
       showToast("error", "Shoe fitting module not initialized");
     }
   }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    // Initialize all modules
+    if (prescriptionId) {
+      // ... existing module initializations ...
+      NotesAttachmentsModule.init(prescriptionId);
+    }
+  });
 </script>
 {% endblock %}

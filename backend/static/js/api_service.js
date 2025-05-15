@@ -213,7 +213,7 @@ const ApiService = {
       return await ApiService.base.post("patients/create", data);
     },
 
-    /**uploadScans
+    /**
      * Update a patient
      * @param {string} id - The patient ID
      * @param {Object} data - The updated patient data
@@ -271,7 +271,22 @@ const ApiService = {
      * @returns {Promise} - Promise resolving to the updated prescription
      */
     async update(id, data) {
-      return await ApiService.base.put(`prescriptions/${id}`, data);
+      try {
+        const response = await fetch(`/api/prescriptions/${id}/`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCsrfToken(),
+          },
+          body: JSON.stringify(data),
+        });
+
+        if (!response.ok) throw new Error("Failed to update prescription");
+        return await response.json();
+      } catch (error) {
+        console.error("Error updating prescription:", error);
+        throw error;
+      }
     },
 
     /**
@@ -534,6 +549,62 @@ const ApiService = {
         throw error;
       }
     },
+
+    async addAttachment(prescriptionId, formData) {
+      try {
+        const csrfToken = getCsrfToken();
+        const response = await fetch(
+          `/api/prescriptions/${prescriptionId}/attachments/`,
+          {
+            method: "POST",
+            headers: {
+              "X-CSRFToken": csrfToken,
+              "X-Requested-With": "XMLHttpRequest",
+            },
+            body: formData,
+            credentials: "same-origin",
+          }
+        );
+
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.detail || "Failed to upload attachment");
+        }
+
+        return await response.json();
+      } catch (error) {
+        console.error("Error uploading attachment:", error);
+        throw error;
+      }
+    },
+
+    async deleteAttachment(prescriptionId, attachmentId) {
+      try {
+        const csrfToken = getCsrfToken();
+        const response = await fetch(
+          `/api/prescriptions/${prescriptionId}/attachments/${attachmentId}/`,
+          {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+              "X-CSRFToken": csrfToken,
+              "X-Requested-With": "XMLHttpRequest",
+            },
+            credentials: "same-origin",
+          }
+        );
+
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.detail || "Failed to delete attachment");
+        }
+
+        return true;
+      } catch (error) {
+        console.error("Error deleting attachment:", error);
+        throw error;
+      }
+    },
   },
 
   /**
@@ -639,11 +710,34 @@ const ApiService = {
      * @returns {Promise} - Promise resolving to the created order
      */
     async create(data) {
-      return await ApiService.base.post("orders", data);
+      try {
+        // Simplified payload for single prescription
+        const payload = {
+          prescription_ids: [data.prescription_id],
+        };
+
+        const response = await fetch("/api/orders/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCsrfToken(),
+          },
+          body: JSON.stringify(payload),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || "Failed to create order");
+        }
+        return await response.json();
+      } catch (error) {
+        console.error("Error creating order:", error);
+        throw error;
+      }
     },
 
     /**
-     * Update order status
+     * Update the status of an order
      * @param {string} id - The order ID
      * @param {string} status - The new status
      * @returns {Promise} - Promise resolving to the updated order

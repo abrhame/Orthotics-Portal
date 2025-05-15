@@ -728,27 +728,53 @@ class PrescriptionViewSet(viewsets.ModelViewSet):
         """
         Get, create, or delete attachments for the prescription.
         """
-        prescription = self.get_object()
-        
-        if request.method == 'GET':
-            attachments = Attachment.objects.filter(prescription=prescription)
-            serializer = AttachmentSerializer(attachments, many=True)
-            return Response(serializer.data)
-        
-        elif request.method == 'POST':
-            serializer = AttachmentSerializer(data={**request.data, 'prescription': prescription.pk})
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        
-        elif request.method == 'DELETE':
-            attachment_id = request.query_params.get('id')
-            if not attachment_id:
-                return Response({"error": "Attachment ID is required"}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            prescription = self.get_object()
+            
+            if request.method == 'GET':
+                attachments = Attachment.objects.filter(prescription=prescription)
+                serializer = AttachmentSerializer(attachments, many=True)
+                return Response(serializer.data)
+            
+            elif request.method == 'POST':
+                # Handle file upload
+                if 'file' not in request.FILES:
+                    return Response(
+                        {"error": "No file provided"},
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
                 
-            attachment = get_object_or_404(Attachment, id=attachment_id, prescription=prescription)
-            attachment.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
+                file_obj = request.FILES['file']
+                filename = request.POST.get('filename', file_obj.name)
+                
+                # Create attachment
+                attachment = Attachment.objects.create(
+                    prescription=prescription,
+                    file=file_obj,
+                    filename=filename
+                )
+                
+                serializer = AttachmentSerializer(attachment)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            
+            elif request.method == 'DELETE':
+                attachment_id = request.query_params.get('id')
+                if not attachment_id:
+                    return Response(
+                        {"error": "Attachment ID is required"},
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+                    
+                attachment = get_object_or_404(Attachment, id=attachment_id, prescription=prescription)
+                attachment.delete()
+                return Response(status=status.HTTP_204_NO_CONTENT)
+                
+        except Exception as e:
+            logger.error(f"Error handling attachment: {str(e)}")
+            return Response(
+                {"error": f"Error processing attachment: {str(e)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])

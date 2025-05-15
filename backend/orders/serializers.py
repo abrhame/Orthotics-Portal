@@ -4,9 +4,10 @@ Serializers for the orders app.
 from rest_framework import serializers
 from .models import Order
 from prescriptions.models import Prescription
-from prescriptions.serializers import PrescriptionSerializer
+from prescriptions.serializers import PrescriptionSerializer, PrescriptionListSerializer
 from django.db import transaction
 import logging
+from patients.serializers import PatientSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -23,36 +24,61 @@ class OrderSerializer(serializers.ModelSerializer):
     """
     Serializer for orders.
     """
-    prescriptions_count = serializers.SerializerMethodField()
-    total_amount = serializers.SerializerMethodField()
-    status_display = serializers.SerializerMethodField()
+    prescriptions = PrescriptionListSerializer(many=True, read_only=True)
+    patient_name = serializers.SerializerMethodField()
+    total_amount = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
     
     class Meta:
         model = Order
-        fields = ['id', 'user', 'status', 'notes', 'created_at', 'updated_at', 
-                  'prescriptions_count', 'total_amount', 'status_display']
-        read_only_fields = ['id', 'created_at', 'updated_at']
+        fields = [
+            'id',
+            'prescriptions',
+            'patient_name',
+            'status',
+            'created_at',
+            'total_amount'
+        ]
+        read_only_fields = ['id', 'created_at']
+
+    def get_patient_name(self, obj):
+        """Get the patient name from the first prescription."""
+        first_prescription = obj.prescriptions.first()
+        if first_prescription and first_prescription.patient:
+            return first_prescription.patient.full_name
+        return 'N/A'
+
+class OrderDetailSerializer(serializers.ModelSerializer):
+    """
+    Detailed serializer for orders, including prescription details.
+    """
+    prescriptions = PrescriptionListSerializer(many=True, read_only=True)
+    patient_name = serializers.SerializerMethodField()
+    total_amount = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
+    shipping_method = serializers.CharField(default="Standard Shipping", read_only=True)
+    shipping_address = serializers.CharField(read_only=True)
+    notes = serializers.CharField(read_only=True)
     
-    def get_prescriptions_count(self, obj):
-        """
-        Get the count of prescriptions in the order.
-        """
-        return obj.prescriptions.count()
+    class Meta:
+        model = Order
+        fields = [
+            'id',
+            'prescriptions',
+            'patient_name',
+            'status',
+            'created_at',
+            'total_amount',
+            'shipping_method',
+            'shipping_address',
+            'notes'
+        ]
+        read_only_fields = ['id', 'created_at']
     
-    def get_total_amount(self, obj):
-        """
-        Calculate the total amount of the order.
-        Each prescription is charged at a base rate of $100 (example).
-        """
-        # In a real implementation, you would have a more complex pricing model
-        prescription_count = obj.prescriptions.count()
-        return prescription_count * 100.00
-    
-    def get_status_display(self, obj):
-        """
-        Get the human-readable status.
-        """
-        return obj.get_status_display()
+    def get_patient_name(self, obj):
+        """Get the patient name from the first prescription."""
+        first_prescription = obj.prescriptions.first()
+        if first_prescription and first_prescription.patient:
+            return first_prescription.patient.full_name
+        return 'N/A'
     
     def create(self, validated_data):
         """
@@ -74,31 +100,4 @@ class OrderSerializer(serializers.ModelSerializer):
             
             logger.info(f"Created order {order.id} with {prescriptions.count()} prescriptions")
             
-            return order
-
-
-class OrderDetailSerializer(OrderSerializer):
-    """
-    Detailed serializer for orders, including prescription details.
-    """
-    items = serializers.SerializerMethodField()
-    shipping_method = serializers.CharField(default="Standard Shipping", read_only=True)
-    
-    class Meta(OrderSerializer.Meta):
-        fields = OrderSerializer.Meta.fields + ['items', 'shipping_method']
-    
-    def get_items(self, obj):
-        """
-        Get detailed information about each prescription in the order.
-        """
-        items = []
-        for prescription in obj.prescriptions.all():
-            item = {
-                'prescription_id': prescription.id,
-                'patient_name': prescription.patient.full_name if prescription.patient else "Unknown",
-                'orthotic_type': prescription.orthotic_type if hasattr(prescription, 'orthotic_type') else "Custom",
-                'price': 100.00  # Base price per prescription
-            }
-            items.append(item)
-        
-        return OrderItemSerializer(items, many=True).data 
+            return order 

@@ -14,65 +14,56 @@ const DeviceOptionsModule = {
     this.prescriptionId = prescriptionId;
     this.initializeForm();
     this.bindEvents();
-    this.loadDeviceOptions();
+    this.loadExistingDeviceOptions();
   },
 
   initializeForm() {
-    const form = document.getElementById("deviceOptionsForm");
-    if (form) {
-      form.reset();
-    }
+    // Initialize tooltips
+    const tooltips = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    tooltips.forEach((tooltip) => new bootstrap.Tooltip(tooltip));
+
+    // Initialize increment/decrement buttons
+    const buttons = document.querySelectorAll(".increase-btn, .decrease-btn");
+    buttons.forEach((button) => {
+      button.addEventListener("click", (e) => {
+        const targetId = e.target.dataset.target;
+        const input = document.getElementById(targetId);
+        const step = parseFloat(input.step) || 1;
+        const min = parseFloat(input.min) || 0;
+        const max = parseFloat(input.max) || 100;
+        const currentValue = parseFloat(input.value) || 0;
+
+        if (e.target.classList.contains("increase-btn")) {
+          input.value = Math.min(currentValue + step, max);
+        } else {
+          input.value = Math.max(currentValue - step, min);
+        }
+      });
+    });
   },
 
   bindEvents() {
+    // Save button click handler
     const saveBtn = document.getElementById("saveDeviceOptionsBtn");
-    const nextBtn = document.getElementById("nextDeviceOptionsBtn");
-
     if (saveBtn) {
-      saveBtn.addEventListener("click", async (e) => {
-        e.preventDefault();
-        await this.saveDeviceOptions(false);
-      });
+      saveBtn.addEventListener("click", () => this.handleSave(false));
     }
 
+    // Next button click handler
+    const nextBtn = document.getElementById("nextDeviceOptionsBtn");
     if (nextBtn) {
-      nextBtn.addEventListener("click", async (e) => {
-        e.preventDefault();
-        await this.saveDeviceOptions(true);
-      });
+      nextBtn.addEventListener("click", () => this.handleSave(true));
     }
-
-    // Bind increment/decrement buttons
-    document
-      .querySelectorAll(".increase-btn, .decrease-btn")
-      .forEach((button) => {
-        button.addEventListener("click", (e) => {
-          const targetId = e.target.dataset.target;
-          const input = document.getElementById(targetId);
-          if (input) {
-            const step = parseFloat(input.step) || 1;
-            const min = parseFloat(input.min) || 0;
-            const max = parseFloat(input.max) || 100;
-            let value = parseFloat(input.value) || 0;
-
-            if (e.target.classList.contains("increase-btn")) {
-              value = Math.min(value + step, max);
-            } else {
-              value = Math.max(value - step, min);
-            }
-
-            input.value = value;
-          }
-        });
-      });
   },
 
-  async loadDeviceOptions() {
+  async loadExistingDeviceOptions() {
     try {
-      const data = await ApiService.prescriptions.getDeviceOptions(
+      const response = await ApiService.prescriptions.getDeviceOptions(
         this.prescriptionId
       );
-      this.populateForm(data);
+      if (response) {
+        this.populateForm(response);
+      }
     } catch (error) {
       console.error("Error loading device options:", error);
       showToast("Failed to load device options", "danger");
@@ -80,11 +71,6 @@ const DeviceOptionsModule = {
   },
 
   populateForm(data) {
-    if (!data) return;
-
-    const form = document.getElementById("deviceOptionsForm");
-    if (!form) return;
-
     const fields = [
       "left_medial_arch_height",
       "left_lateral_arch_height",
@@ -111,7 +97,6 @@ const DeviceOptionsModule = {
           )
           .join("")
       );
-
       if (input && data[field] !== undefined) {
         input.value = data[field];
       }
@@ -158,7 +143,7 @@ const DeviceOptionsModule = {
     return formData;
   },
 
-  async saveDeviceOptions(goToNext = false) {
+  async handleSave(shouldProceedToNext = false) {
     if (!this.prescriptionId) {
       showToast("No prescription ID found", "danger");
       return;
@@ -172,77 +157,98 @@ const DeviceOptionsModule = {
       );
       showToast("Device options saved successfully", "success");
 
-      // Hide modal and clean up
-      const modalElement = document.getElementById("deviceOptionsModal");
-      const modalInstance = bootstrap.Modal.getInstance(modalElement);
-      if (modalInstance) {
-        modalInstance.hide();
+      if (shouldProceedToNext) {
+        const modalElement = document.getElementById("deviceOptionsModal");
+        const modalInstance = bootstrap.Modal.getInstance(modalElement);
 
-        // Clean up modal backdrop and scrollbar issues
-        modalElement.addEventListener(
-          "hidden.bs.modal",
-          () => {
-            setTimeout(() => {
+        if (modalInstance) {
+          const prescriptionId = this.prescriptionId; // Store prescriptionId in closure
+
+          // Remove any existing event listeners
+          modalElement.removeEventListener("hidden.bs.modal", () => {});
+
+          modalElement.addEventListener(
+            "hidden.bs.modal",
+            () => {
+              // Clean up modal backdrop and scrollbar issues
               const backdrop = document.querySelector(".modal-backdrop");
               if (backdrop) backdrop.remove();
               document.body.classList.remove("modal-open");
               document.body.style.removeProperty("padding-right");
 
-              if (goToNext) {
-                setTimeout(() => {
-                  const materialModal = document.getElementById(
-                    "materialSelectionModal"
+              // Ensure some delay before opening the next modal
+              setTimeout(() => {
+                const notesAttachmentsModal = document.getElementById(
+                  "notesAttachmentsModal"
+                );
+                if (!notesAttachmentsModal) {
+                  console.error("Notes & Attachments modal not found in DOM");
+                  showToast(
+                    "Could not proceed to Notes & Attachments",
+                    "danger"
                   );
-                  if (!materialModal) {
-                    console.error("Material selection modal not found");
-                    showToast(
-                      "Could not proceed to material selection",
-                      "danger"
-                    );
-                    return;
+                  return;
+                }
+
+                try {
+                  // First ensure any existing modal instance is disposed
+                  const existingModal = bootstrap.Modal.getInstance(
+                    notesAttachmentsModal
+                  );
+                  if (existingModal) {
+                    existingModal.dispose();
                   }
 
-                  try {
-                    const modal = new bootstrap.Modal(materialModal);
-                    modal.show();
+                  console.log("Opening Notes & Attachments modal...");
+                  const modal = new bootstrap.Modal(notesAttachmentsModal);
+                  modal.show();
 
-                    if (
-                      window.MaterialSelectionModule &&
-                      typeof window.MaterialSelectionModule.init === "function"
-                    ) {
-                      window.MaterialSelectionModule.init(this.prescriptionId);
-                    } else {
-                      console.error(
-                        "MaterialSelectionModule not found or init method not available"
-                      );
-                      showToast(
-                        "Could not initialize material selection",
-                        "danger"
-                      );
-                    }
-                  } catch (error) {
+                  // Initialize the NotesAttachmentsModule
+                  if (window.NotesAttachmentsModule) {
+                    console.log(
+                      "Initializing NotesAttachmentsModule with prescriptionId:",
+                      prescriptionId
+                    );
+                    window.NotesAttachmentsModule.init(prescriptionId);
+                  } else {
                     console.error(
-                      "Error showing material selection modal:",
-                      error
+                      "NotesAttachmentsModule not found in global scope"
                     );
                     showToast(
-                      "Error showing material selection options",
+                      "Could not initialize Notes & Attachments",
                       "danger"
                     );
                   }
-                }, 300);
-              }
-            }, 300);
-          },
-          { once: true }
-        );
+                } catch (error) {
+                  console.error(
+                    "Error showing Notes & Attachments modal:",
+                    error
+                  );
+                  showToast("Error showing Notes & Attachments", "danger");
+                }
+              }, 500); // Increased delay for better reliability
+            },
+            { once: true }
+          );
+
+          modalInstance.hide();
+        }
       }
     } catch (error) {
       console.error("Error saving device options:", error);
-      showToast("Failed to save device options", "danger");
+      showToast("Error saving device options", "danger");
     }
   },
 };
 
-// Export to global scope
+// Explicitly expose the module to the global scope
 window.DeviceOptionsModule = DeviceOptionsModule;
+
+// Initialize when DOM is loaded
+document.addEventListener("DOMContentLoaded", () => {
+  // Only initialize if there's a device options modal
+  const deviceOptionsModal = document.getElementById("deviceOptionsModal");
+  if (deviceOptionsModal) {
+    console.log("Device options modal found in DOM");
+  }
+});

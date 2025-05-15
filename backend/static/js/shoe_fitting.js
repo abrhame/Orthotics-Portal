@@ -27,6 +27,7 @@ function showToast(message, type = "info") {
   });
 }
 
+// Create a singleton instance for the ShoeFittingModule
 const ShoeFittingModule = {
   prescriptionId: null,
 
@@ -43,81 +44,6 @@ const ShoeFittingModule = {
     this.initializeForm();
     this.bindEvents();
     this.loadExistingShoeFitting();
-    console.log("Prescription ID:", this.prescriptionId);
-    // Clean up any existing modals before initializing
-    const existingModals = [
-      "materialSelectionModal",
-      "postingModal",
-      "shoeFittingModal",
-    ]
-      .map((id) => bootstrap.Modal.getInstance(document.getElementById(id)))
-      .filter(Boolean);
-    console.log("Existing modals:", existingModals);
-    const initializeAfterCleanup = () => {
-      // Remove any existing backdrops
-      const backdrops = document.getElementsByClassName("modal-backdrop");
-      while (backdrops.length > 0) {
-        backdrops[0].parentNode.removeChild(backdrops[0]);
-      }
-
-      console.log("Removing backdrops");
-
-      // Remove any inline styles that might interfere
-      document.body.style.removeProperty("padding-right");
-      document.body.style.removeProperty("overflow");
-      document.body.classList.remove("modal-open");
-      console.log("Removing inline styles");
-      this.initializeForm();
-      this.bindEvents();
-      this.loadExistingShoeFitting();
-
-      // Initialize and show the shoe fitting modal
-      const modalElement = document.getElementById("shoeFittingModal");
-      modalElement.style.display = "block"; // Ensure modal is visible
-      const shoeFittingModal = new bootstrap.Modal(modalElement, {
-        backdrop: "static", // Prevent closing when clicking outside
-        keyboard: false, // Prevent closing with keyboard
-      });
-      console.log("Showing shoe fitting modal");
-      // Ensure modal is accessible
-      modalElement.removeAttribute("aria-hidden");
-      modalElement.setAttribute("aria-modal", "true");
-
-      // Show the modal
-      shoeFittingModal.show();
-      console.log("Showing shoe fitting modal");
-      // Add event listener for when modal is shown
-      modalElement.addEventListener("shown.bs.modal", () => {
-        // Ensure the modal is on top
-        const backdrop = document.querySelector(".modal-backdrop");
-        if (backdrop) {
-          backdrop.style.zIndex = "1050";
-        }
-        modalElement.style.zIndex = "1060";
-      });
-    };
-    console.log("Initializing after cleanup");
-
-    if (existingModals.length > 0) {
-      // Hide all existing modals
-      let modalsHidden = 0;
-      existingModals.forEach((modal) => {
-        modal._element.addEventListener(
-          "hidden.bs.modal",
-          () => {
-            modalsHidden++;
-            if (modalsHidden === existingModals.length) {
-              setTimeout(initializeAfterCleanup, 100); // Small delay to ensure cleanup
-            }
-          },
-          { once: true }
-        );
-        modal.hide();
-      });
-      console.log("Hiding existing modals");
-    } else {
-      initializeAfterCleanup();
-    }
   },
 
   initializeForm() {
@@ -125,10 +51,12 @@ const ShoeFittingModule = {
     if (form) {
       form.reset();
     }
-  },
 
-  bindEvents() {
-    // Bind increment/decrement buttons for size
+    // Initialize tooltips
+    const tooltips = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    tooltips.forEach((tooltip) => new bootstrap.Tooltip(tooltip));
+
+    // Initialize increment/decrement buttons
     const incrementBtns = document.querySelectorAll(
       "#shoeFittingModal .increment"
     );
@@ -163,184 +91,171 @@ const ShoeFittingModule = {
         }
       });
     });
+  },
 
-    // Bind save and next buttons
-    const saveBtn = document.querySelector("#saveShoeFittingBtn");
-    const nextBtn = document.querySelector("#nextShoeFittingBtn");
+  bindEvents() {
+    const saveBtn = document.getElementById("saveShoeFittingBtn");
+    const nextBtn = document.getElementById("nextShoeFittingBtn");
 
     if (saveBtn) {
-      saveBtn.addEventListener("click", async (e) => {
-        console.log("Saving shoe fitting");
-        e.preventDefault();
-        await this.saveShoeFitting(false);
-      });
+      saveBtn.addEventListener("click", () => this.saveShoeFitting(false));
     }
 
     if (nextBtn) {
-      nextBtn.addEventListener("click", async (e) => {
-        e.preventDefault();
-        await this.saveShoeFitting(true);
-      });
+      nextBtn.addEventListener("click", () => this.saveShoeFitting(true));
     }
   },
 
   async loadExistingShoeFitting() {
     try {
-      const data = await ApiService.prescriptions.getShoeFitting(
+      const response = await ApiService.prescriptions.getShoeFitting(
         this.prescriptionId
       );
-      this.populateForm(data);
+      if (response) {
+        this.populateForm(response);
+      }
     } catch (error) {
       console.error("Error loading shoe fitting:", error);
-      if (!error.message?.includes("404")) {
-        showToast("Failed to load shoe fitting data", "danger");
-      }
+      showToast("Failed to load shoe fitting", "danger");
     }
   },
 
   populateForm(data) {
     if (!data) return;
 
-    const form = document.getElementById("shoeFittingForm");
-    if (!form) return;
+    const fields = ["sizing_style", "orthosis_size"];
 
-    // Set sizing style
-    const sizingStyleSelect = form.querySelector("#sizingStyle");
-    if (sizingStyleSelect && data.sizing_style) {
-      sizingStyleSelect.value = data.sizing_style;
-    }
-
-    // Set orthosis size
-    const sizeInput = form.querySelector("#orthosisSize");
-    if (sizeInput && data.orthosis_size) {
-      sizeInput.value = data.orthosis_size;
-    }
+    fields.forEach((field) => {
+      const input = document.getElementById(
+        field
+          .split("_")
+          .map((word, index) =>
+            index === 0 ? word : word.charAt(0).toUpperCase() + word.slice(1)
+          )
+          .join("")
+      );
+      if (input && data[field] !== undefined) {
+        input.value = data[field];
+      }
+    });
 
     // Set checkboxes based on to_fit_shoe string
     if (data.to_fit_shoe && data.to_fit_shoe !== "none") {
       const toFitShoeValues = data.to_fit_shoe.split(",");
 
-      const referToInsole = form.querySelector("#referToInsole");
+      const referToInsole = document.getElementById("referToInsole");
       if (referToInsole) {
         referToInsole.checked = toFitShoeValues.includes("refer-to-insole");
       }
 
-      const shoeProvided = form.querySelector("#shoeProvided");
+      const shoeProvided = document.getElementById("shoeProvided");
       if (shoeProvided) {
         shoeProvided.checked = toFitShoeValues.includes("shoe-provided");
       }
     } else {
       // If no to_fit_shoe data or it's 'none', uncheck all boxes
-      const checkboxes = form.querySelectorAll('input[type="checkbox"]');
+      const checkboxes = document.querySelectorAll('input[type="checkbox"]');
       checkboxes.forEach((checkbox) => (checkbox.checked = false));
     }
   },
 
   collectFormData() {
-    const form = document.getElementById("shoeFittingForm");
-    if (!form) {
-      console.error("Shoe fitting form not found");
-      return null;
+    const formData = {
+      prescription: this.prescriptionId,
+    };
+
+    // Get basic fields
+    const sizingStyle = document.getElementById("sizingStyle");
+    const orthosisSize = document.getElementById("orthosisSize");
+
+    if (sizingStyle) {
+      formData.sizing_style = sizingStyle.value;
+    }
+
+    if (orthosisSize) {
+      formData.orthosis_size = parseFloat(orthosisSize.value) || 8;
     }
 
     // Get checkbox values
     const referToInsole =
-      form.querySelector("#referToInsole")?.checked || false;
-    const shoeProvided = form.querySelector("#shoeProvided")?.checked || false;
+      document.getElementById("referToInsole")?.checked || false;
+    const shoeProvided =
+      document.getElementById("shoeProvided")?.checked || false;
 
     // Construct to_fit_shoe array and join with commas
     const toFitShoeArray = [];
     if (referToInsole) toFitShoeArray.push("refer-to-insole");
     if (shoeProvided) toFitShoeArray.push("shoe-provided");
 
-    // Ensure we have valid values for all required fields
-    const data = {
-      prescription: this.prescriptionId,
-      sizing_style: form.querySelector("#sizingStyle")?.value || "mens",
-      orthosis_size:
-        parseFloat(form.querySelector("#orthosisSize")?.value) || 8,
-      to_fit_shoe:
-        toFitShoeArray.length > 0 ? toFitShoeArray.join(",") : "none",
-    };
+    formData.to_fit_shoe =
+      toFitShoeArray.length > 0 ? toFitShoeArray.join(",") : "none";
 
-    // Validate the data
-    if (!data.prescription) {
-      showToast("Missing prescription ID", "danger");
-      return null;
-    }
-
-    if (!data.sizing_style) {
-      showToast("Please select a sizing style", "danger");
-      return null;
-    }
-
-    if (isNaN(data.orthosis_size)) {
-      showToast("Please enter a valid orthosis size", "danger");
-      return null;
-    }
-
-    return data;
+    return formData;
   },
 
   async saveShoeFitting(shouldProceedToNext = false) {
     try {
-      console.log("Saving shoe fitting");
-      const data = this.collectFormData();
-      if (!data) {
-        showToast("Failed to collect form data", "danger");
-        return;
-      }
+      const formData = this.collectFormData();
+      console.log("Saving shoe fitting data...");
 
       const response = await ApiService.prescriptions.saveShoeFitting(
         this.prescriptionId,
-        data
+        formData
       );
-      console.log(response);
+      console.log("Shoe fitting saved successfully");
       showToast("Shoe fitting saved successfully", "success");
 
-      // Get the current modal instance
       const modalElement = document.getElementById("shoeFittingModal");
-      const shoeFittingModal = bootstrap.Modal.getInstance(modalElement);
+      const modalInstance = bootstrap.Modal.getInstance(modalElement);
 
-      if (shoeFittingModal) {
-        // Hide the modal
-        shoeFittingModal.hide();
-        console.log("Hiding shoe fitting modal");
-        // Clean up after modal is hidden
+      if (modalInstance) {
+        const prescriptionId = this.prescriptionId; // Store prescriptionId in closure
+
+        // Remove any existing event listeners
+        modalElement.removeEventListener("hidden.bs.modal", () => {});
+
         modalElement.addEventListener(
           "hidden.bs.modal",
           () => {
-            console.log("Hiding shoe fitting modal");
-            // Remove any lingering backdrops
-            const backdrops = document.getElementsByClassName("modal-backdrop");
-            Array.from(backdrops).forEach((backdrop) => backdrop.remove());
-
+            // Clean up modal backdrop and scrollbar issues
+            const backdrop = document.querySelector(".modal-backdrop");
+            if (backdrop) backdrop.remove();
             document.body.classList.remove("modal-open");
             document.body.style.removeProperty("padding-right");
 
-            // Check if DeviceOptionsModule exists before trying to use it
             if (shouldProceedToNext) {
+              // Ensure some delay before opening the next modal
               setTimeout(() => {
-                const deviceOptionsModal = new bootstrap.Modal(
-                  document.getElementById("deviceOptionsModal")
-                );
+                const deviceOptionsModal =
+                  document.getElementById("deviceOptionsModal");
                 if (!deviceOptionsModal) {
-                  console.error("Device options modal not found");
+                  console.error("Device options modal not found in DOM");
                   showToast("Could not proceed to device options", "danger");
                   return;
                 }
 
                 try {
-                  deviceOptionsModal.show();
+                  // First ensure any existing modal instance is disposed
+                  const existingModal =
+                    bootstrap.Modal.getInstance(deviceOptionsModal);
+                  if (existingModal) {
+                    existingModal.dispose();
+                  }
 
-                  if (
-                    window.DeviceOptionsModule &&
-                    typeof window.DeviceOptionsModule.init === "function"
-                  ) {
-                    window.DeviceOptionsModule.init(this.prescriptionId);
+                  console.log("Opening device options modal...");
+                  const modal = new bootstrap.Modal(deviceOptionsModal);
+                  modal.show();
+
+                  // Initialize the DeviceOptionsModule
+                  if (window.DeviceOptionsModule) {
+                    console.log(
+                      "Initializing DeviceOptionsModule with prescriptionId:",
+                      prescriptionId
+                    );
+                    window.DeviceOptionsModule.init(prescriptionId);
                   } else {
                     console.error(
-                      "DeviceOptionsModule not found or init method not available"
+                      "DeviceOptionsModule not found in global scope"
                     );
                     showToast("Could not initialize device options", "danger");
                   }
@@ -348,11 +263,13 @@ const ShoeFittingModule = {
                   console.error("Error showing device options modal:", error);
                   showToast("Error showing device options", "danger");
                 }
-              }, 300);
+              }, 500); // Increased delay for better reliability
             }
           },
           { once: true }
         );
+
+        modalInstance.hide();
       }
     } catch (error) {
       console.error("Error saving shoe fitting:", error);

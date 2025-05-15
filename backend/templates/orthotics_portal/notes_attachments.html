@@ -1,0 +1,166 @@
+{% load static %}
+
+<!-- Notes & Attachments Modal -->
+<div
+  class="modal fade"
+  id="notesAttachmentsModal"
+  tabindex="-1"
+  aria-labelledby="notesAttachmentsModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="notesAttachmentsModalLabel">
+          Notes & Attachments
+        </h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <div class="notes-attachments-container">
+          <div class="admin-options">
+            <h3>Administration</h3>
+            <div class="admin-option">
+              <input type="checkbox" id="contactClinician" />
+              <label for="contactClinician"
+                >Contact Clinician
+                <span
+                  class="info-icon"
+                  title="Contact clinician before proceeding"
+                  >?</span
+                ></label
+              >
+            </div>
+            <div class="admin-option">
+              <input type="checkbox" id="confirmBeforeManufacture" />
+              <label for="confirmBeforeManufacture"
+                >Confirm Before Manufacture
+                <span
+                  class="info-icon"
+                  title="Get confirmation before manufacturing"
+                  >?</span
+                ></label
+              >
+            </div>
+            <div class="admin-option">
+              <input type="checkbox" id="clinicianCAD" />
+              <label for="clinicianCAD"
+                >Clinician Computer-Aided Design
+                <span class="info-icon" title="Use clinician's CAD design"
+                  >?</span
+                ></label
+              >
+            </div>
+
+            <div class="turnaround-row">
+              <label for="turnaroundTime"
+                >Turnaround:
+                <span class="info-icon" title="Expected turnaround time"
+                  >?</span
+                ></label
+              >
+              <select id="turnaroundTime">
+                <option value="standard">3DP Standard (5 Working Days)</option>
+                <option value="express">3DP Express (3 Working Days)</option>
+                <option value="urgent">3DP Urgent (1 Working Day)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="notes-grid">
+            <div class="notes-field">
+              <label for="generalNotes"
+                >General Notes
+                <span
+                  class="info-icon"
+                  title="General notes for the prescription"
+                  >?</span
+                ></label
+              >
+              <textarea
+                id="generalNotes"
+                placeholder="Enter any general notes here..."
+              ></textarea>
+            </div>
+
+            <div class="notes-row">
+              <div class="notes-field">
+                <label for="leftFootNotes"
+                  >Left Foot Notes
+                  <span class="info-icon" title="Notes specific to left foot"
+                    >?</span
+                  ></label
+                >
+                <textarea
+                  id="leftFootNotes"
+                  placeholder="Enter notes for left foot..."
+                ></textarea>
+              </div>
+              <div class="notes-field">
+                <label for="rightFootNotes"
+                  >Right Foot Notes
+                  <span class="info-icon" title="Notes specific to right foot"
+                    >?</span
+                  ></label
+                >
+                <textarea
+                  id="rightFootNotes"
+                  placeholder="Enter notes for right foot..."
+                ></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="attachments-section">
+            <div class="attachments-header">
+              <h3>
+                Attachments
+                <span class="info-icon" title="Add supporting files">?</span>
+              </h3>
+              <button class="add-file-button" id="addAttachmentBtn">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M12 5V19M5 12H19"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+                ADD FILE
+              </button>
+              <input
+                type="file"
+                id="attachmentInput"
+                style="display: none"
+                multiple
+              />
+            </div>
+            <div class="attachments-list" id="attachmentsList">
+              <!-- Attachment items will be added here dynamically -->
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
+        <button type="button" class="btn btn-primary" id="sendToLab">
+          Send to Lab
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -23,6 +23,8 @@ from django.contrib.auth import views as auth_views
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
+from core import views
+from rest_framework.routers import DefaultRouter
 
 # Create schema view for Swagger
 schema_view = get_schema_view(
@@ -48,12 +50,14 @@ api_patterns = [
     path('invoices/', include('invoices.urls')),
 ]
 
+router = DefaultRouter()
+
 urlpatterns = [
     # Admin
     path('admin/', admin.site.urls),
     
     # Core app URLs (templates)
-    path('', include('core.urls')),
+    path('', views.home_view, name='home'),
     
     # Authentication
     path('login/', auth_views.LoginView.as_view(template_name='orthotics_portal/login.html'), name='login'),
@@ -69,6 +73,17 @@ urlpatterns = [
     
     # Legacy paths (keeping for backward compatibility)
     path('api/docs/', RedirectView.as_view(url='/swagger/', permanent=True)),
+    
+    # New URLs
+    path('register/', views.register_view, name='register'),
+    path('prescriptions/', views.prescriptions_view, name='prescriptions'),
+    path('prescriptions/<uuid:prescription_id>/', views.prescription_detail_view, name='prescription_detail'),
+    path('orders/', views.orders_view, name='orders'),
+    path('orders/<uuid:order_id>/', views.order_detail_view, name='order_detail'),
+    path('invoices/', views.invoices_view, name='invoices'),
+    path('invoices/<uuid:invoice_id>/', views.invoice_detail_view, name='invoice_detail'),
+    path('basket/', views.basket_view, name='basket'),
+    path('profile/', views.profile_view, name='profile'),
 ]
 
 # Serve media files in development and production

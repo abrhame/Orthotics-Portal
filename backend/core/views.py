@@ -86,27 +86,17 @@ def register_view(request):
 @login_required
 def prescriptions_view(request):
     """Prescriptions page view."""
-    logger.info(f"Prescriptions view accessed by user: {request.user} (authenticated: {request.user.is_authenticated})")
-    
-    patients = None
     prescriptions = None
-    templates = None
+    templates = Template.objects.filter(is_active=True).order_by('name')
     
-    # If the user is associated with a clinic, get all patients from that clinic
+    # If the user is associated with a clinic, get all prescriptions from that clinic
     if hasattr(request.user, 'clinic') and request.user.clinic:
-        logger.info(f"User has clinic: {request.user.clinic.name}")
-        patients = Patient.objects.filter(clinic=request.user.clinic)
-        prescriptions = Prescription.objects.filter(patient__clinic=request.user.clinic)
-        templates = Template.objects.filter(is_active=True)
-        logger.info(f"Found {patients.count()} patients and {prescriptions.count()} prescriptions")
-    else:
-        logger.warning(f"User {request.user.email} does not have an associated clinic")
+        prescriptions = Prescription.objects.filter(patient__clinic=request.user.clinic).order_by('-created_at')
     
     context = {
-        'patients': patients,
         'prescriptions': prescriptions,
         'templates': templates,
-        'use_absolute_urls': True,  # Set to True to use absolute URLs for static files in development
+        'use_absolute_urls': True,
     }
     return render(request, 'orthotics_portal/prescriptions.html', context)
 
@@ -371,3 +361,75 @@ def debug_session(request):
             'authenticated': False,
             'session_id': request.session.session_key,
         })
+
+
+@login_required
+def order_detail_view(request, order_id):
+    """Order detail page view."""
+    try:
+        # Get the order and check if it belongs to the user's clinic
+        order = Order.objects.get(id=order_id)
+        if not request.user.is_staff and order.prescriptions.first().patient.clinic != request.user.clinic:
+            messages.error(request, 'You do not have permission to view this order.')
+            return redirect('orders')
+        
+        context = {
+            'order': order,
+            'use_absolute_urls': True
+        }
+        return render(request, 'orthotics_portal/order_detail.html', context)
+    except Order.DoesNotExist:
+        messages.error(request, 'Order not found.')
+        return redirect('orders')
+    except Exception as e:
+        logger.error(f"Error viewing order detail: {str(e)}")
+        messages.error(request, 'An error occurred while loading the order.')
+        return redirect('orders')
+
+
+@login_required
+def invoice_detail_view(request, invoice_id):
+    """Invoice detail page view."""
+    try:
+        # Get the invoice and check if it belongs to the user's clinic
+        invoice = Invoice.objects.get(id=invoice_id)
+        if not request.user.is_staff and invoice.order.prescriptions.first().patient.clinic != request.user.clinic:
+            messages.error(request, 'You do not have permission to view this invoice.')
+            return redirect('invoices')
+        
+        context = {
+            'invoice': invoice,
+            'use_absolute_urls': True
+        }
+        return render(request, 'orthotics_portal/invoice_detail.html', context)
+    except Invoice.DoesNotExist:
+        messages.error(request, 'Invoice not found.')
+        return redirect('invoices')
+    except Exception as e:
+        logger.error(f"Error viewing invoice detail: {str(e)}")
+        messages.error(request, 'An error occurred while loading the invoice.')
+        return redirect('invoices')
+
+
+@login_required
+def prescription_detail_view(request, prescription_id):
+    """Prescription detail page view."""
+    try:
+        # Get the prescription and check if it belongs to the user's clinic
+        prescription = Prescription.objects.get(id=prescription_id)
+        if not request.user.is_staff and prescription.patient.clinic != request.user.clinic:
+            messages.error(request, 'You do not have permission to view this prescription.')
+            return redirect('prescriptions')
+        
+        context = {
+            'prescription': prescription,
+            'use_absolute_urls': True
+        }
+        return render(request, 'orthotics_portal/prescription_detail.html', context)
+    except Prescription.DoesNotExist:
+        messages.error(request, 'Prescription not found.')
+        return redirect('prescriptions')
+    except Exception as e:
+        logger.error(f"Error viewing prescription detail: {str(e)}")
+        messages.error(request, 'An error occurred while loading the prescription.')
+        return redirect('prescriptions')

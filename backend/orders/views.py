@@ -2,7 +2,7 @@
 Views for the orders app.
 """
 from django.shortcuts import render
-from rest_framework import viewsets, status, mixins
+from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -30,8 +30,8 @@ class OrderViewSet(viewsets.ModelViewSet):
             return Order.objects.all().order_by('-created_at')
         elif hasattr(user, 'clinic') and user.clinic:
             return Order.objects.filter(
-                prescription__patient__clinic=user.clinic
-            ).order_by('-created_at')
+                prescriptions__patient__clinic=user.clinic
+            ).distinct().order_by('-created_at')
         return Order.objects.none()
     
     def get_serializer_class(self):
@@ -41,6 +41,27 @@ class OrderViewSet(viewsets.ModelViewSet):
         if self.action == 'retrieve':
             return OrderDetailSerializer
         return OrderSerializer
+    
+    def list(self, request, *args, **kwargs):
+        """
+        Override list method to handle DataTables request and return data in the expected format.
+        """
+        try:
+            queryset = self.get_queryset()
+            serializer = self.get_serializer(queryset, many=True)
+            data = {
+                'data': serializer.data,  # DataTables expects data in a 'data' key
+                'recordsTotal': queryset.count(),
+                'recordsFiltered': queryset.count(),
+                'draw': request.GET.get('draw', 1)
+            }
+            return Response(data)
+        except Exception as e:
+            logger.error(f"Error in order list view: {str(e)}")
+            return Response(
+                {"error": f"Error retrieving orders: {str(e)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
     
     @action(detail=True, methods=['post'])
     def cancel(self, request, pk=None):

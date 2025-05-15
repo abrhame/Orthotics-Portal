@@ -1,0 +1,104 @@
+{% extends 'orthotics_portal/base.html' %} {% load static %} {% block title
+%}Invoice Details | Orthotics Prescription Portal{% endblock %} {% block content
+%}
+<div class="container-fluid px-4">
+  <h1 class="mt-4">Invoice Details</h1>
+  <ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item"><a href="{% url 'home' %}">Dashboard</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'invoices' %}">Invoices</a></li>
+    <li class="breadcrumb-item active">Invoice #{{ invoice.id }}</li>
+  </ol>
+
+  <div class="row">
+    <div class="col-xl-12">
+      <div class="card mb-4">
+        <div class="card-header">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <i class="fas fa-file-invoice-dollar me-1"></i>
+              Invoice Information
+            </div>
+            <div>
+              <button class="btn btn-success btn-sm" id="generatePdfBtn">
+                <i class="fas fa-file-pdf me-1"></i> Generate PDF
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="row mb-4">
+            <div class="col-md-6">
+              <h5 class="mb-3">Invoice Details</h5>
+              <p><strong>Invoice ID:</strong> {{ invoice.id }}</p>
+              <p>
+                <strong>Date:</strong> {{ invoice.created_at|date:"F d, Y" }}
+              </p>
+              <p>
+                <strong>Status:</strong>
+                <span class="badge bg-{{ invoice.status|lower }}"
+                  >{{ invoice.status }}</span
+                >
+              </p>
+              <p>
+                <strong>Order ID:</strong>
+                <a href="{% url 'order_detail' invoice.order.id %}"
+                  >{{ invoice.order.id }}</a
+                >
+              </p>
+            </div>
+            <div class="col-md-6">
+              <h5 class="mb-3">Payment Information</h5>
+              <p><strong>Subtotal:</strong> ${{ invoice.subtotal }}</p>
+              <p><strong>Shipping:</strong> ${{ invoice.shipping }}</p>
+              <p><strong>Tax:</strong> ${{ invoice.tax }}</p>
+              <p><strong>Total Amount:</strong> ${{ invoice.total_amount }}</p>
+            </div>
+          </div>
+
+          <h5 class="mb-3">Invoice Items</h5>
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>Description</th>
+                  <th>Quantity</th>
+                  <th>Price</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for item in invoice.items.all %}
+                <tr>
+                  <td>{{ item.description }}</td>
+                  <td>{{ item.quantity }}</td>
+                  <td>${{ item.price }}</td>
+                  <td>${{ item.total }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+
+          {% if invoice.notes %}
+          <div class="mt-4">
+            <h5 class="mb-3">Notes</h5>
+            <div class="card">
+              <div class="card-body">{{ invoice.notes|linebreaks }}</div>
+            </div>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} {% block extra_js %}
+<script>
+  $(document).ready(function () {
+    // Handle generate PDF button click
+    $("#generatePdfBtn").on("click", function () {
+      window.open(`/api/invoices/${invoice.id}/generate-pdf/`, "_blank");
+    });
+  });
+</script>
+{% endblock %}

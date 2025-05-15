@@ -1,0 +1,221 @@
+{% extends 'orthotics_portal/base.html' %} {% load static %} {% block title
+%}Prescription Details | Orthotics Prescription Portal{% endblock %} {% block
+content %}
+<div class="container-fluid">
+  <h1 class="h3 mb-2 text-gray-800">Prescription Details</h1>
+  <ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item"><a href="{% url 'home' %}">Dashboard</a></li>
+    <li class="breadcrumb-item">
+      <a href="{% url 'prescriptions' %}">Prescriptions</a>
+    </li>
+    <li class="breadcrumb-item active">Prescription #{{ prescription.id }}</li>
+  </ol>
+
+  <div class="row">
+    <div class="col-xl-12">
+      <div class="card mb-4">
+        <div class="card-header">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <i class="fas fa-clipboard-list me-1"></i>
+              Prescription Information
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="row mb-4">
+            <div class="col-md-6">
+              <h5 class="mb-3">Basic Information</h5>
+              <p><strong>Prescription ID:</strong> {{ prescription.id }}</p>
+              <p>
+                <strong>Date Created:</strong> {{
+                prescription.created_at|date:"F d, Y" }}
+              </p>
+              <p>
+                <strong>Status:</strong>
+                <span
+                  class="badge bg-{{ prescription.status.color|default:'secondary' }}"
+                  >{{ prescription.status.name|default:'N/A' }}</span
+                >
+              </p>
+              <p>
+                <strong>Template:</strong> {{
+                prescription.template.name|default:'N/A' }}
+              </p>
+            </div>
+            <div class="col-md-6">
+              <h5 class="mb-3">Patient Information</h5>
+              <p><strong>Name:</strong> {{ prescription.patient.full_name }}</p>
+              <p>
+                <strong>Date of Birth:</strong> {{
+                prescription.patient.date_of_birth|date:"F d, Y" }}
+              </p>
+              <p>
+                <strong>Email:</strong> {{
+                prescription.patient.email|default:'N/A' }}
+              </p>
+              <p>
+                <strong>Phone:</strong> {{
+                prescription.patient.phone|default:'N/A' }}
+              </p>
+            </div>
+          </div>
+
+          <div class="row mb-4">
+            <div class="col-md-6">
+              <h5 class="mb-3">Clinical Information</h5>
+              <p>
+                <strong>Foot Type:</strong> {{
+                prescription.foot_type.name|default:'N/A' }}
+              </p>
+              <p>
+                <strong>Wear Time:</strong> {{
+                prescription.wear_time.name|default:'N/A' }}
+              </p>
+              <p>
+                <strong>Activity Level:</strong> {{
+                prescription.activity_level.name|default:'N/A' }}
+              </p>
+              <p>
+                <strong>Turnaround:</strong> {{
+                prescription.get_turnaround_display }}
+              </p>
+            </div>
+            <div class="col-md-6">
+              <h5 class="mb-3">Additional Options</h5>
+              <p>
+                <strong>Contact Clinician:</strong> {% if
+                prescription.contact_clinician %}<i
+                  class="fas fa-check text-success"
+                ></i
+                >{% else %}<i class="fas fa-times text-danger"></i>{% endif %}
+              </p>
+              <p>
+                <strong>Confirm Before Manufacture:</strong> {% if
+                prescription.confirm_before_manufacture %}<i
+                  class="fas fa-check text-success"
+                ></i
+                >{% else %}<i class="fas fa-times text-danger"></i>{% endif %}
+              </p>
+              <p>
+                <strong>Clinician CAD:</strong> {% if
+                prescription.clinician_computer_aided_design %}<i
+                  class="fas fa-check text-success"
+                ></i
+                >{% else %}<i class="fas fa-times text-danger"></i>{% endif %}
+              </p>
+            </div>
+          </div>
+
+          {% if prescription.general_notes or prescription.left_foot_notes or
+          prescription.right_foot_notes %}
+          <div class="row mb-4">
+            <div class="col-12">
+              <h5 class="mb-3">Notes</h5>
+              {% if prescription.general_notes %}
+              <div class="mb-3">
+                <h6>General Notes</h6>
+                <div class="card">
+                  <div class="card-body">
+                    {{ prescription.general_notes|linebreaks }}
+                  </div>
+                </div>
+              </div>
+              {% endif %} {% if prescription.left_foot_notes %}
+              <div class="mb-3">
+                <h6>Left Foot Notes</h6>
+                <div class="card">
+                  <div class="card-body">
+                    {{ prescription.left_foot_notes|linebreaks }}
+                  </div>
+                </div>
+              </div>
+              {% endif %} {% if prescription.right_foot_notes %}
+              <div class="mb-3">
+                <h6>Right Foot Notes</h6>
+                <div class="card">
+                  <div class="card-body">
+                    {{ prescription.right_foot_notes|linebreaks }}
+                  </div>
+                </div>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+          {% endif %} {% if prescription.scans.exists %}
+          <div class="row mb-4">
+            <div class="col-12">
+              <h5 class="mb-3">Foot Scans</h5>
+              <div class="table-responsive">
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th>File Name</th>
+                      <th>Type</th>
+                      <th>Uploaded</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for scan in prescription.scans.all %}
+                    <tr>
+                      <td>{{ scan.filename }}</td>
+                      <td>{{ scan.scan_type }}</td>
+                      <td>{{ scan.created_at|date:"F d, Y" }}</td>
+                      <td>
+                        <a
+                          href="{{ scan.file.url }}"
+                          class="btn btn-primary btn-sm"
+                          target="_blank"
+                        >
+                          <i class="fas fa-download me-1"></i> Download
+                        </a>
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          {% endif %} {% if prescription.attachments.exists %}
+          <div class="row">
+            <div class="col-12">
+              <h5 class="mb-3">Attachments</h5>
+              <div class="table-responsive">
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th>File Name</th>
+                      <th>Uploaded</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for attachment in prescription.attachments.all %}
+                    <tr>
+                      <td>{{ attachment.filename }}</td>
+                      <td>{{ attachment.created_at|date:"F d, Y" }}</td>
+                      <td>
+                        <a
+                          href="{{ attachment.file.url }}"
+                          class="btn btn-primary btn-sm"
+                          target="_blank"
+                        >
+                          <i class="fas fa-download me-1"></i> Download
+                        </a>
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
