@@ -56,8 +56,8 @@ urlpatterns = [
     # Admin
     path('admin/', admin.site.urls),
     
-    # Core app URLs (templates)
-    path('', views.home_view, name='home'),
+    # Core app URLs
+    path('', include('core.urls')),  # Include all core URLs
     
     # Authentication
     path('login/', auth_views.LoginView.as_view(template_name='orthotics_portal/login.html'), name='login'),
