@@ -5,7 +5,6 @@ Orthotics Prescription Portal {% endblock %} {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/notes_attachments.css' %}" />
 {% endblock %} {% block content %}
 <div class="container mt-4">
-
   <div class="row mt-5">
     <div class="col-12">
       <h2>Patient Management</h2>
@@ -33,6 +32,7 @@ Orthotics Prescription Portal {% endblock %} {% block extra_css %}
         style="background-color: #3a6b6d; color: white"
         data-bs-toggle="modal"
         data-bs-target="#addPatientModal"
+        data-name="Add Patient"
       >
         <i class="bi bi-person-plus"></i> Add Patient
       </button>
@@ -76,7 +76,9 @@ Orthotics Prescription Portal {% endblock %} {% block extra_css %}
                     <button
                       class="btn btn-sm btn-primary create-prescription-btn"
                       data-id="{{ patient.id }}"
-                      data-name="{{ patient.full_name }}"
+                      data-first-name="{{ patient.first_name }}"
+                      data-bs-toggle="modal"
+                      data-bs-target="#addPatientModal"
                     >
                       <i class="bi bi-clipboard-plus"></i> Prescribe
                     </button>
@@ -107,7 +109,11 @@ Orthotics Prescription Portal {% endblock %} {% block extra_css %}
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="addPatientModalLabel" style="color: #ffffff">
+        <h5
+          class="modal-title"
+          id="addPatientModalLabel"
+          style="color: #ffffff"
+        >
           Add New Patient
         </h5>
         <button
@@ -1804,16 +1810,15 @@ Orthotics Prescription Portal {% endblock %} {% block extra_css %}
 <div id="toast-container" class="position-fixed bottom-0 end-0 p-3"></div>
 <!-- Full-screen 3D Preview Modal -->
 
-{% include 'orthotics_portal/plantar_modifiers.html' %} 
-{% include 'orthotics_portal/posting.html' %} 
-{% include 'orthotics_portal/material_selection.html' %} 
-{% include 'orthotics_portal/shoe_fitting.html' %} 
-{% include 'orthotics_portal/device_options.html' %}
+{% include 'orthotics_portal/plantar_modifiers.html' %} {% include
+'orthotics_portal/posting.html' %} {% include
+'orthotics_portal/material_selection.html' %} {% include
+'orthotics_portal/shoe_fitting.html' %} {% include
+'orthotics_portal/device_options.html' %}
 
 <!-- Notes & Attachments Section -->
-{% include 'orthotics_portal/notes_attachments.html' %} 
-{% endblock %} 
-{% block extra_js %}
+{% include 'orthotics_portal/notes_attachments.html' %} {% endblock %} {% block
+extra_js %}
 
 <script src="{% static 'js/plantar_modifiers.js' %}"></script>
 <script src="{% static 'js/posting.js' %}"></script>
@@ -2063,44 +2068,68 @@ Orthotics Prescription Portal {% endblock %} {% block extra_css %}
     }
 
     function openScanUploadModal(prescriptionId) {
+      if (!prescriptionId) {
+        console.error("No prescription ID provided");
+        return;
+      }
+
       console.log(
         "Opening scan upload modal with prescription ID:",
         prescriptionId
       );
-      // Reset the form
-      const leftFootScan = document.getElementById("leftFootScan");
-      const rightFootScan = document.getElementById("rightFootScan");
-      if (leftFootScan) leftFootScan.value = "";
-      if (rightFootScan) rightFootScan.value = "";
 
-      // Clear previews
-      const leftFootPreview = document.getElementById("leftFootPreview");
-      const rightFootPreview = document.getElementById("rightFootPreview");
-      const leftFoot3DPreview = document.getElementById("leftFoot3DPreview");
-      const rightFoot3DPreview = document.getElementById("rightFoot3DPreview");
-      const leftFootScanLabel = document.getElementById("leftFootScanLabel");
-      const rightFootScanLabel = document.getElementById("rightFootScanLabel");
-
-      if (leftFootPreview) leftFootPreview.classList.add("d-none");
-      if (rightFootPreview) rightFootPreview.classList.add("d-none");
-      if (leftFoot3DPreview) leftFoot3DPreview.classList.add("d-none");
-      if (rightFoot3DPreview) rightFoot3DPreview.classList.add("d-none");
-      if (leftFootScanLabel) leftFootScanLabel.textContent = "Select file";
-      if (rightFootScanLabel) rightFootScanLabel.textContent = "Select file";
-
-      // Store the prescription ID
-      const scanPrescriptionIdInput =
-        document.getElementById("scanPrescriptionId");
-      if (scanPrescriptionIdInput) {
-        scanPrescriptionIdInput.value = prescriptionId;
-        console.log("Stored prescription ID:", prescriptionId);
+      // Get modal element
+      const modalElement = document.getElementById("scanUploadModal");
+      if (!modalElement) {
+        console.error("Scan upload modal element not found");
+        return;
       }
 
-      // Show the modal
-      const modal = new bootstrap.Modal(
-        document.getElementById("scanUploadModal")
-      );
-      modal.show();
+      // Reset form and clear previews
+      const elements = {
+        leftFootScan: document.getElementById("leftFootScan"),
+        rightFootScan: document.getElementById("rightFootScan"),
+        leftFootPreview: document.getElementById("leftFootPreview"),
+        rightFootPreview: document.getElementById("rightFootPreview"),
+        leftFoot3DPreview: document.getElementById("leftFoot3DPreview"),
+        rightFoot3DPreview: document.getElementById("rightFoot3DPreview"),
+        leftFootScanLabel: document.getElementById("leftFootScanLabel"),
+        rightFootScanLabel: document.getElementById("rightFootScanLabel"),
+        scanPrescriptionId: document.getElementById("scanPrescriptionId"),
+      };
+
+      // Reset file inputs
+      if (elements.leftFootScan) elements.leftFootScan.value = "";
+      if (elements.rightFootScan) elements.rightFootScan.value = "";
+
+      // Reset previews
+      [
+        "leftFootPreview",
+        "rightFootPreview",
+        "leftFoot3DPreview",
+        "rightFoot3DPreview",
+      ].forEach((id) => {
+        if (elements[id]) elements[id].classList.add("d-none");
+      });
+
+      // Reset labels
+      if (elements.leftFootScanLabel)
+        elements.leftFootScanLabel.textContent = "Select file";
+      if (elements.rightFootScanLabel)
+        elements.rightFootScanLabel.textContent = "Select file";
+
+      // Set prescription ID
+      if (elements.scanPrescriptionId) {
+        elements.scanPrescriptionId.value = prescriptionId;
+      }
+
+      // Initialize and show modal
+      try {
+        const modal = new bootstrap.Modal(modalElement);
+        modal.show();
+      } catch (error) {
+        console.error("Error showing modal:", error);
+      }
     }
 
     // Handle scan upload
@@ -2208,7 +2237,7 @@ Orthotics Prescription Portal {% endblock %} {% block extra_css %}
     try {
       // Load patients
       const patientsResponse = await ApiService.patients.getAll();
-      console.log(patientsResponse);
+      console.log(patientsResponse.results[0]);
       displayPatients(patientsResponse.results || []);
       // Load prescriptions
       const prescriptionsResponse = await ApiService.prescriptions.getAll();
@@ -2237,7 +2266,7 @@ Orthotics Prescription Portal {% endblock %} {% block extra_css %}
       const row = document.createElement("tr");
       row.innerHTML = `
         <td>${patient.external_id || patient.id}</td>
-        <td>${patient.full_name}</td>
+        <td>${patient.first_name} ${patient.last_name}</td>
         <td>${formatDate(patient.date_of_birth)}</td>
         <td>${patient.email || patient.phone || "N/A"}</td>
         <td>
@@ -2254,7 +2283,11 @@ Orthotics Prescription Portal {% endblock %} {% block extra_css %}
           <button
             class="btn btn-sm btn-primary create-prescription-btn" 
             data-id="${patient.id}" 
-            data-name="${patient.full_name}">
+            data-first-name="${patient.first_name}" 
+            data-last-name="${patient.last_name}" 
+            data-bs-toggle="modal"
+            data-bs-target="#addPatientModal"
+            >
             <i class="bi bi-clipboard-plus"></i> Prescribe
           </button>
         </td>
@@ -2595,31 +2628,22 @@ Orthotics Prescription Portal {% endblock %} {% block extra_css %}
     const patientTableBody = document.getElementById("patientsTableBody");
     if (patientTableBody) {
       patientTableBody.addEventListener("click", function (event) {
-        if (event.target.classList.contains("view-patient-btn")) {
-          const patientId = event.target.dataset.id;
-          console.log("View patient:", patientId);
-          // Implement view patient functionality (e.g., open a modal or navigate to a detail page)
-        } else if (event.target.classList.contains("edit-patient-btn")) {
-          const patientId = event.target.dataset.id;
-          console.log("Edit patient:", patientId);
-          // Implement edit patient functionality (e.g., populate a modal with patient data)
-        } else if (event.target.classList.contains("create-prescription-btn")) {
-          const patientId = event.target.dataset.id;
-          const patientName = event.target.dataset.name;
-          // Open the create prescription modal and pre-select the patient
-          const createPrescriptionModal = new bootstrap.Modal(
-            document.getElementById("createPrescriptionModal")
-          );
-          const patientSelect = document.getElementById("prescriptionPatient");
-          if (patientSelect) {
-            for (let i = 0; i < patientSelect.options.length; i++) {
-              if (patientSelect.options[i].value === patientId) {
-                patientSelect.selectedIndex = i;
-                break;
-              }
-            }
+        const target = event.target.closest("button");
+        if (!target) return;
+
+        if (target.classList.contains("create-prescription-btn")) {
+          const patientId = target.dataset.id;
+          if (patientId) {
+            openScanUploadModal(patientId);
           }
-          createPrescriptionModal.show();
+        } else if (target.classList.contains("view-patient-btn")) {
+          const patientId = target.dataset.id;
+          console.log("View patient:", patientId);
+          // Implement view patient functionality
+        } else if (target.classList.contains("edit-patient-btn")) {
+          const patientId = target.dataset.id;
+          console.log("Edit patient:", patientId);
+          // Implement edit patient functionality
         }
       });
     }
