@@ -74,9 +74,10 @@ Orthotics Prescription Portal {% endblock %} {% block extra_css %}
                       <i class="bi bi-pencil"></i> Edit
                     </button>
                     <button
-                      class="btn btn-sm btn-primary create-prescription-btn"
+                      class="btn btn-sm btn-primary "
                       data-id="{{ patient.id }}"
                       data-first-name="{{ patient.first_name }}"
+                      data-last-name="{{patient.last_name}}"
                       data-bs-toggle="modal"
                       data-bs-target="#addPatientModal"
                     >
@@ -1810,15 +1811,16 @@ Orthotics Prescription Portal {% endblock %} {% block extra_css %}
 <div id="toast-container" class="position-fixed bottom-0 end-0 p-3"></div>
 <!-- Full-screen 3D Preview Modal -->
 
-{% include 'orthotics_portal/plantar_modifiers.html' %} {% include
-'orthotics_portal/posting.html' %} {% include
-'orthotics_portal/material_selection.html' %} {% include
-'orthotics_portal/shoe_fitting.html' %} {% include
-'orthotics_portal/device_options.html' %}
+{% include 'orthotics_portal/plantar_modifiers.html' %} 
+{% include 'orthotics_portal/posting.html' %} 
+{% include 'orthotics_portal/material_selection.html' %} 
+{% include 'orthotics_portal/shoe_fitting.html' %} 
+{% include 'orthotics_portal/device_options.html' %}
 
 <!-- Notes & Attachments Section -->
-{% include 'orthotics_portal/notes_attachments.html' %} {% endblock %} {% block
-extra_js %}
+{% include 'orthotics_portal/notes_attachments.html' %} 
+{% endblock %} 
+{% block extra_js %}
 
 <script src="{% static 'js/plantar_modifiers.js' %}"></script>
 <script src="{% static 'js/posting.js' %}"></script>
@@ -2281,7 +2283,7 @@ extra_js %}
             <i class="bi bi-pencil"></i> Edit
           </button>
           <button
-            class="btn btn-sm btn-primary create-prescription-btn" 
+            class="btn btn-sm btn-primary" 
             data-id="${patient.id}" 
             data-first-name="${patient.first_name}" 
             data-last-name="${patient.last_name}" 
