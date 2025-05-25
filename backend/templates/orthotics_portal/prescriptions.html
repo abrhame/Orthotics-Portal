@@ -74,7 +74,7 @@ Orthotics Prescription Portal {% endblock %} {% block extra_css %}
                       <i class="bi bi-pencil"></i> Edit
                     </button>
                     <button
-                      class="btn btn-sm btn-primary "
+                      class="btn btn-sm btn-primary"
                       data-id="{{ patient.id }}"
                       data-first-name="{{ patient.first_name }}"
                       data-last-name="{{patient.last_name}}"
@@ -160,6 +160,17 @@ Orthotics Prescription Portal {% endblock %} {% block extra_css %}
             <div class="col-md-6">
               <label for="patientId" class="form-label">Patient ID</label>
               <input type="text" class="form-control" id="patientId" />
+            </div>
+            <div class="col-md-6">
+              <label for="weight" class="form-label">Weight (kg)</label>
+              <input
+                type="number"
+                class="form-control"
+                id="weight"
+                required
+                min="0"
+                step="0.1"
+              />
             </div>
           </div>
           <div class="row mb-3">
@@ -341,7 +352,11 @@ Orthotics Prescription Portal {% endblock %} {% block extra_css %}
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="clinicalMeasuresModalLabel">
+        <h5
+          class="modal-title"
+          id="clinicalMeasuresModalLabel"
+          style="color: #ffffff"
+        >
           Clinical Measures
         </h5>
         <button
@@ -719,7 +734,11 @@ Orthotics Prescription Portal {% endblock %} {% block extra_css %}
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="intrinsicAdjustmentsModalLabel">
+        <h5
+          class="modal-title"
+          style="color: #ffffff"
+          id="intrinsicAdjustmentsModalLabel"
+        >
           Intrinsic Adjustments
         </h5>
         <button
@@ -947,6 +966,8 @@ Orthotics Prescription Portal {% endblock %} {% block extra_css %}
                     class="form-control text-center"
                     id="leftSkiveDepth"
                     value="0"
+                    step="0.1"
+                    min="0"
                   />
                   <button
                     type="button"
@@ -973,6 +994,8 @@ Orthotics Prescription Portal {% endblock %} {% block extra_css %}
                     class="form-control text-center"
                     id="leftSkiveDegrees"
                     value="0"
+                    step="0.1"
+                    min="0"
                   />
                   <button
                     type="button"
@@ -987,8 +1010,40 @@ Orthotics Prescription Portal {% endblock %} {% block extra_css %}
               <select class="form-select" id="leftSkiveInclination">
                 <option value="maximum" selected>Maximum Inclination</option>
                 <option value="zero">Zero Inclination</option>
-                <option value="minimum">Spe Inclination</option>
+                <option value="specific">Specific Inclination</option>
               </select>
+              <div
+                id="leftSpecificInclination"
+                class="mt-2"
+                style="display: none"
+              >
+                <label>Specific Inclination (degrees)</label>
+                <div class="input-group">
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary decrement"
+                    data-target="leftSpecificInclinationValue"
+                  >
+                    −
+                  </button>
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="leftSpecificInclinationValue"
+                    name="left_specific_inclination"
+                    step="0.1"
+                    min="0"
+                    value="0.0"
+                  />
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary increment"
+                    data-target="leftSpecificInclinationValue"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
             </div>
             <div class="col-md-1"></div>
             <div class="col-md-4">
@@ -1018,6 +1073,8 @@ Orthotics Prescription Portal {% endblock %} {% block extra_css %}
                     class="form-control text-center"
                     id="rightSkiveDepth"
                     value="0"
+                    step="0.1"
+                    min="0"
                   />
                   <button
                     type="button"
@@ -1044,6 +1101,8 @@ Orthotics Prescription Portal {% endblock %} {% block extra_css %}
                     class="form-control text-center"
                     id="rightSkiveDegrees"
                     value="0"
+                    step="0.1"
+                    min="0"
                   />
                   <button
                     type="button"
@@ -1060,6 +1119,38 @@ Orthotics Prescription Portal {% endblock %} {% block extra_css %}
                 <option value="zero">Zero Inclination</option>
                 <option value="specific">Specific Inclination</option>
               </select>
+              <div
+                id="rightSpecificInclination"
+                class="mt-2"
+                style="display: none"
+              >
+                <label>Specific Inclination (degrees)</label>
+                <div class="input-group">
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary decrement"
+                    data-target="rightSpecificInclinationValue"
+                  >
+                    −
+                  </button>
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="rightSpecificInclinationValue"
+                    name="right_specific_inclination"
+                    step="0.1"
+                    min="0"
+                    value="0.0"
+                  />
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary increment"
+                    data-target="rightSpecificInclinationValue"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </form>
@@ -1099,7 +1190,13 @@ Orthotics Prescription Portal {% endblock %} {% block extra_css %}
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="offLoadingModalLabel">Off-Loading</h5>
+        <h5
+          class="modal-title"
+          style="color: #ffffff"
+          id="offLoadingModalLabel"
+        >
+          Off-Loading
+        </h5>
         <button
           type="button"
           class="btn-close"
@@ -1120,33 +1217,33 @@ Orthotics Prescription Portal {% endblock %} {% block extra_css %}
             </div>
           </div>
 
-          <!-- Cuboid Raise/Deli -->
+          <!-- Cuboid Raise/Dell -->
           <div class="row mb-3 align-items-center">
             <div class="col-md-3">
-              <label class="form-label mb-0">Cuboid Raise/Deli</label>
+              <label class="form-label mb-0">Cuboid Raise/Dell</label>
               <span class="badge bg-primary ms-1">i</span>
               <span class="d-block small text-muted">(mm)</span>
             </div>
             <div class="col-md-4">
-              <label class="form-label small">Deli</label>
+              <label class="form-label small">Dell</label>
               <div class="input-group mb-2">
                 <button
                   type="button"
                   class="btn btn-outline-secondary decrease-btn"
-                  data-target="leftCuboidDeli"
+                  data-target="leftCuboidDell"
                 >
                   −
                 </button>
                 <input
                   type="number"
                   class="form-control text-center"
-                  id="leftCuboidDeli"
+                  id="leftCuboidDell"
                   value="0"
                 />
                 <button
                   type="button"
                   class="btn btn-outline-secondary increase-btn"
-                  data-target="leftCuboidDeli"
+                  data-target="leftCuboidDell"
                 >
                   +
                 </button>
@@ -1178,25 +1275,25 @@ Orthotics Prescription Portal {% endblock %} {% block extra_css %}
             </div>
             <div class="col-md-1"></div>
             <div class="col-md-4">
-              <label class="form-label small">Deli</label>
+              <label class="form-label small">Dell</label>
               <div class="input-group mb-2">
                 <button
                   type="button"
                   class="btn btn-outline-secondary decrease-btn"
-                  data-target="rightCuboidDeli"
+                  data-target="rightCuboidDell"
                 >
                   −
                 </button>
                 <input
                   type="number"
                   class="form-control text-center"
-                  id="rightCuboidDeli"
+                  id="rightCuboidDell"
                   value="0"
                 />
                 <button
                   type="button"
                   class="btn btn-outline-secondary increase-btn"
-                  data-target="rightCuboidDeli"
+                  data-target="rightCuboidDell"
                 >
                   +
                 </button>
@@ -1228,33 +1325,33 @@ Orthotics Prescription Portal {% endblock %} {% block extra_css %}
             </div>
           </div>
 
-          <!-- Styloid Raise/Deli -->
+          <!-- Styloid Raise/Dell -->
           <div class="row mb-3 align-items-center">
             <div class="col-md-3">
-              <label class="form-label mb-0">Styloid Raise/Deli</label>
+              <label class="form-label mb-0">Styloid Raise/Dell</label>
               <span class="badge bg-primary ms-1">i</span>
               <span class="d-block small text-muted">(mm)</span>
             </div>
             <div class="col-md-4">
-              <label class="form-label small">Deli</label>
+              <label class="form-label small">Dell</label>
               <div class="input-group mb-2">
                 <button
                   type="button"
                   class="btn btn-outline-secondary decrease-btn"
-                  data-target="leftStyloidDeli"
+                  data-target="leftStyloidDell"
                 >
                   −
                 </button>
                 <input
                   type="number"
                   class="form-control text-center"
-                  id="leftStyloidDeli"
+                  id="leftStyloidDell"
                   value="0"
                 />
                 <button
                   type="button"
                   class="btn btn-outline-secondary increase-btn"
-                  data-target="leftStyloidDeli"
+                  data-target="leftStyloidDell"
                 >
                   +
                 </button>
@@ -1286,25 +1383,25 @@ Orthotics Prescription Portal {% endblock %} {% block extra_css %}
             </div>
             <div class="col-md-1"></div>
             <div class="col-md-4">
-              <label class="form-label small">Deli</label>
+              <label class="form-label small">Dell</label>
               <div class="input-group mb-2">
                 <button
                   type="button"
                   class="btn btn-outline-secondary decrease-btn"
-                  data-target="rightStyloidDeli"
+                  data-target="rightStyloidDell"
                 >
                   −
                 </button>
                 <input
                   type="number"
                   class="form-control text-center"
-                  id="rightStyloidDeli"
+                  id="rightStyloidDell"
                   value="0"
                 />
                 <button
                   type="button"
                   class="btn btn-outline-secondary increase-btn"
-                  data-target="rightStyloidDeli"
+                  data-target="rightStyloidDell"
                 >
                   +
                 </button>
@@ -1336,33 +1433,33 @@ Orthotics Prescription Portal {% endblock %} {% block extra_css %}
             </div>
           </div>
 
-          <!-- Navicular Raise/Deli -->
+          <!-- Navicular Raise/Dell -->
           <div class="row mb-3 align-items-center">
             <div class="col-md-3">
-              <label class="form-label mb-0">Navicular Raise/Deli</label>
+              <label class="form-label mb-0">Navicular Raise/Dell</label>
               <span class="badge bg-primary ms-1">i</span>
               <span class="d-block small text-muted">(mm)</span>
             </div>
             <div class="col-md-4">
-              <label class="form-label small">Deli</label>
+              <label class="form-label small">Dell</label>
               <div class="input-group mb-2">
                 <button
                   type="button"
                   class="btn btn-outline-secondary decrease-btn"
-                  data-target="leftNavicularDeli"
+                  data-target="leftNavicularDell"
                 >
                   −
                 </button>
                 <input
                   type="number"
                   class="form-control text-center"
-                  id="leftNavicularDeli"
+                  id="leftNavicularDell"
                   value="0"
                 />
                 <button
                   type="button"
                   class="btn btn-outline-secondary increase-btn"
-                  data-target="leftNavicularDeli"
+                  data-target="leftNavicularDell"
                 >
                   +
                 </button>
@@ -1394,25 +1491,25 @@ Orthotics Prescription Portal {% endblock %} {% block extra_css %}
             </div>
             <div class="col-md-1"></div>
             <div class="col-md-4">
-              <label class="form-label small">Deli</label>
+              <label class="form-label small">Dell</label>
               <div class="input-group mb-2">
                 <button
                   type="button"
                   class="btn btn-outline-secondary decrease-btn"
-                  data-target="rightNavicularDeli"
+                  data-target="rightNavicularDell"
                 >
                   −
                 </button>
                 <input
                   type="number"
                   class="form-control text-center"
-                  id="rightNavicularDeli"
+                  id="rightNavicularDell"
                   value="0"
                 />
                 <button
                   type="button"
                   class="btn btn-outline-secondary increase-btn"
-                  data-target="rightNavicularDeli"
+                  data-target="rightNavicularDell"
                 >
                   +
                 </button>
@@ -3140,8 +3237,23 @@ Orthotics Prescription Portal {% endblock %} {% block extra_css %}
     const decreaseBtns = document.querySelectorAll(".decrease-btn");
     const increaseBtns = document.querySelectorAll(".increase-btn");
 
-    // Add event listeners for decrement buttons
+    // Remove existing event listeners first
     decreaseBtns.forEach((btn) => {
+      const newBtn = btn.cloneNode(true);
+      btn.parentNode.replaceChild(newBtn, btn);
+    });
+
+    increaseBtns.forEach((btn) => {
+      const newBtn = btn.cloneNode(true);
+      btn.parentNode.replaceChild(newBtn, btn);
+    });
+
+    // Get the fresh references after cloning
+    const freshDecreaseBtns = document.querySelectorAll(".decrease-btn");
+    const freshIncreaseBtns = document.querySelectorAll(".increase-btn");
+
+    // Add event listeners for decrement buttons
+    freshDecreaseBtns.forEach((btn) => {
       btn.addEventListener("click", function () {
         const targetId = this.getAttribute("data-target");
         const input = document.getElementById(targetId);
@@ -3153,7 +3265,7 @@ Orthotics Prescription Portal {% endblock %} {% block extra_css %}
     });
 
     // Add event listeners for increment buttons
-    increaseBtns.forEach((btn) => {
+    freshIncreaseBtns.forEach((btn) => {
       btn.addEventListener("click", function () {
         const targetId = this.getAttribute("data-target");
         const input = document.getElementById(targetId);
@@ -3293,15 +3405,15 @@ Orthotics Prescription Portal {% endblock %} {% block extra_css %}
           left_foot: {
             cuboid: {
               raise: document.getElementById("leftCuboidRaise").value || 0,
-              deli: document.getElementById("leftCuboidDeli").value || 0,
+              dell: document.getElementById("leftCuboidDell").value || 0,
             },
             styloid: {
               raise: document.getElementById("leftStyloidRaise").value || 0,
-              deli: document.getElementById("leftStyloidDeli").value || 0,
+              dell: document.getElementById("leftStyloidDell").value || 0,
             },
             navicular: {
               raise: document.getElementById("leftNavicularRaise").value || 0,
-              deli: document.getElementById("leftNavicularDeli").value || 0,
+              dell: document.getElementById("leftNavicularDell").value || 0,
             },
             apertures: document.querySelector(
               'input[name="leftApertures"]:checked'
@@ -3318,15 +3430,15 @@ Orthotics Prescription Portal {% endblock %} {% block extra_css %}
           right_foot: {
             cuboid: {
               raise: document.getElementById("rightCuboidRaise").value || 0,
-              deli: document.getElementById("rightCuboidDeli").value || 0,
+              dell: document.getElementById("rightCuboidDell").value || 0,
             },
             styloid: {
               raise: document.getElementById("rightStyloidRaise").value || 0,
-              deli: document.getElementById("rightStyloidDeli").value || 0,
+              dell: document.getElementById("rightStyloidDell").value || 0,
             },
             navicular: {
               raise: document.getElementById("rightNavicularRaise").value || 0,
-              deli: document.getElementById("rightNavicularDeli").value || 0,
+              dell: document.getElementById("rightNavicularDell").value || 0,
             },
             apertures: document.querySelector(
               'input[name="rightApertures"]:checked'
@@ -3451,26 +3563,41 @@ Orthotics Prescription Portal {% endblock %} {% block extra_css %}
     const decreaseBtns = document.querySelectorAll(".decrease-btn");
     const increaseBtns = document.querySelectorAll(".increase-btn");
 
-    // Add event listeners for decrement buttons
+    // Remove existing event listeners first
     decreaseBtns.forEach((btn) => {
+      const newBtn = btn.cloneNode(true);
+      btn.parentNode.replaceChild(newBtn, btn);
+    });
+
+    increaseBtns.forEach((btn) => {
+      const newBtn = btn.cloneNode(true);
+      btn.parentNode.replaceChild(newBtn, btn);
+    });
+
+    // Get the fresh references after cloning
+    const freshDecreaseBtns = document.querySelectorAll(".decrease-btn");
+    const freshIncreaseBtns = document.querySelectorAll(".increase-btn");
+
+    // Add event listeners for decrement buttons
+    freshDecreaseBtns.forEach((btn) => {
       btn.addEventListener("click", function () {
         const targetId = this.getAttribute("data-target");
         const input = document.getElementById(targetId);
         if (input) {
-          let value = parseInt(input.value) || 0;
-          input.value = Math.max(value - 1, 0); // Prevent negative values
+          let value = parseFloat(input.value) || 0;
+          input.value = Math.max(value - 1.5, 0).toFixed(1); // Prevent negative values and maintain decimal precision
         }
       });
     });
 
     // Add event listeners for increment buttons
-    increaseBtns.forEach((btn) => {
+    freshIncreaseBtns.forEach((btn) => {
       btn.addEventListener("click", function () {
         const targetId = this.getAttribute("data-target");
         const input = document.getElementById(targetId);
         if (input) {
-          let value = parseInt(input.value) || 0;
-          input.value = Math.min(value + 1, 100); // Set a reasonable maximum
+          let value = parseFloat(input.value) || 0;
+          input.value = Math.min(value + 1.5, 100).toFixed(1); // Set a reasonable maximum and maintain decimal precision
         }
       });
     });
@@ -3490,17 +3617,17 @@ Orthotics Prescription Portal {% endblock %} {% block extra_css %}
         if (response.left_foot) {
           if (response.left_foot.cuboid) {
             document.getElementById("leftCuboidRaise").value = response.left_foot.cuboid.raise || 0;
-            document.getElementById("leftCuboidDeli").value = response.left_foot.cuboid.deli || 0;
+            document.getElementById("leftCuboidDell").value = response.left_foot.cuboid.dell || 0;
           }
           
           if (response.left_foot.styloid) {
             document.getElementById("leftStyloidRaise").value = response.left_foot.styloid.raise || 0;
-            document.getElementById("leftStyloidDeli").value = response.left_foot.styloid.deli || 0;
+            document.getElementById("leftStyloidDell").value = response.left_foot.styloid.dell || 0;
           }
           
           if (response.left_foot.navicular) {
             document.getElementById("leftNavicularRaise").value = response.left_foot.navicular.raise || 0;
-            document.getElementById("leftNavicularDeli").value = response.left_foot.navicular.deli || 0;
+            document.getElementById("leftNavicularDell").value = response.left_foot.navicular.dell || 0;
           }
           
           // Set the apertures radio button

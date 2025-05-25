@@ -25,6 +25,7 @@ from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from core import views
 from rest_framework.routers import DefaultRouter
+import django_browser_reload
 
 # Create schema view for Swagger
 schema_view = get_schema_view(
@@ -55,6 +56,7 @@ router = DefaultRouter()
 urlpatterns = [
     # Admin
     path('admin/', admin.site.urls),
+    path("__reload__/", include("django_browser_reload.urls")),
     
     # Core app URLs
     path('', include('core.urls')),  # Include all core URLs

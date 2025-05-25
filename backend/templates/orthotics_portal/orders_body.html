@@ -1,0 +1,105 @@
+{% load static %}
+<div class="container-fluid">
+  <h1 class="h3 mb-2 text-gray-800">Orders</h1>
+  <div class="card shadow mb-4">
+    <div class="card-body">
+      <div class="table-responsive">
+        <table id="ordersTable" class="table table-bordered">
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Patient</th>
+              <th>Prescriptions</th>
+              <th>Status</th>
+              <th>Created</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Order Details Modal -->
+  <div
+    class="modal fade"
+    id="orderDetailsModal"
+    tabindex="-1"
+    aria-labelledby="orderDetailsModalLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="orderDetailsModalLabel">Order Details</h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <div class="order-info mb-4">
+            <div class="row">
+              <div class="col-md-12">
+                <h5 class="mb-3">Order Details</h5>
+                <p>
+                  <strong>Order ID:</strong> <span id="modal-order-id"></span>
+                </p>
+                <p>
+                  <strong>Date:</strong> <span id="modal-order-date"></span>
+                </p>
+                <p>
+                  <strong>Status:</strong> <span id="modal-order-status"></span>
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <h6 class="fw-bold">Prescriptions</h6>
+          <div class="table-responsive">
+            <table class="table table-bordered" id="orderItemsTable">
+              <thead>
+                <tr>
+                  <th>Patient</th>
+                  <th>Orthotic Type</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="order-items-list">
+                <!-- Order items will be loaded here via JavaScript -->
+              </tbody>
+            </table>
+          </div>
+
+          <div id="modal-notes-section" class="mt-4" style="display: none">
+            <h6 class="fw-bold">Notes</h6>
+            <div class="card">
+              <div class="card-body" id="modal-notes"></div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >
+            Close
+          </button>
+          <button
+            type="button"
+            class="btn btn-danger"
+            id="modalCancelOrderBtn"
+            style="display: none"
+          >
+            Cancel Order
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

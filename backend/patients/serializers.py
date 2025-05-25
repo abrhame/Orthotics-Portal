@@ -12,7 +12,7 @@ class PatientSerializer(serializers.ModelSerializer):
         model = Patient
         fields = [
             'id', 'external_id', 'first_name', 'last_name', 
-            'date_of_birth', 'gender', 'clinic'
+            'date_of_birth', 'gender', 'weight', 'clinic'
         ]
         read_only_fields = ['id', 'clinic']
 
@@ -31,6 +31,7 @@ class PatientSerializer(serializers.ModelSerializer):
         instance.last_name = validated_data.get('last_name', instance.last_name)
         instance.date_of_birth = validated_data.get('date_of_birth', instance.date_of_birth)
         instance.gender = validated_data.get('gender', instance.gender)
+        instance.weight = validated_data.get('weight', instance.weight)
         instance.save()
         return instance
 

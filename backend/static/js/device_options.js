@@ -28,15 +28,19 @@ const DeviceOptionsModule = {
       button.addEventListener("click", (e) => {
         const targetId = e.target.dataset.target;
         const input = document.getElementById(targetId);
-        const step = parseFloat(input.step) || 1;
-        const min = parseFloat(input.min) || 0;
-        const max = parseFloat(input.max) || 100;
-        const currentValue = parseFloat(input.value) || 0;
+        if (input) {
+          const min = parseFloat(input.min) || 0;
+          const max = parseFloat(input.max) || 100;
+          const currentValue = parseFloat(input.value) || 0;
+          const increment = 0.01;
 
-        if (e.target.classList.contains("increase-btn")) {
-          input.value = Math.min(currentValue + step, max);
-        } else {
-          input.value = Math.max(currentValue - step, min);
+          if (e.target.classList.contains("increase-btn")) {
+            const newValue = Math.min(currentValue + increment, max);
+            input.value = newValue.toFixed(1);
+          } else {
+            const newValue = Math.max(currentValue - increment, min);
+            input.value = newValue.toFixed(1);
+          }
         }
       });
     });

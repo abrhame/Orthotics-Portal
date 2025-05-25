@@ -22,6 +22,7 @@ class Patient(models.Model):
     last_name = models.CharField(max_length=100)
     date_of_birth = models.DateField()
     gender = models.CharField(max_length=10, choices=GENDER_CHOICES, default='', blank=True)
+    weight = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True, help_text=_('Patient weight in kg'))
     clinic = models.ForeignKey(
         'users.Clinic',
         on_delete=models.CASCADE,

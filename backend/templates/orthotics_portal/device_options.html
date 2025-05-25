@@ -10,8 +10,12 @@
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="deviceOptionsModalLabel">
-          <span class="text-primary">Device</span> Options
+        <h5
+          class="modal-title"
+          id="deviceOptionsModalLabel"
+          style="color: #ffffff"
+        >
+          Device Options
         </h5>
         <button
           type="button"
@@ -55,7 +59,6 @@
                       value="0"
                       min="0"
                       max="50"
-                      step="1"
                     />
                     <button
                       type="button"
@@ -94,7 +97,7 @@
                       value="0"
                       min="0"
                       max="50"
-                      step="1"
+                      step="0.1"
                     />
                     <button
                       type="button"
@@ -133,7 +136,7 @@
                       value="0"
                       min="0"
                       max="50"
-                      step="1"
+                      step="0.1"
                     />
                     <button
                       type="button"
@@ -172,7 +175,7 @@
                       value="0"
                       min="0"
                       max="50"
-                      step="1"
+                      step="0.1"
                     />
                     <button
                       type="button"
@@ -211,7 +214,7 @@
                       value="0"
                       min="0"
                       max="100"
-                      step="1"
+                      step="0.1"
                     />
                     <button
                       type="button"
@@ -224,6 +227,7 @@
                 </div>
 
                 <!-- Midfoot Width -->
+                 
                 <div class="mb-3">
                   <label class="form-label d-flex align-items-center">
                     Midfoot Width
@@ -250,7 +254,7 @@
                       value="0"
                       min="0"
                       max="100"
-                      step="1"
+                      step="0.1"
                     />
                     <button
                       type="button"
@@ -289,7 +293,7 @@
                       value="0"
                       min="0"
                       max="100"
-                      step="1"
+                      step="0.1"
                     />
                     <button
                       type="button"
@@ -335,7 +339,7 @@
                       value="0"
                       min="0"
                       max="50"
-                      step="1"
+                      step="0.1"
                     />
                     <button
                       type="button"
@@ -374,7 +378,7 @@
                       value="0"
                       min="0"
                       max="50"
-                      step="1"
+                      step="0.1"
                     />
                     <button
                       type="button"
@@ -413,7 +417,7 @@
                       value="0"
                       min="0"
                       max="50"
-                      step="1"
+                      step="0.1"
                     />
                     <button
                       type="button"
@@ -452,7 +456,7 @@
                       value="0"
                       min="0"
                       max="50"
-                      step="1"
+                      step="0.1"
                     />
                     <button
                       type="button"
@@ -491,7 +495,7 @@
                       value="0"
                       min="0"
                       max="100"
-                      step="1"
+                      step="0.1"
                     />
                     <button
                       type="button"
@@ -530,7 +534,7 @@
                       value="0"
                       min="0"
                       max="100"
-                      step="1"
+                      step="0.1"
                     />
                     <button
                       type="button"
@@ -569,7 +573,7 @@
                       value="0"
                       min="0"
                       max="100"
-                      step="1"
+                      step="0.1"
                     />
                     <button
                       type="button"
@@ -642,5 +646,14 @@
   #deviceOptionsModal .form-check-input {
     position: relative;
     z-index: 1;
+  }
+  /* Remove number input spinners */
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type="number"] {
+    -moz-appearance: textfield;
   }
 </style>

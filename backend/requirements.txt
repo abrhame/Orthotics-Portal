@@ -13,3 +13,4 @@ dj-database-url==2.1.0
 reportlab==4.1.0
 celery>=5.3.6,<5.4.0
 redis>=5.0.1,<5.1.0
+django-browser-reload==1.11.0

@@ -541,23 +541,6 @@ class PrescriptionViewSet(viewsets.ModelViewSet):
                     status=status.HTTP_500_INTERNAL_SERVER_ERROR
                 )
     
-    @swagger_auto_schema(
-        method='get',
-        operation_description="Get posting details for the prescription",
-        responses={200: PostingSerializer()}
-    )
-    @swagger_auto_schema(
-        method='put',
-        operation_description="Update posting details for the prescription",
-        request_body=PostingSerializer,
-        responses={200: PostingSerializer()}
-    )
-    @swagger_auto_schema(
-        method='patch',
-        operation_description="Partially update posting details for the prescription",
-        request_body=PostingSerializer,
-        responses={200: PostingSerializer()}
-    )
     @action(detail=True, methods=['get', 'put', 'patch'])
     def postings(self, request, pk=None):
         """
@@ -565,11 +548,30 @@ class PrescriptionViewSet(viewsets.ModelViewSet):
         """
         try:
             prescription = self.get_object()
+            logger.info(f"Processing posting request for prescription {prescription.id}")
             
             # Get or create the posting instance
             instance, created = Posting.objects.get_or_create(
                 prescription=prescription,
-                defaults={'prescription': prescription}
+                defaults={
+                    'prescription': prescription,
+                    'left_heel_post_angle': 0,
+                    'right_heel_post_angle': 0,
+                    'left_heel_post_pitch': 0,
+                    'right_heel_post_pitch': 0,
+                    'left_heel_post_raise': 0,
+                    'right_heel_post_raise': 0,
+                    'left_heel_post_taper': 0,
+                    'right_heel_post_taper': 0,
+                    'left_forefoot_post_width': 'none',
+                    'right_forefoot_post_width': 'none',
+                    'left_forefoot_post_medial': False,
+                    'left_forefoot_post_lateral': False,
+                    'right_forefoot_post_medial': False,
+                    'right_forefoot_post_lateral': False,
+                    'left_forefoot_post_angle': 0,
+                    'right_forefoot_post_angle': 0
+                }
             )
             
             if request.method == 'GET':
@@ -579,6 +581,40 @@ class PrescriptionViewSet(viewsets.ModelViewSet):
             # For PUT/PATCH requests
             data = request.data.copy()
             data['prescription'] = prescription.id
+            
+            # Ensure all numeric fields are properly converted
+            numeric_fields = [
+                'left_heel_post_angle', 'right_heel_post_angle',
+                'left_heel_post_pitch', 'right_heel_post_pitch',
+                'left_heel_post_raise', 'right_heel_post_raise',
+                'left_heel_post_taper', 'right_heel_post_taper',
+                'left_forefoot_post_angle', 'right_forefoot_post_angle'
+            ]
+            
+            for field in numeric_fields:
+                if field in data:
+                    try:
+                        data[field] = float(data[field])
+                    except (TypeError, ValueError):
+                        data[field] = 0
+            
+            # Ensure boolean fields are properly converted
+            boolean_fields = [
+                'left_forefoot_post_medial', 'left_forefoot_post_lateral',
+                'right_forefoot_post_medial', 'right_forefoot_post_lateral'
+            ]
+            
+            for field in boolean_fields:
+                if field in data:
+                    data[field] = bool(data[field])
+            
+            # Ensure select fields have valid values
+            select_fields = ['left_forefoot_post_width', 'right_forefoot_post_width']
+            valid_widths = ['none', 'quarterly_width', 'half_width', 'full_width']
+            
+            for field in select_fields:
+                if field in data and data[field] not in valid_widths:
+                    data[field] = 'none'
             
             serializer = PostingSerializer(
                 instance,
@@ -590,6 +626,8 @@ class PrescriptionViewSet(viewsets.ModelViewSet):
                 serializer.save()
                 status_code = status.HTTP_201_CREATED if created else status.HTTP_200_OK
                 return Response(serializer.data, status=status_code)
+            
+            logger.error(f"Validation error for posting: {serializer.errors}")
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
             
         except Exception as e:

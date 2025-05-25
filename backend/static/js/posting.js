@@ -27,34 +27,56 @@ const PostingModule = {
     // Initialize numeric inputs with 0
     const numericInputs = document.querySelectorAll('input[type="number"]');
     numericInputs.forEach((input) => {
-      input.value = "0";
+      input.value = "0.0";
       input.min = "0";
-      input.step = "1";
+      input.step = "0.1";
     });
   },
 
   bindEvents() {
     // Bind increment/decrement buttons
-    document.querySelectorAll(".increment").forEach((button) => {
+    document.querySelectorAll(".increment, .increase-btn").forEach((button) => {
       button.addEventListener("click", () => {
         const targetId = button.getAttribute("data-target");
         const input = document.getElementById(targetId);
         if (input) {
-          input.value = parseInt(input.value || 0) + 1;
+          const currentValue = parseFloat(input.value || 0);
+          const max = parseFloat(input.max) || 100;
+          const newValue = Math.min(currentValue + 1.5, max);
+          input.value = newValue.toFixed(1);
         }
       });
     });
 
-    document.querySelectorAll(".decrement").forEach((button) => {
+    document.querySelectorAll(".decrement, .decrease-btn").forEach((button) => {
       button.addEventListener("click", () => {
         const targetId = button.getAttribute("data-target");
         const input = document.getElementById(targetId);
         if (input) {
-          const currentValue = parseInt(input.value || 0);
-          input.value = currentValue > 0 ? currentValue - 1 : 0;
+          const currentValue = parseFloat(input.value || 0);
+          const min = parseFloat(input.min) || 0;
+          const newValue = Math.max(currentValue - 1.5, min);
+          input.value = newValue.toFixed(1);
         }
       });
     });
+
+    // Handle skive inclination selection
+    document
+      .getElementById("leftSkiveInclination")
+      .addEventListener("change", (e) => {
+        const specificDiv = document.getElementById("leftSpecificInclination");
+        specificDiv.style.display =
+          e.target.value === "specific" ? "block" : "none";
+      });
+
+    document
+      .getElementById("rightSkiveInclination")
+      .addEventListener("change", (e) => {
+        const specificDiv = document.getElementById("rightSpecificInclination");
+        specificDiv.style.display =
+          e.target.value === "specific" ? "block" : "none";
+      });
 
     // Bind save button
     document.getElementById("savePostingBtn").addEventListener("click", () => {
@@ -82,78 +104,133 @@ const PostingModule = {
   },
 
   populateForm(data) {
-    // Populate select fields
-    document.getElementById("leftHeelPostWidth").value =
-      data.left_heel_post_width || "none";
-    document.getElementById("rightHeelPostWidth").value =
-      data.right_heel_post_width || "none";
-    document.getElementById("leftForefootPostWidth").value =
-      data.left_forefoot_post_width || "none";
-    document.getElementById("rightForefootPostWidth").value =
-      data.right_forefoot_post_width || "none";
-
     // Populate numeric fields
-    document.getElementById("leftHeelPostAngle").value =
-      data.left_heel_post_angle || 0;
-    document.getElementById("rightHeelPostAngle").value =
-      data.right_heel_post_angle || 0;
-    document.getElementById("leftHeelPostPitch").value =
-      data.left_heel_post_pitch || 0;
-    document.getElementById("rightHeelPostPitch").value =
-      data.right_heel_post_pitch || 0;
-    document.getElementById("leftForefootPostAngle").value =
-      data.left_forefoot_post_angle || 0;
-    document.getElementById("rightForefootPostAngle").value =
-      data.right_forefoot_post_angle || 0;
+    const numericFields = [
+      "leftHeelPostAngle",
+      "rightHeelPostAngle",
+      "leftHeelPostPitch",
+      "rightHeelPostPitch",
+      "leftHeelPostRaise",
+      "rightHeelPostRaise",
+      "leftHeelPostTaper",
+      "rightHeelPostTaper",
+      "leftForefootPostAngle",
+      "rightForefootPostAngle",
+      "leftSpecificInclinationValue",
+      "rightSpecificInclinationValue",
+    ];
+
+    numericFields.forEach((field) => {
+      const element = document.getElementById(field);
+      if (element) {
+        element.value = data[field.toLowerCase()] || 0;
+      }
+    });
+
+    // Populate select fields
+    const selectFields = [
+      "leftForefootPostWidth",
+      "rightForefootPostWidth",
+      "leftSkiveInclination",
+      "rightSkiveInclination",
+    ];
+
+    selectFields.forEach((field) => {
+      const element = document.getElementById(field);
+      if (element) {
+        element.value = data[field.toLowerCase()] || "none";
+        // Show/hide specific inclination fields based on selection
+        if (field.includes("SkiveInclination")) {
+          const specificDiv = document.getElementById(
+            field.replace("SkiveInclination", "SpecificInclination")
+          );
+          if (specificDiv) {
+            specificDiv.style.display =
+              element.value === "specific" ? "block" : "none";
+          }
+        }
+      }
+    });
 
     // Populate checkboxes
-    document.getElementById("leftForefootPostMedial").checked =
-      data.left_forefoot_post_medial || false;
-    document.getElementById("leftForefootPostLateral").checked =
-      data.left_forefoot_post_lateral || false;
-    document.getElementById("rightForefootPostMedial").checked =
-      data.right_forefoot_post_medial || false;
-    document.getElementById("rightForefootPostLateral").checked =
-      data.right_forefoot_post_lateral || false;
+    const checkboxFields = [
+      "leftForefootPostMedial",
+      "leftForefootPostLateral",
+      "rightForefootPostMedial",
+      "rightForefootPostLateral",
+    ];
+
+    checkboxFields.forEach((field) => {
+      const element = document.getElementById(field);
+      if (element) {
+        element.checked = data[field.toLowerCase()] || false;
+      }
+    });
   },
 
   collectFormData() {
-    return {
-      prescription: this.prescriptionId,
-      left_heel_post_width: document.getElementById("leftHeelPostWidth").value,
-      right_heel_post_width:
-        document.getElementById("rightHeelPostWidth").value,
-      left_heel_post_angle:
-        parseFloat(document.getElementById("leftHeelPostAngle").value) || 0,
-      right_heel_post_angle:
-        parseFloat(document.getElementById("rightHeelPostAngle").value) || 0,
-      left_heel_post_pitch:
-        parseFloat(document.getElementById("leftHeelPostPitch").value) || 0,
-      right_heel_post_pitch:
-        parseFloat(document.getElementById("rightHeelPostPitch").value) || 0,
-      left_forefoot_post_width: document.getElementById("leftForefootPostWidth")
-        .value,
-      right_forefoot_post_width: document.getElementById(
-        "rightForefootPostWidth"
-      ).value,
-      left_forefoot_post_medial: document.getElementById(
-        "leftForefootPostMedial"
-      ).checked,
-      left_forefoot_post_lateral: document.getElementById(
-        "leftForefootPostLateral"
-      ).checked,
-      right_forefoot_post_medial: document.getElementById(
-        "rightForefootPostMedial"
-      ).checked,
-      right_forefoot_post_lateral: document.getElementById(
-        "rightForefootPostLateral"
-      ).checked,
-      left_forefoot_post_angle:
-        parseFloat(document.getElementById("leftForefootPostAngle").value) || 0,
-      right_forefoot_post_angle:
-        parseFloat(document.getElementById("rightForefootPostAngle").value) ||
-        0,
+    // Helper function to safely get numeric value
+    const getNumericValue = (elementId) => {
+      const element = document.getElementById(elementId);
+      return element ? parseFloat(element.value || 0) : 0;
     };
+
+    // Helper function to safely get select value
+    const getSelectValue = (elementId) => {
+      const element = document.getElementById(elementId);
+      return element ? element.value : "none";
+    };
+
+    // Helper function to safely get checkbox value
+    const getCheckboxValue = (elementId) => {
+      const element = document.getElementById(elementId);
+      return element ? element.checked : false;
+    };
+
+    const formData = {
+      prescription: this.prescriptionId,
+      // Heel Post Angles
+      left_heel_post_angle: getNumericValue("leftHeelPostAngle"),
+      right_heel_post_angle: getNumericValue("rightHeelPostAngle"),
+
+      // Heel Post Pitch
+      left_heel_post_pitch: getNumericValue("leftHeelPostPitch"),
+      right_heel_post_pitch: getNumericValue("rightHeelPostPitch"),
+
+      // Heel Post Raise
+      left_heel_post_raise: getNumericValue("leftHeelPostRaise"),
+      right_heel_post_raise: getNumericValue("rightHeelPostRaise"),
+
+      // Heel Post Taper
+      left_heel_post_taper: getNumericValue("leftHeelPostTaper"),
+      right_heel_post_taper: getNumericValue("rightHeelPostTaper"),
+
+      // Forefoot Post Width
+      left_forefoot_post_width: getSelectValue("leftForefootPostWidth"),
+      right_forefoot_post_width: getSelectValue("rightForefootPostWidth"),
+
+      // Forefoot Post Position
+      left_forefoot_post_medial: getCheckboxValue("leftForefootPostMedial"),
+      left_forefoot_post_lateral: getCheckboxValue("leftForefootPostLateral"),
+      right_forefoot_post_medial: getCheckboxValue("rightForefootPostMedial"),
+      right_forefoot_post_lateral: getCheckboxValue("rightForefootPostLateral"),
+
+      // Forefoot Post Angle
+      left_forefoot_post_angle: getNumericValue("leftForefootPostAngle"),
+      right_forefoot_post_angle: getNumericValue("rightForefootPostAngle"),
+
+      // Skive Inclination
+      left_skive_inclination: getSelectValue("leftSkiveInclination"),
+      right_skive_inclination: getSelectValue("rightSkiveInclination"),
+      left_specific_inclination: getNumericValue(
+        "leftSpecificInclinationValue"
+      ),
+      right_specific_inclination: getNumericValue(
+        "rightSpecificInclinationValue"
+      ),
+    };
+
+    return formData;
   },
 
   async savePosting(shouldProceedToNext = false) {
