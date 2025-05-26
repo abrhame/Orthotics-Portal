@@ -1,0 +1,363 @@
+{% load static %}
+
+<div class="clinical-measures">
+  <div class="row">
+    <!-- Left Foot Section -->
+    <div class="col-md-6">
+      <div class="card mb-4">
+        <div class="card-header">
+          <h5 class="mb-0">Left Foot Measurements</h5>
+        </div>
+        <div class="card-body">
+          <div class="mb-3">
+            <label class="form-label">Scan Angles</label>
+            <div class="input-group mb-2">
+              <span class="input-group-text">Varus/Valgus</span>
+              <button
+                class="btn btn-outline-secondary"
+                type="button"
+                data-action="decrement"
+                data-target="leftScanVv"
+              >
+                -
+              </button>
+              <input
+                type="number"
+                class="form-control text-center"
+                id="leftScanVv"
+                value="0"
+                min="-180"
+                max="180"
+              />
+              <button
+                class="btn btn-outline-secondary"
+                type="button"
+                data-action="increment"
+                data-target="leftScanVv"
+              >
+                +
+              </button>
+              <span class="input-group-text">°</span>
+            </div>
+            <div class="input-group">
+              <span class="input-group-text">Dorsi/Plantar</span>
+              <button
+                class="btn btn-outline-secondary"
+                type="button"
+                data-action="decrement"
+                data-target="leftScanDp"
+              >
+                -
+              </button>
+              <input
+                type="number"
+                class="form-control text-center"
+                id="leftScanDp"
+                value="0"
+                min="-180"
+                max="180"
+              />
+              <button
+                class="btn btn-outline-secondary"
+                type="button"
+                data-action="increment"
+                data-target="leftScanDp"
+              >
+                +
+              </button>
+              <span class="input-group-text">°</span>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Forefoot</label>
+            <div class="input-group mb-2">
+              <span class="input-group-text">Varus/Valgus</span>
+              <button
+                class="btn btn-outline-secondary"
+                type="button"
+                data-action="decrement"
+                data-target="leftForefootVv"
+              >
+                -
+              </button>
+              <input
+                type="number"
+                class="form-control text-center"
+                id="leftForefootVv"
+                value="0"
+                min="-180"
+                max="180"
+              />
+              <button
+                class="btn btn-outline-secondary"
+                type="button"
+                data-action="increment"
+                data-target="leftForefootVv"
+              >
+                +
+              </button>
+              <span class="input-group-text">°</span>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Heel Measurements</label>
+            <div class="input-group mb-2">
+              <span class="input-group-text">Varus/Valgus</span>
+              <button
+                class="btn btn-outline-secondary"
+                type="button"
+                data-action="decrement"
+                data-target="leftHeelVv"
+              >
+                -
+              </button>
+              <input
+                type="number"
+                class="form-control text-center"
+                id="leftHeelVv"
+                value="0"
+                min="-180"
+                max="180"
+              />
+              <button
+                class="btn btn-outline-secondary"
+                type="button"
+                data-action="increment"
+                data-target="leftHeelVv"
+              >
+                +
+              </button>
+              <span class="input-group-text">°</span>
+            </div>
+            <div class="input-group">
+              <span class="input-group-text">Height</span>
+              <button
+                class="btn btn-outline-secondary"
+                type="button"
+                data-action="decrement"
+                data-target="leftHeelHeight"
+              >
+                -
+              </button>
+              <input
+                type="number"
+                class="form-control text-center"
+                id="leftHeelHeight"
+                value="0"
+                min="0"
+                max="100"
+              />
+              <button
+                class="btn btn-outline-secondary"
+                type="button"
+                data-action="increment"
+                data-target="leftHeelHeight"
+              >
+                +
+              </button>
+              <span class="input-group-text">mm</span>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="leftNotes" class="form-label">Notes</label>
+            <textarea class="form-control" id="leftNotes" rows="3"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Foot Section -->
+    <div class="col-md-6">
+      <div class="card mb-4">
+        <div class="card-header">
+          <h5 class="mb-0">Right Foot Measurements</h5>
+        </div>
+        <div class="card-body">
+          <div class="mb-3">
+            <label class="form-label">Scan Angles</label>
+            <div class="input-group mb-2">
+              <span class="input-group-text">Varus/Valgus</span>
+              <button
+                class="btn btn-outline-secondary"
+                type="button"
+                data-action="decrement"
+                data-target="rightScanVv"
+              >
+                -
+              </button>
+              <input
+                type="number"
+                class="form-control text-center"
+                id="rightScanVv"
+                value="0"
+                min="-180"
+                max="180"
+              />
+              <button
+                class="btn btn-outline-secondary"
+                type="button"
+                data-action="increment"
+                data-target="rightScanVv"
+              >
+                +
+              </button>
+              <span class="input-group-text">°</span>
+            </div>
+            <div class="input-group">
+              <span class="input-group-text">Dorsi/Plantar</span>
+              <button
+                class="btn btn-outline-secondary"
+                type="button"
+                data-action="decrement"
+                data-target="rightScanDp"
+              >
+                -
+              </button>
+              <input
+                type="number"
+                class="form-control text-center"
+                id="rightScanDp"
+                value="0"
+                min="-180"
+                max="180"
+              />
+              <button
+                class="btn btn-outline-secondary"
+                type="button"
+                data-action="increment"
+                data-target="rightScanDp"
+              >
+                +
+              </button>
+              <span class="input-group-text">°</span>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Forefoot</label>
+            <div class="input-group mb-2">
+              <span class="input-group-text">Varus/Valgus</span>
+              <button
+                class="btn btn-outline-secondary"
+                type="button"
+                data-action="decrement"
+                data-target="rightForefootVv"
+              >
+                -
+              </button>
+              <input
+                type="number"
+                class="form-control text-center"
+                id="rightForefootVv"
+                value="0"
+                min="-180"
+                max="180"
+              />
+              <button
+                class="btn btn-outline-secondary"
+                type="button"
+                data-action="increment"
+                data-target="rightForefootVv"
+              >
+                +
+              </button>
+              <span class="input-group-text">°</span>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Heel Measurements</label>
+            <div class="input-group mb-2">
+              <span class="input-group-text">Varus/Valgus</span>
+              <button
+                class="btn btn-outline-secondary"
+                type="button"
+                data-action="decrement"
+                data-target="rightHeelVv"
+              >
+                -
+              </button>
+              <input
+                type="number"
+                class="form-control text-center"
+                id="rightHeelVv"
+                value="0"
+                min="-180"
+                max="180"
+              />
+              <button
+                class="btn btn-outline-secondary"
+                type="button"
+                data-action="increment"
+                data-target="rightHeelVv"
+              >
+                +
+              </button>
+              <span class="input-group-text">°</span>
+            </div>
+            <div class="input-group">
+              <span class="input-group-text">Height</span>
+              <button
+                class="btn btn-outline-secondary"
+                type="button"
+                data-action="decrement"
+                data-target="rightHeelHeight"
+              >
+                -
+              </button>
+              <input
+                type="number"
+                class="form-control text-center"
+                id="rightHeelHeight"
+                value="0"
+                min="0"
+                max="100"
+              />
+              <button
+                class="btn btn-outline-secondary"
+                type="button"
+                data-action="increment"
+                data-target="rightHeelHeight"
+              >
+                +
+              </button>
+              <span class="input-group-text">mm</span>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="rightNotes" class="form-label">Notes</label>
+            <textarea class="form-control" id="rightNotes" rows="3"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Additional Notes -->
+  <div class="card mb-4">
+    <div class="card-header">
+      <h5 class="mb-0">Additional Clinical Notes</h5>
+    </div>
+    <div class="card-body">
+      <textarea class="form-control" id="clinicalNotes" rows="4"></textarea>
+    </div>
+  </div>
+</div>
+
+<style>
+  .clinical-measures input[type="number"] {
+    min-width: 80px;
+  }
+
+  .input-group .btn {
+    min-width: 40px;
+  }
+
+  .input-group-text {
+    min-width: 120px;
+  }
+</style>

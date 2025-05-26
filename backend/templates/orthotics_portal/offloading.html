@@ -1,0 +1,1098 @@
+{% load static %}
+
+<div
+  class=""
+  id="offLoadingModal"
+  tabindex="-1"
+  aria-labelledby="offLoadingModalLabel"
+  aria-hidden="true"
+>
+  <div class="">
+    <div class="modal-content">
+      <div class="modal-body">
+        <form id="offLoadingForm">
+          <input type="hidden" id="offLoadingPrescriptionId" value="" />
+
+          <div class="row mb-4">
+            <div class="col-md-6 text-center bg-light py-2 rounded-3">
+              <h6>Left Foot</h6>
+            </div>
+            <div class="col-md-6 text-center bg-light py-2 rounded-3">
+              <h6>Right Foot</h6>
+            </div>
+          </div>
+
+          <!-- Cuboid Raise/Dell -->
+          <div class="row mb-3 align-items-center">
+            <div class="col-md-3">
+              <label class="form-label mb-0">Cuboid Raise/Dell</label>
+              <span class="badge bg-primary ms-1">i</span>
+              <span class="d-block small text-muted">(mm)</span>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label small">Dell</label>
+              <div class="input-group mb-2">
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary decrease-btn"
+                  data-target="leftCuboidDell"
+                >
+                  −
+                </button>
+                <input
+                  type="number"
+                  class="form-control text-center"
+                  id="leftCuboidDell"
+                  value="0"
+                />
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary increase-btn"
+                  data-target="leftCuboidDell"
+                >
+                  +
+                </button>
+              </div>
+
+              <label class="form-label small">Raise</label>
+              <div class="input-group">
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary decrease-btn"
+                  data-target="leftCuboidRaise"
+                >
+                  −
+                </button>
+                <input
+                  type="number"
+                  class="form-control text-center"
+                  id="leftCuboidRaise"
+                  value="0"
+                />
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary increase-btn"
+                  data-target="leftCuboidRaise"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+            <div class="col-md-1"></div>
+            <div class="col-md-4">
+              <label class="form-label small">Dell</label>
+              <div class="input-group mb-2">
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary decrease-btn"
+                  data-target="rightCuboidDell"
+                >
+                  −
+                </button>
+                <input
+                  type="number"
+                  class="form-control text-center"
+                  id="rightCuboidDell"
+                  value="0"
+                />
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary increase-btn"
+                  data-target="rightCuboidDell"
+                >
+                  +
+                </button>
+              </div>
+
+              <label class="form-label small">Raise</label>
+              <div class="input-group">
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary decrease-btn"
+                  data-target="rightCuboidRaise"
+                >
+                  −
+                </button>
+                <input
+                  type="number"
+                  class="form-control text-center"
+                  id="rightCuboidRaise"
+                  value="0"
+                />
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary increase-btn"
+                  data-target="rightCuboidRaise"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Styloid Raise/Dell -->
+          <div class="row mb-3 align-items-center">
+            <div class="col-md-3">
+              <label class="form-label mb-0">Styloid Raise/Dell</label>
+              <span class="badge bg-primary ms-1">i</span>
+              <span class="d-block small text-muted">(mm)</span>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label small">Dell</label>
+              <div class="input-group mb-2">
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary decrease-btn"
+                  data-target="leftStyloidDell"
+                >
+                  −
+                </button>
+                <input
+                  type="number"
+                  class="form-control text-center"
+                  id="leftStyloidDell"
+                  value="0"
+                />
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary increase-btn"
+                  data-target="leftStyloidDell"
+                >
+                  +
+                </button>
+              </div>
+
+              <label class="form-label small">Raise</label>
+              <div class="input-group">
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary decrease-btn"
+                  data-target="leftStyloidRaise"
+                >
+                  −
+                </button>
+                <input
+                  type="number"
+                  class="form-control text-center"
+                  id="leftStyloidRaise"
+                  value="0"
+                />
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary increase-btn"
+                  data-target="leftStyloidRaise"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+            <div class="col-md-1"></div>
+            <div class="col-md-4">
+              <label class="form-label small">Dell</label>
+              <div class="input-group mb-2">
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary decrease-btn"
+                  data-target="rightStyloidDell"
+                >
+                  −
+                </button>
+                <input
+                  type="number"
+                  class="form-control text-center"
+                  id="rightStyloidDell"
+                  value="0"
+                />
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary increase-btn"
+                  data-target="rightStyloidDell"
+                >
+                  +
+                </button>
+              </div>
+
+              <label class="form-label small">Raise</label>
+              <div class="input-group">
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary decrease-btn"
+                  data-target="rightStyloidRaise"
+                >
+                  −
+                </button>
+                <input
+                  type="number"
+                  class="form-control text-center"
+                  id="rightStyloidRaise"
+                  value="0"
+                />
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary increase-btn"
+                  data-target="rightStyloidRaise"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Navicular Raise/Dell -->
+          <div class="row mb-3 align-items-center">
+            <div class="col-md-3">
+              <label class="form-label mb-0">Navicular Raise/Dell</label>
+              <span class="badge bg-primary ms-1">i</span>
+              <span class="d-block small text-muted">(mm)</span>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label small">Dell</label>
+              <div class="input-group mb-2">
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary decrease-btn"
+                  data-target="leftNavicularDell"
+                >
+                  −
+                </button>
+                <input
+                  type="number"
+                  class="form-control text-center"
+                  id="leftNavicularDell"
+                  value="0"
+                />
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary increase-btn"
+                  data-target="leftNavicularDell"
+                >
+                  +
+                </button>
+              </div>
+
+              <label class="form-label small">Raise</label>
+              <div class="input-group">
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary decrease-btn"
+                  data-target="leftNavicularRaise"
+                >
+                  −
+                </button>
+                <input
+                  type="number"
+                  class="form-control text-center"
+                  id="leftNavicularRaise"
+                  value="0"
+                />
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary increase-btn"
+                  data-target="leftNavicularRaise"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+            <div class="col-md-1"></div>
+            <div class="col-md-4">
+              <label class="form-label small">Dell</label>
+              <div class="input-group mb-2">
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary decrease-btn"
+                  data-target="rightNavicularDell"
+                >
+                  −
+                </button>
+                <input
+                  type="number"
+                  class="form-control text-center"
+                  id="rightNavicularDell"
+                  value="0"
+                />
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary increase-btn"
+                  data-target="rightNavicularDell"
+                >
+                  +
+                </button>
+              </div>
+
+              <label class="form-label small">Raise</label>
+              <div class="input-group">
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary decrease-btn"
+                  data-target="rightNavicularRaise"
+                >
+                  −
+                </button>
+                <input
+                  type="number"
+                  class="form-control text-center"
+                  id="rightNavicularRaise"
+                  value="0"
+                />
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary increase-btn"
+                  data-target="rightNavicularRaise"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Apertures -->
+          <div class="row mb-3 align-items-center">
+            <div class="col-md-3">
+              <label class="form-label mb-0">Apertures</label>
+              <span class="badge bg-primary ms-1">i</span>
+            </div>
+            <div class="col-md-4">
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="leftApertures"
+                  id="leftAperturesNone"
+                  value="none"
+                  checked
+                />
+                <label class="form-check-label" for="leftAperturesNone"
+                  >NONE</label
+                >
+              </div>
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="leftApertures"
+                  id="leftApertures1stMPJ"
+                  value="1st_mpj"
+                />
+                <label class="form-check-label" for="leftApertures1stMPJ"
+                  >1st MPJ</label
+                >
+              </div>
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="leftApertures"
+                  id="leftApertures2ndMPJ"
+                  value="2nd_mpj"
+                />
+                <label class="form-check-label" for="leftApertures2ndMPJ"
+                  >2nd MPJ</label
+                >
+              </div>
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="leftApertures"
+                  id="leftApertures3rdMPJ"
+                  value="3rd_mpj"
+                />
+                <label class="form-check-label" for="leftApertures3rdMPJ"
+                  >3rd MPJ</label
+                >
+              </div>
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="leftApertures"
+                  id="leftApertures4thMPJ"
+                  value="4th_mpj"
+                />
+                <label class="form-check-label" for="leftApertures4thMPJ"
+                  >4th MPJ</label
+                >
+              </div>
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="leftApertures"
+                  id="leftApertures5thMPJ"
+                  value="5th_mpj"
+                />
+                <label class="form-check-label" for="leftApertures5thMPJ"
+                  >5th MPJ</label
+                >
+              </div>
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="leftApertures"
+                  id="leftAperturesHeel"
+                  value="heel"
+                />
+                <label class="form-check-label" for="leftAperturesHeel"
+                  >Heel</label
+                >
+              </div>
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  id="leftNoFill"
+                />
+                <label class="form-check-label" for="leftNoFill">No Fill</label>
+              </div>
+            </div>
+            <div class="col-md-1"></div>
+            <div class="col-md-4">
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="rightApertures"
+                  id="rightAperturesNone"
+                  value="none"
+                  checked
+                />
+                <label class="form-check-label" for="rightAperturesNone"
+                  >NONE</label
+                >
+              </div>
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="rightApertures"
+                  id="rightApertures1stMPJ"
+                  value="1st_mpj"
+                />
+                <label class="form-check-label" for="rightApertures1stMPJ"
+                  >1st MPJ</label
+                >
+              </div>
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="rightApertures"
+                  id="rightApertures2ndMPJ"
+                  value="2nd_mpj"
+                />
+                <label class="form-check-label" for="rightApertures2ndMPJ"
+                  >2nd MPJ</label
+                >
+              </div>
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="rightApertures"
+                  id="rightApertures3rdMPJ"
+                  value="3rd_mpj"
+                />
+                <label class="form-check-label" for="rightApertures3rdMPJ"
+                  >3rd MPJ</label
+                >
+              </div>
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="rightApertures"
+                  id="rightApertures4thMPJ"
+                  value="4th_mpj"
+                />
+                <label class="form-check-label" for="rightApertures4thMPJ"
+                  >4th MPJ</label
+                >
+              </div>
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="rightApertures"
+                  id="rightApertures5thMPJ"
+                  value="5th_mpj"
+                />
+                <label class="form-check-label" for="rightApertures5thMPJ"
+                  >5th MPJ</label
+                >
+              </div>
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="rightApertures"
+                  id="rightAperturesHeel"
+                  value="heel"
+                />
+                <label class="form-check-label" for="rightAperturesHeel"
+                  >Heel</label
+                >
+              </div>
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  id="rightNoFill"
+                />
+                <label class="form-check-label" for="rightNoFill"
+                  >No Fill</label
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- Poron U-Pad -->
+          <div class="row mb-3 align-items-center">
+            <div class="col-md-3">
+              <label class="form-label mb-0">Poron U-Pad</label>
+              <span class="badge bg-primary ms-1">i</span>
+            </div>
+            <div class="col-md-4">
+              <select class="form-select" id="leftPoronUPad">
+                <option value="none" selected>NONE</option>
+                <option value="eva">EVA 120 Black</option>
+                <option value="ppt">PPT (PORON) 1.6mm</option>
+                <option value="ppt-slow-release">
+                  PPT (PORON) Slow Release
+                </option>
+              </select>
+            </div>
+            <div class="col-md-1"></div>
+            <div class="col-md-4">
+              <select class="form-select" id="rightPoronUPad">
+                <option value="none" selected>NONE</option>
+                <option value="eva">EVA 120 Black</option>
+                <option value="ppt">PPT (PORON) 1.6mm</option>
+                <option value="ppt-slow-release">
+                  PPT (PORON) Slow Release
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <!-- EVA U-Pad -->
+          <div class="row mb-3 align-items-center">
+            <div class="col-md-3">
+              <label class="form-label mb-0">EVA U-Pad</label>
+              <span class="badge bg-primary ms-1">i</span>
+            </div>
+            <div class="col-md-4">
+              <select class="form-select" id="leftEVAUPad">
+                <option value="none" selected>NONE</option>
+                <option value="small">120 EVA 2mm</option>
+              </select>
+            </div>
+            <div class="col-md-1"></div>
+            <div class="col-md-4">
+              <select class="form-select" id="rightEVAUPad">
+                <option value="none" selected>NONE</option>
+                <option value="small">120 EVA 2mm</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Metatarsal Dome -->
+          <div class="row mb-3 align-items-center">
+            <div class="col-md-3">
+              <label class="form-label mb-0">Metatarsal Dome</label>
+              <span class="badge bg-primary ms-1">i</span>
+            </div>
+            <div class="col-md-4">
+              <select class="form-select" id="leftMetatarsalDome">
+                <option value="none" selected>None</option>
+                <option value="small">Small</option>
+                <option value="medium">Medium</option>
+                <option value="large">Large</option>
+              </select>
+            </div>
+            <div class="col-md-1"></div>
+            <div class="col-md-4">
+              <select class="form-select" id="rightMetatarsalDome">
+                <option value="none" selected>None</option>
+                <option value="small">Small</option>
+                <option value="medium">Medium</option>
+                <option value="large">Large</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Metatarsal Pad -->
+          <div class="row mb-3 align-items-center">
+            <div class="col-md-3">
+              <label class="form-label mb-0">Metatarsal Pad</label>
+              <span class="badge bg-primary ms-1">i</span>
+            </div>
+            <div class="col-md-4">
+              <div class="form-check form-check-inline">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="leftMetatarsalPad"
+                  id="leftMetatarsalPadNo"
+                  value="no"
+                  checked
+                />
+                <label class="form-check-label" for="leftMetatarsalPadNo"
+                  >No</label
+                >
+              </div>
+              <div class="form-check form-check-inline">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="leftMetatarsalPad"
+                  id="leftMetatarsalPadYes"
+                  value="yes"
+                />
+                <label class="form-check-label" for="leftMetatarsalPadYes"
+                  >Yes</label
+                >
+              </div>
+            </div>
+            <div class="col-md-1"></div>
+            <div class="col-md-4">
+              <div class="form-check form-check-inline">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="rightMetatarsalPad"
+                  id="rightMetatarsalPadNo"
+                  value="no"
+                  checked
+                />
+                <label class="form-check-label" for="rightMetatarsalPadNo"
+                  >No</label
+                >
+              </div>
+              <div class="form-check form-check-inline">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="rightMetatarsalPad"
+                  id="rightMetatarsalPadYes"
+                  value="yes"
+                />
+                <label class="form-check-label" for="rightMetatarsalPadYes"
+                  >Yes</label
+                >
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" data-bs-dismiss="modal">
+          Cancel
+        </button>
+        <button
+          type="button"
+          class="btn"
+          id="saveOffLoadingBtn"
+          style="background-color: #3a6b6d; color: white"
+        >
+          Save Off-Loading
+        </button>
+        <button
+          type="button"
+          class="btn"
+          id="nextToPlanterModifiersBtn"
+          style="background-color: #3a6b6d; color: white"
+        >
+          Next: Plantar Modifiers
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast container for notifications -->
+<div id="toast-container" class="position-fixed bottom-0 end-0 p-3"></div>
+
+<!-- Off-Loading JavaScript -->
+<script>
+  // Initialize the off-loading functionality
+  function initOffLoadingForm() {
+    const saveOffLoadingBtn = document.getElementById("saveOffLoadingBtn");
+    const nextToPlanterModifiersBtn = document.getElementById(
+      "nextToPlanterModifiersBtn"
+    );
+
+    // Initialize increment/decrement buttons for numeric fields
+    initOffLoadingControls();
+
+    if (saveOffLoadingBtn) {
+      saveOffLoadingBtn.addEventListener("click", async function () {
+        // Get the prescription ID
+        const prescriptionId = document.getElementById(
+          "offLoadingPrescriptionId"
+        ).value;
+        if (!prescriptionId) {
+          showToast("No prescription selected", "danger");
+          return;
+        }
+
+        // Collect all form data
+        const formData = {
+          prescription: prescriptionId,
+          left_foot: {
+            cuboid: {
+              raise:
+                parseFloat(document.getElementById("leftCuboidRaise").value) ||
+                0,
+              dell:
+                parseFloat(document.getElementById("leftCuboidDell").value) ||
+                0,
+            },
+            styloid: {
+              raise:
+                parseFloat(document.getElementById("leftStyloidRaise").value) ||
+                0,
+              dell:
+                parseFloat(document.getElementById("leftStyloidDell").value) ||
+                0,
+            },
+            navicular: {
+              raise:
+                parseFloat(
+                  document.getElementById("leftNavicularRaise").value
+                ) || 0,
+              dell:
+                parseFloat(
+                  document.getElementById("leftNavicularDell").value
+                ) || 0,
+            },
+            apertures: document.querySelector(
+              'input[name="leftApertures"]:checked'
+            ).value,
+            no_fill: document.getElementById("leftNoFill").checked,
+            poron_u_pad: document.getElementById("leftPoronUPad").value,
+            eva_u_pad: document.getElementById("leftEVAUPad").value,
+            metatarsal_dome:
+              document.getElementById("leftMetatarsalDome").value,
+            metatarsal_pad:
+              document.querySelector('input[name="leftMetatarsalPad"]:checked')
+                .value === "yes",
+          },
+          right_foot: {
+            cuboid: {
+              raise:
+                parseFloat(document.getElementById("rightCuboidRaise").value) ||
+                0,
+              dell:
+                parseFloat(document.getElementById("rightCuboidDell").value) ||
+                0,
+            },
+            styloid: {
+              raise:
+                parseFloat(
+                  document.getElementById("rightStyloidRaise").value
+                ) || 0,
+              dell:
+                parseFloat(document.getElementById("rightStyloidDell").value) ||
+                0,
+            },
+            navicular: {
+              raise:
+                parseFloat(
+                  document.getElementById("rightNavicularRaise").value
+                ) || 0,
+              dell:
+                parseFloat(
+                  document.getElementById("rightNavicularDell").value
+                ) || 0,
+            },
+            apertures: document.querySelector(
+              'input[name="rightApertures"]:checked'
+            ).value,
+            no_fill: document.getElementById("rightNoFill").checked,
+            poron_u_pad: document.getElementById("rightPoronUPad").value,
+            eva_u_pad: document.getElementById("rightEVAUPad").value,
+            metatarsal_dome: document.getElementById("rightMetatarsalDome")
+              .value,
+            metatarsal_pad:
+              document.querySelector('input[name="rightMetatarsalPad"]:checked')
+                .value === "yes",
+          },
+        };
+
+        // Show loading state
+        saveOffLoadingBtn.disabled = true;
+        saveOffLoadingBtn.innerHTML =
+          '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...';
+
+        try {
+          // Save the off-loading using the API service
+          const response = await ApiService.prescriptions.saveOffLoading(
+            prescriptionId,
+            formData
+          );
+          console.log("Off-loading saved:", response);
+          showToast("Off-loading saved successfully", "success");
+
+          // Get the modal instance
+          const modal = bootstrap.Modal.getInstance(
+            document.getElementById("offLoadingModal")
+          );
+          if (modal) {
+            modal.hide();
+          }
+
+          // Open the plantar modifiers modal
+          openPlanterModifierModal(prescriptionId);
+        } catch (error) {
+          console.error("Error saving off-loading:", error);
+          showToast(
+            "Failed to save off-loading: " + (error.message || "Unknown error"),
+            "danger"
+          );
+        } finally {
+          // Re-enable the button
+          saveOffLoadingBtn.disabled = false;
+          saveOffLoadingBtn.innerHTML = "Save Off-Loading";
+        }
+      });
+    }
+
+    // Handle the Next button click
+    if (nextToPlanterModifiersBtn) {
+      nextToPlanterModifiersBtn.addEventListener("click", function () {
+        // First save the off-loading
+        saveOffLoadingBtn.click();
+      });
+    }
+  }
+
+  function initOffLoadingControls() {
+    // Get all increment and decrement buttons
+    const decreaseBtns = document.querySelectorAll(".decrease-btn");
+    const increaseBtns = document.querySelectorAll(".increase-btn");
+
+    // Add event listeners for decrement buttons
+    decreaseBtns.forEach((btn) => {
+      btn.addEventListener("click", function () {
+        const targetId = this.getAttribute("data-target");
+        const input = document.getElementById(targetId);
+        if (input) {
+          let value = parseFloat(input.value) || 0;
+          let step = 0.5; // Use 0.5mm steps for precise adjustments
+          input.value = Math.max(value - step, 0).toFixed(1); // Prevent negative values
+        }
+      });
+    });
+
+    // Add event listeners for increment buttons
+    increaseBtns.forEach((btn) => {
+      btn.addEventListener("click", function () {
+        const targetId = this.getAttribute("data-target");
+        const input = document.getElementById(targetId);
+        if (input) {
+          let value = parseFloat(input.value) || 0;
+          let step = 0.5; // Use 0.5mm steps for precise adjustments
+          input.value = Math.min(value + step, 20).toFixed(1); // Set a reasonable maximum (20mm)
+        }
+      });
+    });
+  }
+
+  async function loadExistingOffLoading(prescriptionId) {
+    try {
+      // Fetch existing off-loading from the API
+      const response = await ApiService.prescriptions.getOffLoading(
+        prescriptionId
+      );
+      console.log("Loaded off-loading:", response);
+
+      if (response) {
+        // Left foot
+        if (response.left_foot) {
+          // Cuboid
+          if (response.left_foot.cuboid) {
+            document.getElementById("leftCuboidRaise").value =
+              response.left_foot.cuboid.raise || 0;
+            document.getElementById("leftCuboidDell").value =
+              response.left_foot.cuboid.dell || 0;
+          }
+
+          // Styloid
+          if (response.left_foot.styloid) {
+            document.getElementById("leftStyloidRaise").value =
+              response.left_foot.styloid.raise || 0;
+            document.getElementById("leftStyloidDell").value =
+              response.left_foot.styloid.dell || 0;
+          }
+
+          // Navicular
+          if (response.left_foot.navicular) {
+            document.getElementById("leftNavicularRaise").value =
+              response.left_foot.navicular.raise || 0;
+            document.getElementById("leftNavicularDell").value =
+              response.left_foot.navicular.dell || 0;
+          }
+
+          // Apertures
+          if (response.left_foot.apertures) {
+            const apertureRadio = document.querySelector(
+              `input[name="leftApertures"][value="${response.left_foot.apertures}"]`
+            );
+            if (apertureRadio) {
+              apertureRadio.checked = true;
+            }
+          }
+
+          // No Fill
+          document.getElementById("leftNoFill").checked =
+            response.left_foot.no_fill || false;
+
+          // Poron U-Pad
+          document.getElementById("leftPoronUPad").value =
+            response.left_foot.poron_u_pad || "none";
+
+          // EVA U-Pad
+          document.getElementById("leftEVAUPad").value =
+            response.left_foot.eva_u_pad || "none";
+
+          // Metatarsal Dome
+          document.getElementById("leftMetatarsalDome").value =
+            response.left_foot.metatarsal_dome || "none";
+
+          // Metatarsal Pad
+          const leftMetatarsalPadValue = response.left_foot.metatarsal_pad
+            ? "yes"
+            : "no";
+          document.querySelector(
+            `input[name="leftMetatarsalPad"][value="${leftMetatarsalPadValue}"]`
+          ).checked = true;
+        }
+
+        // Right foot
+        if (response.right_foot) {
+          // Cuboid
+          if (response.right_foot.cuboid) {
+            document.getElementById("rightCuboidRaise").value =
+              response.right_foot.cuboid.raise || 0;
+            document.getElementById("rightCuboidDell").value =
+              response.right_foot.cuboid.dell || 0;
+          }
+
+          // Styloid
+          if (response.right_foot.styloid) {
+            document.getElementById("rightStyloidRaise").value =
+              response.right_foot.styloid.raise || 0;
+            document.getElementById("rightStyloidDell").value =
+              response.right_foot.styloid.dell || 0;
+          }
+
+          // Navicular
+          if (response.right_foot.navicular) {
+            document.getElementById("rightNavicularRaise").value =
+              response.right_foot.navicular.raise || 0;
+            document.getElementById("rightNavicularDell").value =
+              response.right_foot.navicular.dell || 0;
+          }
+
+          // Apertures
+          if (response.right_foot.apertures) {
+            const apertureRadio = document.querySelector(
+              `input[name="rightApertures"][value="${response.right_foot.apertures}"]`
+            );
+            if (apertureRadio) {
+              apertureRadio.checked = true;
+            }
+          }
+
+          // No Fill
+          document.getElementById("rightNoFill").checked =
+            response.right_foot.no_fill || false;
+
+          // Poron U-Pad
+          document.getElementById("rightPoronUPad").value =
+            response.right_foot.poron_u_pad || "none";
+
+          // EVA U-Pad
+          document.getElementById("rightEVAUPad").value =
+            response.right_foot.eva_u_pad || "none";
+
+          // Metatarsal Dome
+          document.getElementById("rightMetatarsalDome").value =
+            response.right_foot.metatarsal_dome || "none";
+
+          // Metatarsal Pad
+          const rightMetatarsalPadValue = response.right_foot.metatarsal_pad
+            ? "yes"
+            : "no";
+          document.querySelector(
+            `input[name="rightMetatarsalPad"][value="${rightMetatarsalPadValue}"]`
+          ).checked = true;
+        }
+      }
+    } catch (error) {
+      console.error("Error loading off-loading:", error);
+    }
+  }
+
+  // Toast notification function
+  function showToast(message, type = "info") {
+    const toastContainer = document.getElementById("toast-container");
+    if (!toastContainer) {
+      console.error("Toast container not found");
+      return;
+    }
+
+    const toast = document.createElement("div");
+    toast.className = `toast align-items-center text-white bg-${
+      type === "error" ? "danger" : type
+    } border-0`;
+    toast.setAttribute("role", "alert");
+    toast.setAttribute("aria-live", "assertive");
+    toast.setAttribute("aria-atomic", "true");
+
+    toast.innerHTML = `
+      <div class="d-flex">
+        <div class="toast-body">${message}</div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+    `;
+
+    toastContainer.appendChild(toast);
+    const bsToast = new bootstrap.Toast(toast);
+    bsToast.show();
+
+    toast.addEventListener("hidden.bs.toast", function () {
+      toast.remove();
+    });
+  }
+
+  // Export the openOffLoadingModal function to make it globally available
+  window.openOffLoadingModal = function (prescriptionId) {
+    if (!prescriptionId) {
+      console.error("No prescription ID provided");
+      return;
+    }
+
+    // Set the prescription ID
+    document.getElementById("offLoadingPrescriptionId").value = prescriptionId;
+
+    // Clear form fields
+    document.getElementById("offLoadingForm").reset();
+
+    // Load existing off-loading
+    loadExistingOffLoading(prescriptionId);
+
+    // Show the modal
+    const modal = new bootstrap.Modal(
+      document.getElementById("offLoadingModal")
+    );
+    modal.show();
+  };
+
+  // Initialize when the document is ready
+  document.addEventListener("DOMContentLoaded", function () {
+    initOffLoadingForm();
+  });
+</script>

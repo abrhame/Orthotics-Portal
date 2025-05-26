@@ -1,221 +1,724 @@
-{% extends 'orthotics_portal/base.html' %} {% load static %} {% block title
-%}Prescription Details | Orthotics Prescription Portal{% endblock %} {% block
-content %}
+{% extends 'orthotics_portal/base.html' %} {% load static %} {% block title %}
+{{ page_title|default:"Prescription Details" }} | Orthotics Prescription Portal
+{% endblock %} {% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/notes_attachments.css' %}" />
+<style>
+  .sidebar {
+    min-height: calc(100vh - 60px);
+    background-color: #f8f9fa;
+    border-right: 1px solid #dee2e6;
+    padding: 1.5rem;
+  }
+
+  .step-item {
+    padding: 1rem;
+    margin-bottom: 0.5rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+  }
+
+  .step-item:hover {
+    background-color: #e9ecef;
+  }
+
+  .step-item.active {
+    background-color: #3a6b6d;
+    color: white;
+  }
+
+  .step-item.completed {
+    background-color: #e9ecef;
+    color: #198754;
+  }
+
+  .step-item i {
+    width: 24px;
+    text-align: center;
+    margin-right: 0.5rem;
+  }
+
+  .timeline {
+    position: relative;
+    margin-left: 1rem;
+  }
+
+  .timeline::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 2px;
+    background-color: #dee2e6;
+  }
+
+  .timeline-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: #dee2e6;
+    position: absolute;
+    left: -5px;
+  }
+
+  .timeline-dot.active {
+    background-color: #3a6b6d;
+  }
+
+  .timeline-dot.completed {
+    background-color: #198754;
+  }
+
+  .main-content {
+    padding: 2rem;
+  }
+
+  .card {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  }
+
+  .card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+  }
+
+  .form-control:focus,
+  .form-select:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+  }
+
+  .breadcrumb {
+    background-color: #f8f9fa;
+    padding: 0.75rem 1rem;
+    border-radius: 0.25rem;
+  }
+
+  /* Horizontal Timeline Styles */
+  .horizontal-timeline {
+    position: relative;
+    width: 100%;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .horizontal-timeline::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background-color: #dee2e6;
+    z-index: 1;
+  }
+
+  /* Add progress line */
+  .horizontal-timeline::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 0;
+    height: 2px;
+    background-color: #198754;
+    z-index: 1;
+    transition: width 0.3s ease;
+    width: var(--progress-width, 0%);
+  }
+
+  .timeline-step {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    cursor: pointer;
+  }
+
+  .timeline-step-dot {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: #fff;
+    border: 2px solid #dee2e6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+    transition: all 0.3s ease;
+  }
+
+  .timeline-step.active .timeline-step-dot {
+    background-color: #3a6b6d;
+    border-color: #3a6b6d;
+    color: white;
+  }
+
+  .timeline-step.completed .timeline-step-dot {
+    background-color: #198754;
+    border-color: #198754;
+    color: white;
+  }
+
+  .timeline-step-icon {
+    font-size: 14px;
+    color: inherit;
+  }
+
+  .timeline-step-label {
+    font-size: 12px;
+    text-align: center;
+    color: #6c757d;
+    max-width: 100px;
+    word-wrap: break-word;
+  }
+
+  .timeline-step.active .timeline-step-label {
+    color: #3a6b6d;
+    font-weight: bold;
+  }
+
+  .timeline-step.completed .timeline-step-label {
+    color: #198754;
+  }
+
+  .timeline-step.completed .timeline-step-icon {
+    color: white;
+  }
+</style>
+{% endblock %} {% block content %}
 <div class="container-fluid">
-  <h1 class="h3 mb-2 text-gray-800">Prescription Details</h1>
-  <ol class="breadcrumb mb-4">
-    <li class="breadcrumb-item"><a href="{% url 'home' %}">Dashboard</a></li>
-    <li class="breadcrumb-item">
-      <a href="{% url 'prescriptions' %}">Prescriptions</a>
-    </li>
-    <li class="breadcrumb-item active">Prescription #{{ prescription.id }}</li>
-  </ol>
-
   <div class="row">
-    <div class="col-xl-12">
-      <div class="card mb-4">
-        <div class="card-header">
-          <div class="d-flex justify-content-between align-items-center">
-            <div>
-              <i class="fas fa-clipboard-list me-1"></i>
-              Prescription Information
-            </div>
-          </div>
+    <!-- Sidebar -->
+    <div class="col-md-3 col-lg-2 sidebar">
+      <h5 class="mb-4">Prescription Steps</h5>
+      <div class="timeline">
+        <div
+          class="step-item {% if current_step == 'patient' %}active{% endif %}"
+          data-step="patient"
+        >
+          <div
+            class="timeline-dot {% if current_step == 'patient' %}active{% endif %}"
+          ></div>
+          <i class="bi bi-person"></i>
+          Patient Information
         </div>
-        <div class="card-body">
-          <div class="row mb-4">
-            <div class="col-md-6">
-              <h5 class="mb-3">Basic Information</h5>
-              <p><strong>Prescription ID:</strong> {{ prescription.id }}</p>
-              <p>
-                <strong>Date Created:</strong> {{
-                prescription.created_at|date:"F d, Y" }}
-              </p>
-              <p>
-                <strong>Status:</strong>
-                <span
-                  class="badge bg-{{ prescription.status.color|default:'secondary' }}"
-                  >{{ prescription.status.name|default:'N/A' }}</span
-                >
-              </p>
-              <p>
-                <strong>Template:</strong> {{
-                prescription.template.name|default:'N/A' }}
-              </p>
-            </div>
-            <div class="col-md-6">
-              <h5 class="mb-3">Patient Information</h5>
-              <p><strong>Name:</strong> {{ prescription.patient.full_name }}</p>
-              <p>
-                <strong>Date of Birth:</strong> {{
-                prescription.patient.date_of_birth|date:"F d, Y" }}
-              </p>
-              <p>
-                <strong>Email:</strong> {{
-                prescription.patient.email|default:'N/A' }}
-              </p>
-              <p>
-                <strong>Phone:</strong> {{
-                prescription.patient.phone|default:'N/A' }}
-              </p>
-            </div>
-          </div>
+        <div
+          class="step-item {% if current_step == 'scan_upload' %}active{% endif %}"
+          data-step="scan_upload"
+        >
+          <div
+            class="timeline-dot {% if current_step == 'scan_upload' %}active{% endif %}"
+          ></div>
+          <i class="bi bi-cloud-upload"></i>
+          Scan Upload
+        </div>
+        <div
+          class="step-item {% if current_step == 'clinical_measures' %}active{% endif %}"
+          data-step="clinical_measures"
+        >
+          <div
+            class="timeline-dot {% if current_step == 'clinical_measures' %}active{% endif %}"
+          ></div>
+          <i class="bi bi-rulers"></i>
+          Clinical Measures
+        </div>
+        <div
+          class="step-item {% if current_step == 'intrinsic' %}active{% endif %}"
+          data-step="intrinsic"
+        >
+          <div
+            class="timeline-dot {% if current_step == 'intrinsic' %}active{% endif %}"
+          ></div>
+          <i class="bi bi-diagram-3"></i>
+          Intrinsic Adjustments
+        </div>
+        <div
+          class="step-item {% if current_step == 'offloading' %}active{% endif %}"
+          data-step="offloading"
+        >
+          <div
+            class="timeline-dot {% if current_step == 'offloading' %}active{% endif %}"
+          ></div>
+          <i class="bi bi-arrows-move"></i>
+          Offloading
+        </div>
+        <div
+          class="step-item {% if current_step == 'plantar_modifiers' %}active{% endif %}"
+          data-step="plantar_modifiers"
+        >
+          <div
+            class="timeline-dot {% if current_step == 'plantar_modifiers' %}active{% endif %}"
+          ></div>
+          <i class="bi bi-grid-3x3"></i>
+          Plantar Modifiers
+        </div>
+        <div
+          class="step-item {% if current_step == 'material_selection' %}active{% endif %}"
+          data-step="material_selection"
+        >
+          <div
+            class="timeline-dot {% if current_step == 'material_selection' %}active{% endif %}"
+          ></div>
+          <i class="bi bi-layers"></i>
+          Material Selection
+        </div>
+        <div
+          class="step-item {% if current_step == 'shoe_fitting' %}active{% endif %}"
+          data-step="shoe_fitting"
+        >
+          <div
+            class="timeline-dot {% if current_step == 'shoe_fitting' %}active{% endif %}"
+          ></div>
+          <i class="bi bi-boot"></i>
+          Shoe Fitting
+        </div>
+        <div
+          class="step-item {% if current_step == 'posting' %}active{% endif %}"
+          data-step="posting"
+        >
+          <div
+            class="timeline-dot {% if current_step == 'posting' %}active{% endif %}"
+          ></div>
+          <i class="bi bi-box"></i>
+          Posting
+        </div>
+        <div
+          class="step-item {% if current_step == 'device_options' %}active{% endif %}"
+          data-step="device_options"
+        >
+          <div
+            class="timeline-dot {% if current_step == 'device_options' %}active{% endif %}"
+          ></div>
+          <i class="bi bi-gear"></i>
+          Device Options
+        </div>
+        <div
+          class="step-item {% if current_step == 'notes_attachments' %}active{% endif %}"
+          data-step="notes_attachments"
+        >
+          <div
+            class="timeline-dot {% if current_step == 'notes_attachments' %}active{% endif %}"
+          ></div>
+          <i class="bi bi-paperclip"></i>
+          Notes & Attachments
+        </div>
+      </div>
+    </div>
 
-          <div class="row mb-4">
-            <div class="col-md-6">
-              <h5 class="mb-3">Clinical Information</h5>
-              <p>
-                <strong>Foot Type:</strong> {{
-                prescription.foot_type.name|default:'N/A' }}
-              </p>
-              <p>
-                <strong>Wear Time:</strong> {{
-                prescription.wear_time.name|default:'N/A' }}
-              </p>
-              <p>
-                <strong>Activity Level:</strong> {{
-                prescription.activity_level.name|default:'N/A' }}
-              </p>
-              <p>
-                <strong>Turnaround:</strong> {{
-                prescription.get_turnaround_display }}
-              </p>
-            </div>
-            <div class="col-md-6">
-              <h5 class="mb-3">Additional Options</h5>
-              <p>
-                <strong>Contact Clinician:</strong> {% if
-                prescription.contact_clinician %}<i
-                  class="fas fa-check text-success"
-                ></i
-                >{% else %}<i class="fas fa-times text-danger"></i>{% endif %}
-              </p>
-              <p>
-                <strong>Confirm Before Manufacture:</strong> {% if
-                prescription.confirm_before_manufacture %}<i
-                  class="fas fa-check text-success"
-                ></i
-                >{% else %}<i class="fas fa-times text-danger"></i>{% endif %}
-              </p>
-              <p>
-                <strong>Clinician CAD:</strong> {% if
-                prescription.clinician_computer_aided_design %}<i
-                  class="fas fa-check text-success"
-                ></i
-                >{% else %}<i class="fas fa-times text-danger"></i>{% endif %}
-              </p>
-            </div>
+    <!-- Main Content -->
+    <div class="col-md-9 col-lg-10 main-content">
+      <!-- Horizontal Timeline -->
+      <div class="horizontal-timeline">
+        <div
+          class="timeline-step {% if current_step == 'patient' %}active{% endif %} {% if steps_completed.patient %}completed{% endif %}"
+          data-step="patient"
+        >
+          <div class="timeline-step-dot">
+            <i class="bi bi-person timeline-step-icon"></i>
           </div>
+          <span class="timeline-step-label">Patient</span>
+        </div>
+        <div
+          class="timeline-step {% if current_step == 'scan_upload' %}active{% endif %} {% if steps_completed.scan_upload %}completed{% endif %}"
+          data-step="scan_upload"
+        >
+          <div class="timeline-step-dot">
+            <i class="bi bi-cloud-upload timeline-step-icon"></i>
+          </div>
+          <span class="timeline-step-label">Scan Upload</span>
+        </div>
+        <div
+          class="timeline-step {% if current_step == 'clinical_measures' %}active{% endif %} {% if steps_completed.clinical_measures %}completed{% endif %}"
+          data-step="clinical_measures"
+        >
+          <div class="timeline-step-dot">
+            <i class="bi bi-rulers timeline-step-icon"></i>
+          </div>
+          <span class="timeline-step-label">Clinical Measures</span>
+        </div>
+        <div
+          class="timeline-step {% if current_step == 'intrinsic' %}active{% endif %} {% if steps_completed.intrinsic %}completed{% endif %}"
+          data-step="intrinsic"
+        >
+          <div class="timeline-step-dot">
+            <i class="bi bi-diagram-3 timeline-step-icon"></i>
+          </div>
+          <span class="timeline-step-label">Intrinsic</span>
+        </div>
+        <div
+          class="timeline-step {% if current_step == 'offloading' %}active{% endif %} {% if steps_completed.offloading %}completed{% endif %}"
+          data-step="offloading"
+        >
+          <div class="timeline-step-dot">
+            <i class="bi bi-arrows-move timeline-step-icon"></i>
+          </div>
+          <span class="timeline-step-label">Offloading</span>
+        </div>
+        <div
+          class="timeline-step {% if current_step == 'plantar_modifiers' %}active{% endif %} {% if steps_completed.plantar_modifiers %}completed{% endif %}"
+          data-step="plantar_modifiers"
+        >
+          <div class="timeline-step-dot">
+            <i class="bi bi-grid-3x3 timeline-step-icon"></i>
+          </div>
+          <span class="timeline-step-label">Plantar Modifiers</span>
+        </div>
+        <div
+          class="timeline-step {% if current_step == 'material_selection' %}active{% endif %} {% if steps_completed.material_selection %}completed{% endif %}"
+          data-step="material_selection"
+        >
+          <div class="timeline-step-dot">
+            <i class="bi bi-layers timeline-step-icon"></i>
+          </div>
+          <span class="timeline-step-label">Material</span>
+        </div>
+        <div
+          class="timeline-step {% if current_step == 'shoe_fitting' %}active{% endif %} {% if steps_completed.shoe_fitting %}completed{% endif %}"
+          data-step="shoe_fitting"
+        >
+          <div class="timeline-step-dot">
+            <i class="bi bi-boot timeline-step-icon"></i>
+          </div>
+          <span class="timeline-step-label">Shoe Fitting</span>
+        </div>
+        <div
+          class="timeline-step {% if current_step == 'posting' %}active{% endif %} {% if steps_completed.posting %}completed{% endif %}"
+          data-step="posting"
+        >
+          <div class="timeline-step-dot">
+            <i class="bi bi-box timeline-step-icon"></i>
+          </div>
+          <span class="timeline-step-label">Posting</span>
+        </div>
+        <div
+          class="timeline-step {% if current_step == 'device_options' %}active{% endif %} {% if steps_completed.device_options %}completed{% endif %}"
+          data-step="device_options"
+        >
+          <div class="timeline-step-dot">
+            <i class="bi bi-gear timeline-step-icon"></i>
+          </div>
+          <span class="timeline-step-label">Device Options</span>
+        </div>
+        <div
+          class="timeline-step {% if current_step == 'notes_attachments' %}active{% endif %} {% if steps_completed.notes_attachments %}completed{% endif %}"
+          data-step="notes_attachments"
+        >
+          <div class="timeline-step-dot">
+            <i class="bi bi-paperclip timeline-step-icon"></i>
+          </div>
+          <span class="timeline-step-label">Notes</span>
+        </div>
+      </div>
 
-          {% if prescription.general_notes or prescription.left_foot_notes or
-          prescription.right_foot_notes %}
-          <div class="row mb-4">
-            <div class="col-12">
-              <h5 class="mb-3">Notes</h5>
-              {% if prescription.general_notes %}
-              <div class="mb-3">
-                <h6>General Notes</h6>
-                <div class="card">
-                  <div class="card-body">
-                    {{ prescription.general_notes|linebreaks }}
-                  </div>
-                </div>
-              </div>
-              {% endif %} {% if prescription.left_foot_notes %}
-              <div class="mb-3">
-                <h6>Left Foot Notes</h6>
-                <div class="card">
-                  <div class="card-body">
-                    {{ prescription.left_foot_notes|linebreaks }}
-                  </div>
-                </div>
-              </div>
-              {% endif %} {% if prescription.right_foot_notes %}
-              <div class="mb-3">
-                <h6>Right Foot Notes</h6>
-                <div class="card">
-                  <div class="card-body">
-                    {{ prescription.right_foot_notes|linebreaks }}
-                  </div>
-                </div>
-              </div>
-              {% endif %}
-            </div>
-          </div>
-          {% endif %} {% if prescription.scans.exists %}
-          <div class="row mb-4">
-            <div class="col-12">
-              <h5 class="mb-3">Foot Scans</h5>
-              <div class="table-responsive">
-                <table class="table table-bordered">
-                  <thead>
-                    <tr>
-                      <th>File Name</th>
-                      <th>Type</th>
-                      <th>Uploaded</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {% for scan in prescription.scans.all %}
-                    <tr>
-                      <td>{{ scan.filename }}</td>
-                      <td>{{ scan.scan_type }}</td>
-                      <td>{{ scan.created_at|date:"F d, Y" }}</td>
-                      <td>
-                        <a
-                          href="{{ scan.file.url }}"
-                          class="btn btn-primary btn-sm"
-                          target="_blank"
-                        >
-                          <i class="fas fa-download me-1"></i> Download
-                        </a>
-                      </td>
-                    </tr>
-                    {% endfor %}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-          {% endif %} {% if prescription.attachments.exists %}
-          <div class="row">
-            <div class="col-12">
-              <h5 class="mb-3">Attachments</h5>
-              <div class="table-responsive">
-                <table class="table table-bordered">
-                  <thead>
-                    <tr>
-                      <th>File Name</th>
-                      <th>Uploaded</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {% for attachment in prescription.attachments.all %}
-                    <tr>
-                      <td>{{ attachment.filename }}</td>
-                      <td>{{ attachment.created_at|date:"F d, Y" }}</td>
-                      <td>
-                        <a
-                          href="{{ attachment.file.url }}"
-                          class="btn btn-primary btn-sm"
-                          target="_blank"
-                        >
-                          <i class="fas fa-download me-1"></i> Download
-                        </a>
-                      </td>
-                    </tr>
-                    {% endfor %}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-          {% endif %}
+      <!-- Dynamic Content Area -->
+      <div id="stepContent">
+        <div
+          class="step-content"
+          id="patient-content"
+          {%
+          if
+          current_step
+          !="patient"
+          %}style="display: none;"
+          {%
+          endif
+          %}
+        >
+          {% include 'orthotics_portal/add_patient.html' %}
+        </div>
+        <div
+          class="step-content"
+          id="scan_upload-content"
+          {%
+          if
+          current_step
+          !="scan_upload"
+          %}style="display: none;"
+          {%
+          endif
+          %}
+        >
+          {% include 'orthotics_portal/scan_upload.html' %}
+        </div>
+        <div
+          class="step-content"
+          id="clinical_measures-content"
+          {%
+          if
+          current_step
+          !="clinical_measures"
+          %}style="display: none;"
+          {%
+          endif
+          %}
+        >
+          {% include 'orthotics_portal/clinical_measures.html' %}
+        </div>
+        <div
+          class="step-content"
+          id="intrinsic-content"
+          {%
+          if
+          current_step
+          !="intrinsic"
+          %}style="display: none;"
+          {%
+          endif
+          %}
+        >
+          {% include 'orthotics_portal/intrrnsic_adjustments.html' %}
+        </div>
+        <div
+          class="step-content"
+          id="offloading-content"
+          {%
+          if
+          current_step
+          !="offloading"
+          %}style="display: none;"
+          {%
+          endif
+          %}
+        >
+          {% include 'orthotics_portal/offloading.html' %}
+        </div>
+        <div
+          class="step-content"
+          id="plantar_modifiers-content"
+          {%
+          if
+          current_step
+          !="plantar_modifiers"
+          %}style="display: none;"
+          {%
+          endif
+          %}
+        >
+          {% include 'orthotics_portal/plantar_modifiers.html' %}
+        </div>
+        <div
+          class="step-content"
+          id="material_selection-content"
+          {%
+          if
+          current_step
+          !="material_selection"
+          %}style="display: none;"
+          {%
+          endif
+          %}
+        >
+          {% include 'orthotics_portal/material_selection.html' %}
+        </div>
+        <div
+          class="step-content"
+          id="shoe_fitting-content"
+          {%
+          if
+          current_step
+          !="shoe_fitting"
+          %}style="display: none;"
+          {%
+          endif
+          %}
+        >
+          {% include 'orthotics_portal/shoe_fitting.html' %}
+        </div>
+        <div
+          class="step-content"
+          id="posting-content"
+          {%
+          if
+          current_step
+          !="posting"
+          %}style="display: none;"
+          {%
+          endif
+          %}
+        >
+          {% include 'orthotics_portal/posting.html' %}
+        </div>
+        <div
+          class="step-content"
+          id="device_options-content"
+          {%
+          if
+          current_step
+          !="device_options"
+          %}style="display: none;"
+          {%
+          endif
+          %}
+        >
+          {% include 'orthotics_portal/device_options.html' %}
+        </div>
+        <div
+          class="step-content"
+          id="notes_attachments-content"
+          {%
+          if
+          current_step
+          !="notes_attachments"
+          %}style="display: none;"
+          {%
+          endif
+          %}
+        >
+          {% include 'orthotics_portal/notes_attachments.html' %}
         </div>
       </div>
     </div>
   </div>
 </div>
+
+
+<script src="{% static 'js/scan_preview.js' %}"></script>
+<script src="{% static 'js/create_prescription/workflow.js' %}"></script>
+
+<!-- Component scripts -->
+<script src="{% static 'js/components/plantar_modifiers.js' %}"></script>
+<script src="{% static 'js/components/posting.js' %}"></script>
+<script src="{% static 'js/components/material_selection.js' %}"></script>
+<script src="{% static 'js/components/shoe_fitting.js' %}"></script>
+<script src="{% static 'js/components/device_options.js' %}"></script>
+<script src="{% static 'js/components/notes_attachments.js' %}"></script>
+
+<script>
+  // Initialize workflow when DOM is loaded
+  document.addEventListener("DOMContentLoaded", function () {
+    // Initialize scan preview
+    if (typeof ScanPreview !== "undefined") {
+      window.scanPreview = new ScanPreview();
+    }
+
+    const stepItems = document.querySelectorAll(".step-item");
+    const timelineSteps = document.querySelectorAll(".timeline-step");
+    const stepContents = document.querySelectorAll(".step-content");
+    const totalSteps = timelineSteps.length;
+    let completedSteps = document.querySelectorAll(
+      ".timeline-step.completed"
+    ).length;
+
+    // Function to update progress line
+    function updateProgressLine() {
+      const progress = (completedSteps / (totalSteps - 1)) * 100;
+      document
+        .querySelector(".horizontal-timeline")
+        .style.setProperty("--progress-width", `${progress}%`);
+    }
+
+    // Function to update step display
+    function updateStepDisplay(step) {
+      // Update sidebar active states
+      stepItems.forEach((si) => si.classList.remove("active"));
+      document
+        .querySelector(`.step-item[data-step="${step}"]`)
+        .classList.add("active");
+
+      // Update timeline active states
+      timelineSteps.forEach((ts) => ts.classList.remove("active"));
+      const currentTimelineStep = document.querySelector(
+        `.timeline-step[data-step="${step}"]`
+      );
+      currentTimelineStep.classList.add("active");
+
+      // Mark previous steps as completed
+      let foundCurrent = false;
+      timelineSteps.forEach((ts) => {
+        if (ts === currentTimelineStep) {
+          foundCurrent = true;
+        } else if (!foundCurrent) {
+          ts.classList.add("completed");
+        }
+      });
+
+      // Update progress line
+      completedSteps = document.querySelectorAll(
+        ".timeline-step.completed"
+      ).length;
+      updateProgressLine();
+
+      // Update content visibility
+      stepContents.forEach((content) => {
+        if (content.id === `${step}-content`) {
+          content.style.display = "block";
+        } else {
+          content.style.display = "none";
+        }
+      });
+    }
+
+    // Initialize progress line
+    updateProgressLine();
+
+    // Initialize workflow with default steps if none provided
+    const defaultSteps = [
+      { id: "patient", name: "Patient Information", icon: "bi-person" },
+      { id: "scan_upload", name: "Scan Upload", icon: "bi-cloud-upload" },
+      { id: "clinical_measures", name: "Clinical Measures", icon: "bi-rulers" },
+      { id: "intrinsic", name: "Intrinsic Adjustments", icon: "bi-diagram-3" },
+      { id: "offloading", name: "Offloading", icon: "bi-arrows-move" },
+      {
+        id: "plantar_modifiers",
+        name: "Plantar Modifiers",
+        icon: "bi-grid-3x3",
+      },
+      {
+        id: "material_selection",
+        name: "Material Selection",
+        icon: "bi-layers",
+      },
+      { id: "shoe_fitting", name: "Shoe Fitting", icon: "bi-boot" },
+      { id: "posting", name: "Posting", icon: "bi-box" },
+      { id: "device_options", name: "Device Options", icon: "bi-gear" },
+      {
+        id: "notes_attachments",
+        name: "Notes & Attachments",
+        icon: "bi-paperclip",
+      },
+    ];
+
+    try {
+      const steps = "{{ steps|escapejs }}"
+        ? JSON.parse("{{ steps|escapejs }}")
+        : defaultSteps;
+      const workflow = new PrescriptionWorkflow({
+        currentStep: "{{ current_step|default:'patient' }}",
+        steps: steps,
+        prescriptionId: "{{ prescription.id|default:'' }}",
+      });
+    } catch (error) {
+      console.warn("Using default workflow configuration:", error);
+      const workflow = new PrescriptionWorkflow({
+        currentStep: "patient",
+        steps: defaultSteps,
+        prescriptionId: "",
+      });
+    }
+
+    // Add click handlers for sidebar items
+    stepItems.forEach((item) => {
+      item.addEventListener("click", function () {
+        const step = this.getAttribute("data-step");
+        updateStepDisplay(step);
+      });
+    });
+
+    // Add click handlers for timeline steps
+    timelineSteps.forEach((item) => {
+      item.addEventListener("click", function () {
+        const step = this.getAttribute("data-step");
+        updateStepDisplay(step);
+      });
+    });
+  });
+</script>
 {% endblock %}

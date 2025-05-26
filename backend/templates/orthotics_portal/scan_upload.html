@@ -1,0 +1,567 @@
+{% load static %}
+
+<!-- Scan Upload Modal -->
+<div
+  class=""
+  id="scanUploadModal"
+  tabindex="-1"
+  aria-labelledby="scanUploadModalLabel"
+  aria-hidden="true"
+>
+  <div class="" style="max-width: 90vw; max-height: 90vh">
+    <div class="modal-content">
+      <div class="modal-body">
+        <!-- Hidden input for prescription ID -->
+        <input type="hidden" id="scanPrescriptionId" />
+        <div class="row">
+          <div class="col-md-6">
+            <div class="card mb-3">
+              <div class="card-header">Left Foot Scan</div>
+              <div class="card-body text-center">
+                <div
+                  id="leftFootPreview"
+                  class="mb-3 d-none"
+                  style="max-height: 200px"
+                >
+                  Left Foot Preview
+                </div>
+                <!-- 3D Preview Container -->
+                <div
+                  id="leftFoot3DPreview"
+                  class="d-none"
+                  style="height: 45vh; width: 100%"
+                ></div>
+
+                <div class="input-group mt-2">
+                  <input
+                    type="file"
+                    class="form-control"
+                    id="leftFootScan"
+                    accept=".stl,.wrl,image/*"
+                    style="display: none"
+                  />
+                  <label
+                    id="leftFootScanLabel"
+                    for="leftFootScan"
+                    class="form-control text-start overflow-hidden"
+                    >Select file</label
+                  >
+                  <label
+                    for="leftFootScan"
+                    class="input-group-text btn"
+                    style="background-color: #3a6b6d; color: white"
+                    >Browse</label
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="card mb-3">
+              <div class="card-header">Right Foot Scan</div>
+              <div class="card-body text-center">
+                <div
+                  id="rightFootPreview"
+                  class="mb-3 d-none"
+                  style="max-height: 200px"
+                >
+                  Right Foot Preview
+                </div>
+                <!-- 3D Preview Container -->
+                <div
+                  id="rightFoot3DPreview"
+                  class="d-none"
+                  style="height: 45vh; width: 100%"
+                ></div>
+
+                <div class="input-group mt-2">
+                  <input
+                    type="file"
+                    class="form-control"
+                    id="rightFootScan"
+                    accept=".stl,.wrl,image/*"
+                    style="display: none"
+                  />
+                  <label
+                    id="rightFootScanLabel"
+                    for="rightFootScan"
+                    class="form-control text-start overflow-hidden"
+                    >Select file</label
+                  >
+                  <label
+                    for="rightFootScan"
+                    class="input-group-text btn"
+                    style="background-color: #3a6b6d; color: white"
+                    >Browse</label
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="clearFiles">
+          Clear Files
+        </button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Cancel
+        </button>
+        <button
+          type="button"
+          class="btn"
+          style="background-color: #3a6b6d; color: white"
+          id="uploadScans"
+        >
+          Upload Scans
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          id="nextStepBtnClinicalMeasures"
+        >
+          Next
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Styles for scan preview -->
+<style>
+  .scan-preview {
+    border: 1px dashed #ccc;
+    border-radius: 4px;
+    padding: 20px;
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .scan-preview img {
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: contain;
+  }
+  .scale-controls {
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  .scale-controls .btn-group {
+    display: flex;
+    gap: 2px;
+  }
+  .scale-controls button {
+    padding: 2px 8px;
+    font-size: 12px;
+  }
+</style>
+
+<!-- Toast container for notifications -->
+<div id="toast-container" class="position-fixed bottom-0 end-0 p-3"></div>
+
+<!-- Scan Upload JavaScript -->
+<script type="module">
+  import * as THREE from "three";
+  import { STLLoader } from "three/examples/jsm/loaders/STLLoader";
+  import { VRMLLoader } from "three/examples/jsm/loaders/VRMLLoader";
+  import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+
+  let camera, scene, renderer, controls;
+  let object;
+  class ScanUploadManager {
+    constructor() {
+      this.elements = {
+        leftFootScan: document.getElementById("leftFootScan"),
+        rightFootScan: document.getElementById("rightFootScan"),
+        leftFootScanLabel: document.getElementById("leftFootScanLabel"),
+        rightFootScanLabel: document.getElementById("rightFootScanLabel"),
+        leftFootPreview: document.getElementById("leftFootPreview"),
+        rightFootPreview: document.getElementById("rightFootPreview"),
+        leftFoot3DPreview: document.getElementById("leftFoot3DPreview"),
+        rightFoot3DPreview: document.getElementById("rightFoot3DPreview"),
+        uploadScansBtn: document.getElementById("uploadScans"),
+        clearFilesBtn: document.getElementById("clearFiles"),
+        scanPrescriptionId: document.getElementById("scanPrescriptionId"),
+        modalElement: document.getElementById("scanUploadModal"),
+      };
+
+      this.init();
+
+      // Add scale factor to track model scaling
+      this.currentScale = 1.0;
+      this.originalSize = null;
+    }
+
+    init() {
+      this.setupEventListeners();
+    }
+
+    setupEventListeners() {
+      // File input change handlers
+      if (this.elements.leftFootScan) {
+        this.elements.leftFootScan.addEventListener("change", (event) =>
+          this.handleFileChange(event, "left")
+        );
+      }
+
+      if (this.elements.rightFootScan) {
+        this.elements.rightFootScan.addEventListener("change", (event) =>
+          this.handleFileChange(event, "right")
+        );
+      }
+
+      // Upload button handler
+      if (this.elements.uploadScansBtn) {
+        this.elements.uploadScansBtn.addEventListener("click", () =>
+          this.handleUpload()
+        );
+      }
+
+      // Clear files button handler
+      if (this.elements.clearFilesBtn) {
+        this.elements.clearFilesBtn.addEventListener("click", () =>
+          this.clearFiles()
+        );
+      }
+    }
+
+    async handleFileChange(event, side) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const elements =
+        side === "left"
+          ? {
+              scanLabel: this.elements.leftFootScanLabel,
+              preview: this.elements.leftFootPreview,
+              preview3D: this.elements.leftFoot3DPreview,
+              inputId: "leftFootScan",
+            }
+          : {
+              scanLabel: this.elements.rightFootScanLabel,
+              preview: this.elements.rightFootPreview,
+              preview3D: this.elements.rightFoot3DPreview,
+              inputId: "rightFootScan",
+            };
+
+      elements.scanLabel.textContent = file.name;
+      await this.handlePreview(
+        elements.inputId,
+        elements.preview.id,
+        elements.preview3D.id
+      );
+    }
+
+    async handlePreview(inputId, imageId, previewDivId) {
+      const fileInput = document.getElementById(inputId);
+      const imgPreview = document.getElementById(imageId);
+      const modelPreview = document.getElementById(previewDivId);
+
+      const file = fileInput.files[0];
+      if (!file) {
+        showToast("Please select a file first!", "warning");
+        return;
+      }
+
+      const fileType = file.name.split(".").pop().toLowerCase();
+
+      if (["png", "jpg", "jpeg", "gif"].includes(fileType)) {
+        await this.handleImagePreview(file, imgPreview, modelPreview);
+      } else if (["stl", "wrl"].includes(fileType)) {
+        await this.handle3DPreview(file, fileType, imgPreview, modelPreview);
+      } else {
+        showToast("Unsupported file format.", "danger");
+      }
+    }
+
+    async handleImagePreview(file, imgPreview, modelPreview) {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        imgPreview.src = e.target.result;
+        imgPreview.classList.remove("d-none");
+        if (modelPreview) modelPreview.classList.add("d-none");
+      };
+      reader.readAsDataURL(file);
+    }
+
+    async handle3DPreview(file, fileType, imgPreview, modelPreview) {
+      imgPreview.classList.add("d-none");
+      if (!modelPreview) return;
+
+      modelPreview.classList.remove("d-none");
+      modelPreview.innerHTML = "";
+
+      // Create scale controls
+      const scaleControls = document.createElement("div");
+      scaleControls.className =
+        "scale-controls position-absolute top-0 end-0 p-2";
+      scaleControls.style.zIndex = "1000";
+      scaleControls.innerHTML = `
+        <div class="btn-group">
+          <button class="btn btn-sm btn-secondary" id="scaleDown">-</button>
+          <button class="btn btn-sm btn-secondary" id="resetScale">Reset</button>
+          <button class="btn btn-sm btn-secondary" id="scaleUp">+</button>
+        </div>
+      `;
+      modelPreview.appendChild(scaleControls);
+
+      const scene = new THREE.Scene();
+      scene.background = new THREE.Color(0xf0f0f0);
+
+      // Adjust camera settings for better view of original size
+      const camera = new THREE.PerspectiveCamera(
+        45, // Reduced FOV for better depth perception
+        modelPreview.clientWidth / modelPreview.clientHeight,
+        0.1,
+        10000 // Increased far plane for larger models
+      );
+      camera.position.set(0, 200, 500); // Adjusted initial position
+
+      const renderer = new THREE.WebGLRenderer({
+        antialias: true,
+        alpha: true,
+      });
+      renderer.setSize(modelPreview.clientWidth, modelPreview.clientHeight);
+      modelPreview.appendChild(renderer.domElement);
+
+      const controls = new OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.05;
+      controls.screenSpacePanning = true;
+      controls.minDistance = 1; // Allow closer zoom
+      controls.maxDistance = 5000; // Allow further zoom out
+      controls.target.set(0, 0, 0);
+
+      this.setupLights(scene);
+      const loadedObject = await this.load3DModel(file, fileType, scene);
+
+      // Setup scale controls
+      const scaleStep = 0.1;
+      document.getElementById("scaleDown").addEventListener("click", () => {
+        this.currentScale = Math.max(0.1, this.currentScale - scaleStep);
+        loadedObject.scale.setScalar(this.currentScale);
+      });
+
+      document.getElementById("scaleUp").addEventListener("click", () => {
+        this.currentScale = Math.min(5.0, this.currentScale + scaleStep);
+        loadedObject.scale.setScalar(this.currentScale);
+      });
+
+      document.getElementById("resetScale").addEventListener("click", () => {
+        this.currentScale = 1.0;
+        loadedObject.scale.setScalar(this.currentScale);
+
+        // Reset camera position to fit model
+        const box = new THREE.Box3().setFromObject(loadedObject);
+        const center = box.getCenter(new THREE.Vector3());
+        const size = box.getSize(new THREE.Vector3());
+        const maxDim = Math.max(size.x, size.y, size.z);
+
+        camera.position.set(
+          center.x + maxDim * 2,
+          center.y + maxDim,
+          center.z + maxDim * 2
+        );
+        controls.target.copy(center);
+        camera.lookAt(center);
+      });
+
+      this.animate(renderer, scene, camera, controls);
+      this.handleResize(camera, renderer, modelPreview);
+
+      // Initial camera position adjustment
+      const box = new THREE.Box3().setFromObject(loadedObject);
+      const center = box.getCenter(new THREE.Vector3());
+      const size = box.getSize(new THREE.Vector3());
+      const maxDim = Math.max(size.x, size.y, size.z);
+
+      camera.position.set(
+        center.x + maxDim * 2,
+        center.y + maxDim,
+        center.z + maxDim * 2
+      );
+      controls.target.copy(center);
+      camera.lookAt(center);
+    }
+
+    setupLights(scene) {
+      const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 1.2);
+      scene.add(hemiLight);
+
+      const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+      dirLight.position.set(0, 200, 100);
+      scene.add(dirLight);
+    }
+
+    async load3DModel(file, fileType, scene) {
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const loader =
+            fileType === "stl" ? new STLLoader() : new VRMLLoader();
+          const parsed = loader.parse(e.target.result);
+
+          let object;
+          if (fileType === "stl") {
+            const material = new THREE.MeshStandardMaterial({
+              color: 0x007bff,
+              flatShading: true,
+            });
+            object = new THREE.Mesh(parsed, material);
+          } else {
+            object = parsed;
+          }
+
+          // Don't scale the model - keep original size
+          scene.add(object);
+
+          // Store reference to the object
+          this.currentObject = object;
+
+          resolve(object);
+        };
+
+        if (fileType === "stl") {
+          reader.readAsArrayBuffer(file);
+        } else {
+          reader.readAsText(file);
+        }
+      });
+    }
+
+    animate(renderer, scene, camera, controls) {
+      function animate() {
+        requestAnimationFrame(animate);
+        controls.update();
+        renderer.render(scene, camera);
+      }
+      animate();
+    }
+
+    handleResize(camera, renderer, modelPreview) {
+      window.addEventListener("resize", () => {
+        camera.aspect = modelPreview.clientWidth / modelPreview.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(modelPreview.clientWidth, modelPreview.clientHeight);
+      });
+    }
+
+    async handleUpload() {
+      const prescriptionId = this.elements.scanPrescriptionId.value;
+      if (!prescriptionId) {
+        showToast("No prescription selected", "danger");
+        return;
+      }
+
+      const leftFile = this.elements.leftFootScan.files[0];
+      const rightFile = this.elements.rightFootScan.files[0];
+
+      if (!leftFile && !rightFile) {
+        showToast("Please select at least one scan file", "warning");
+        return;
+      }
+
+      const uploadBtn = this.elements.uploadScansBtn;
+      uploadBtn.disabled = true;
+      uploadBtn.innerHTML =
+        '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Uploading...';
+
+      try {
+        const formData = new FormData();
+        formData.append("prescription", prescriptionId);
+        if (leftFile) formData.append("left_foot", leftFile);
+        if (rightFile) formData.append("right_foot", rightFile);
+
+        const response = await ApiService.prescriptions.uploadScans(
+          prescriptionId,
+          formData
+        );
+
+        const modal = bootstrap.Modal.getInstance(this.elements.modalElement);
+        modal.hide();
+        showToast("Scans uploaded successfully", "success");
+
+        await loadPatientsAndPrescriptions();
+
+        this.handleNextStep(prescriptionId);
+      } catch (error) {
+        console.error("Error uploading scans:", error);
+        showToast(
+          "Error uploading scans: " + (error.message || "Unknown error"),
+          "danger"
+        );
+      } finally {
+        uploadBtn.disabled = false;
+        uploadBtn.innerHTML = "Upload Scans";
+      }
+    }
+
+    handleNextStep(prescriptionId) {
+      const nextStepBtn = document.getElementById(
+        "nextStepBtnClinicalMeasures"
+      );
+      if (!nextStepBtn) return;
+
+      const clinicalMeasuresModal = document.getElementById(
+        "clinicalMeasuresModal"
+      );
+      if (!clinicalMeasuresModal) return;
+
+      document.getElementById("clinicalMeasuresPrescriptionId").value =
+        prescriptionId;
+      const modal = new bootstrap.Modal(clinicalMeasuresModal);
+      modal.show();
+    }
+
+    clearFiles() {
+      this.elements.leftFootScan.value = "";
+      this.elements.rightFootScan.value = "";
+      this.elements.leftFootPreview.classList.add("d-none");
+      this.elements.rightFootPreview.classList.add("d-none");
+      this.elements.leftFoot3DPreview.classList.add("d-none");
+      this.elements.rightFoot3DPreview.classList.add("d-none");
+      this.elements.leftFootScanLabel.textContent = "Select file";
+      this.elements.rightFootScanLabel.textContent = "Select file";
+    }
+
+    openModal(prescriptionId) {
+      if (!prescriptionId) {
+        console.error("No prescription ID provided");
+        return;
+      }
+
+      if (!this.elements.modalElement) {
+        console.error("Scan upload modal element not found");
+        return;
+      }
+
+      this.clearFiles();
+      this.elements.scanPrescriptionId.value = prescriptionId;
+
+      try {
+        const modal = new bootstrap.Modal(this.elements.modalElement);
+        modal.show();
+      } catch (error) {
+        console.error("Error showing modal:", error);
+      }
+    }
+  }
+
+  // Initialize when the document is ready
+  document.addEventListener("DOMContentLoaded", function () {
+    window.scanUploadManager = new ScanUploadManager();
+  });
+
+  // Make openScanUploadModal available globally
+  window.openScanUploadModal = function (prescriptionId) {
+    if (window.scanUploadManager) {
+      window.scanUploadManager.openModal(prescriptionId);
+    }
+  };
+</script>

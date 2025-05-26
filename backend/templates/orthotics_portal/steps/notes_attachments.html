@@ -1,0 +1,228 @@
+{% load static %}
+
+<div class="container">
+  <div class="row">
+    <div class="col">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0">Notes & Attachments</h5>
+        </div>
+        <div class="card-body">
+          <form id="notesAttachmentsForm">
+            <!-- Administration Options -->
+            <div class="card mb-4">
+              <div class="card-header">
+                <h6 class="mb-0">Administration</h6>
+              </div>
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-md-4">
+                    <div class="form-check mb-2">
+                      <input
+                        type="checkbox"
+                        class="form-check-input"
+                        id="contactClinician"
+                      />
+                      <label class="form-check-label" for="contactClinician">
+                        Contact Clinician
+                      </label>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="form-check mb-2">
+                      <input
+                        type="checkbox"
+                        class="form-check-input"
+                        id="confirmBeforeManufacture"
+                      />
+                      <label
+                        class="form-check-label"
+                        for="confirmBeforeManufacture"
+                      >
+                        Confirm Before Manufacture
+                      </label>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="form-check mb-2">
+                      <input
+                        type="checkbox"
+                        class="form-check-input"
+                        id="clinicianCAD"
+                      />
+                      <label class="form-check-label" for="clinicianCAD">
+                        Clinician Computer-Aided Design
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div class="row mt-3">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="turnaroundTime" class="form-label"
+                        >Turnaround Time</label
+                      >
+                      <select class="form-select" id="turnaroundTime">
+                        <option value="standard">
+                          3DP Standard (5 Working Days)
+                        </option>
+                        <option value="express">
+                          3DP Express (3 Working Days)
+                        </option>
+                        <option value="urgent">
+                          3DP Urgent (1 Working Day)
+                        </option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Notes Section -->
+            <div class="card mb-4">
+              <div class="card-header">
+                <h6 class="mb-0">Notes</h6>
+              </div>
+              <div class="card-body">
+                <div class="mb-3">
+                  <label for="generalNotes" class="form-label"
+                    >General Notes</label
+                  >
+                  <textarea
+                    class="form-control"
+                    id="generalNotes"
+                    rows="3"
+                    placeholder="Enter any general notes here..."
+                  ></textarea>
+                </div>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="leftFootNotes" class="form-label"
+                        >Left Foot Notes</label
+                      >
+                      <textarea
+                        class="form-control"
+                        id="leftFootNotes"
+                        rows="3"
+                        placeholder="Enter notes for left foot..."
+                      ></textarea>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="rightFootNotes" class="form-label"
+                        >Right Foot Notes</label
+                      >
+                      <textarea
+                        class="form-control"
+                        id="rightFootNotes"
+                        rows="3"
+                        placeholder="Enter notes for right foot..."
+                      ></textarea>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Attachments Section -->
+            <div class="card">
+              <div
+                class="card-header d-flex justify-content-between align-items-center"
+              >
+                <h6 class="mb-0">Attachments</h6>
+                <button
+                  type="button"
+                  class="btn btn-primary btn-sm"
+                  id="addAttachmentBtn"
+                >
+                  <i class="bi bi-plus"></i> Add File
+                </button>
+              </div>
+              <div class="card-body">
+                <div id="attachmentsList" class="list-group">
+                  <!-- Attachments will be listed here -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="mt-4">
+              <button type="submit" class="btn btn-primary">
+                Save Notes & Attachments
+              </button>
+              <button type="button" class="btn btn-success ms-2" id="sendToLab">
+                Send to Lab
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Include the modal for additional options -->
+{% include 'orthotics_portal/notes_attachments.html' %}
+
+<style>
+  .info-icon {
+    cursor: help;
+    color: #6c757d;
+    margin-left: 0.25rem;
+  }
+</style>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // Initialize tooltips
+    var tooltips = [].slice.call(
+      document.querySelectorAll('[data-bs-toggle="tooltip"]')
+    );
+    tooltips.map(function (tooltip) {
+      return new bootstrap.Tooltip(tooltip);
+    });
+
+    // Handle file input
+    const addAttachmentBtn = document.getElementById("addAttachmentBtn");
+    const attachmentsList = document.getElementById("attachmentsList");
+
+    if (addAttachmentBtn) {
+      addAttachmentBtn.addEventListener("click", function () {
+        const input = document.createElement("input");
+        input.type = "file";
+        input.multiple = true;
+        input.style.display = "none";
+
+        input.addEventListener("change", function (e) {
+          Array.from(e.target.files).forEach((file) => {
+            const item = document.createElement("div");
+            item.className =
+              "list-group-item d-flex justify-content-between align-items-center";
+            item.innerHTML = `
+            <span>
+              <i class="bi bi-paperclip me-2"></i>
+              ${file.name}
+            </span>
+            <button type="button" class="btn btn-sm btn-danger">
+              <i class="bi bi-trash"></i>
+            </button>
+          `;
+
+            // Add remove functionality
+            const removeBtn = item.querySelector(".btn-danger");
+            removeBtn.addEventListener("click", () => item.remove());
+
+            attachmentsList.appendChild(item);
+          });
+        });
+
+        document.body.appendChild(input);
+        input.click();
+        document.body.removeChild(input);
+      });
+    }
+  });
+</script>

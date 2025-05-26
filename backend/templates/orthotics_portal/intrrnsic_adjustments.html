@@ -1,0 +1,829 @@
+{% load static %}
+
+<div
+  class=""
+  id="intrinsicAdjustmentsModal"
+  tabindex="-1"
+  aria-labelledby="intrinsicAdjustmentsModalLabel"
+  aria-hidden="true"
+>
+  <div class="">
+    <div class="modal-content">
+      <div class="modal-body">
+        <form id="intrinsicAdjustmentsForm">
+          <input
+            type="hidden"
+            id="intrinsicAdjustmentsPrescriptionId"
+            value=""
+          />
+
+          <div class="row mb-4">
+            <div class="col-md-6 text-center bg-light py-2 rounded-3">
+              <h6>Left Foot</h6>
+            </div>
+            <div class="col-md-6 text-center bg-light py-2 rounded-3">
+              <h6>Right Foot</h6>
+            </div>
+          </div>
+
+          <!-- Arch Expansion -->
+          <div class="row mb-3 align-items-center">
+            <div class="col-md-3">
+              <label class="form-label mb-0">Arch Expansion</label>
+              <span class="badge bg-primary ms-1">i</span>
+            </div>
+            <div class="col-md-4">
+              <select class="form-select" id="leftArchExpansion">
+                <option value="none" selected>None</option>
+                <option value="minimal">Minimal(10%)</option>
+                <option value="moderate">Standard(20%)</option>
+                <option value="maximum">Maximum(30%)</option>
+              </select>
+            </div>
+            <div class="col-md-1"></div>
+            <div class="col-md-4">
+              <select class="form-select" id="rightArchExpansion">
+                <option value="none" selected>None</option>
+                <option value="minimal">Minimal(10%)</option>
+                <option value="moderate">Standard(20%)</option>
+                <option value="maximum">Maximum(30%)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Heel Expansion -->
+          <div class="row mb-3 align-items-center">
+            <div class="col-md-3">
+              <label class="form-label mb-0">Heel Expansion</label>
+              <span class="badge bg-primary ms-1">i</span>
+            </div>
+            <div class="col-md-4">
+              <select class="form-select" id="leftHeelExpansion">
+                <option value="none" selected>None</option>
+                <option value="minimal">Minimal(10%)</option>
+                <option value="moderate">Standard(20%)</option>
+                <option value="maximum">Maximum(30%)</option>
+              </select>
+            </div>
+            <div class="col-md-1"></div>
+            <div class="col-md-4">
+              <select class="form-select" id="rightHeelExpansion">
+                <option value="none" selected>None</option>
+                <option value="minimal">Minimal(10%)</option>
+                <option value="moderate">Standard(20%)</option>
+                <option value="maximum">Maximum(30%)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Shell Width -->
+          <div class="row mb-3 align-items-center">
+            <div class="col-md-3">
+              <label class="form-label mb-0">Shell Width</label>
+              <span class="badge bg-primary ms-1">i</span>
+            </div>
+            <div class="col-md-4">
+              <select class="form-select" id="leftShellWidth">
+                <option value="wide">Wide</option>
+                <option value="standard" selected>Standard</option>
+                <option value="slim">Slim</option>
+                <option value="super-slim">Super Slim</option>
+              </select>
+            </div>
+            <div class="col-md-1"></div>
+            <div class="col-md-4">
+              <select class="form-select" id="rightShellWidth">
+                <option value="wide">Wide</option>
+                <option value="standard" selected>Standard</option>
+                <option value="slim">Slim</option>
+                <option value="super-slim">Super Slim</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Shell Length -->
+          <div class="row mb-3 align-items-center">
+            <div class="col-md-3">
+              <label class="form-label mb-0">Shell Length</label>
+              <span class="badge bg-primary ms-1">i</span>
+            </div>
+            <div class="col-md-4">
+              <select class="form-select" id="leftShellLength">
+                <option value="short">Short</option>
+                <option value="standard" selected>Standard</option>
+                <option value="long">Long</option>
+              </select>
+            </div>
+            <div class="col-md-1"></div>
+            <div class="col-md-4">
+              <select class="form-select" id="rightShellLength">
+                <option value="short">Short</option>
+                <option value="standard" selected>Standard</option>
+                <option value="long">Long</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- PFA Height -->
+          <div class="row mb-3 align-items-center">
+            <div class="col-md-3">
+              <label class="form-label mb-0">PFA Height</label>
+              <span class="badge bg-primary ms-1">i</span>
+            </div>
+            <div class="col-md-4">
+              <select class="form-select mb-2" id="leftPFAHeight">
+                <option value="straight" selected>Straight</option>
+                <option value="curved">Curved</option>
+                <option value="custom">Scan</option>
+                <option value="none">None</option>
+              </select>
+              <div class="input-group">
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary decrease-btn"
+                  data-target="leftPFAHeightValue"
+                >
+                  −
+                </button>
+                <input
+                  type="number"
+                  class="form-control text-center"
+                  id="leftPFAHeightValue"
+                  value="0"
+                />
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary increase-btn"
+                  data-target="leftPFAHeightValue"
+                >
+                  +
+                </button>
+                <span class="input-group-text">mm</span>
+              </div>
+            </div>
+            <div class="col-md-1"></div>
+            <div class="col-md-4">
+              <select class="form-select mb-2" id="rightPFAHeight">
+                <option value="straight" selected>Straight</option>
+                <option value="curved">Curved</option>
+                <option value="custom">Custom</option>
+              </select>
+              <div class="input-group">
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary decrease-btn"
+                  data-target="rightPFAHeightValue"
+                >
+                  −
+                </button>
+                <input
+                  type="number"
+                  class="form-control text-center"
+                  id="rightPFAHeightValue"
+                  value="0"
+                />
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary increase-btn"
+                  data-target="rightPFAHeightValue"
+                >
+                  +
+                </button>
+                <span class="input-group-text">mm</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Skive -->
+          <div class="row mb-3 align-items-center">
+            <div class="col-md-3">
+              <label class="form-label mb-0">Skive</label>
+              <span class="badge bg-primary ms-1">i</span>
+            </div>
+            <div class="col-md-4">
+              <select class="form-select mb-2" id="leftSkive">
+                <option value="none">None</option>
+                <option value="medial" selected>Medial</option>
+                <option value="lateral">Lateral</option>
+              </select>
+              <select class="form-select mb-2" id="leftSkiveMethod">
+                <option value="depth/degree" selected>
+                  Depth/Degree Method
+                </option>
+              </select>
+
+              <div class="mb-2">
+                <div class="input-group">
+                  <span class="input-group-text">Depth (mm)</span>
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary decrease-btn"
+                    data-target="leftSkiveDepth"
+                  >
+                    −
+                  </button>
+                  <input
+                    type="number"
+                    class="form-control text-center"
+                    id="leftSkiveDepth"
+                    value="0"
+                    step="0.1"
+                    min="0"
+                  />
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary increase-btn"
+                    data-target="leftSkiveDepth"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+
+              <div class="mb-2">
+                <div class="input-group">
+                  <span class="input-group-text">Degrees (°)</span>
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary decrease-btn"
+                    data-target="leftSkiveDegrees"
+                  >
+                    −
+                  </button>
+                  <input
+                    type="number"
+                    class="form-control text-center"
+                    id="leftSkiveDegrees"
+                    value="0"
+                    step="0.1"
+                    min="0"
+                  />
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary increase-btn"
+                    data-target="leftSkiveDegrees"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+
+              <select class="form-select" id="leftSkiveInclination">
+                <option value="maximum" selected>Maximum Inclination</option>
+                <option value="zero">Zero Inclination</option>
+                <option value="specific">Specific Inclination</option>
+              </select>
+              <div
+                id="leftSpecificInclination"
+                class="mt-2"
+                style="display: none"
+              >
+                <label>Specific Inclination (degrees)</label>
+                <div class="input-group">
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary decrement"
+                    data-target="leftSpecificInclinationValue"
+                  >
+                    −
+                  </button>
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="leftSpecificInclinationValue"
+                    name="left_specific_inclination"
+                    step="0.1"
+                    min="0"
+                    value="0.0"
+                  />
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary increment"
+                    data-target="leftSpecificInclinationValue"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-1"></div>
+            <div class="col-md-4">
+              <select class="form-select mb-2" id="rightSkive">
+                <option value="none">None</option>
+                <option value="medial" selected>Medial</option>
+                <option value="lateral">Lateral</option>
+              </select>
+              <select class="form-select mb-2" id="rightSkiveMethod">
+                <option value="depth/degree" selected>
+                  Depth/Degree Method
+                </option>
+              </select>
+
+              <div class="mb-2">
+                <div class="input-group">
+                  <span class="input-group-text">Depth (mm)</span>
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary decrease-btn"
+                    data-target="rightSkiveDepth"
+                  >
+                    −
+                  </button>
+                  <input
+                    type="number"
+                    class="form-control text-center"
+                    id="rightSkiveDepth"
+                    value="0"
+                    step="0.1"
+                    min="0"
+                  />
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary increase-btn"
+                    data-target="rightSkiveDepth"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+
+              <div class="mb-2">
+                <div class="input-group">
+                  <span class="input-group-text">Degrees (°)</span>
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary decrease-btn"
+                    data-target="rightSkiveDegrees"
+                  >
+                    −
+                  </button>
+                  <input
+                    type="number"
+                    class="form-control text-center"
+                    id="rightSkiveDegrees"
+                    value="0"
+                    step="0.1"
+                    min="0"
+                  />
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary increase-btn"
+                    data-target="rightSkiveDegrees"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+
+              <select class="form-select" id="rightSkiveInclination">
+                <option value="maximum" selected>Maximum Inclination</option>
+                <option value="zero">Zero Inclination</option>
+                <option value="specific">Specific Inclination</option>
+              </select>
+              <div
+                id="rightSpecificInclination"
+                class="mt-2"
+                style="display: none"
+              >
+                <label>Specific Inclination (degrees)</label>
+                <div class="input-group">
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary decrement"
+                    data-target="rightSpecificInclinationValue"
+                  >
+                    −
+                  </button>
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="rightSpecificInclinationValue"
+                    name="right_specific_inclination"
+                    step="0.1"
+                    min="0"
+                    value="0.0"
+                  />
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary increment"
+                    data-target="rightSpecificInclinationValue"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" data-bs-dismiss="modal">
+          Cancel
+        </button>
+        <button
+          type="button"
+          class="btn"
+          style="background-color: #3a6b6d; color: white"
+          id="saveIntrinsicAdjustmentsBtn"
+        >
+          Save Adjustments
+        </button>
+        <button
+          type="button"
+          class="btn"
+          style="background-color: #3a6b6d; color: white"
+          id="nextToOffLoadingBtn"
+        >
+          Next: Off-Loading
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast container for notifications -->
+<div id="toast-container" class="position-fixed bottom-0 end-0 p-3"></div>
+
+<!-- Intrinsic Adjustments JavaScript -->
+<script>
+  // Initialize the intrinsic adjustments functionality
+  function initIntrinsicAdjustmentsForm() {
+    const saveIntrinsicAdjustmentsBtn = document.getElementById(
+      "saveIntrinsicAdjustmentsBtn"
+    );
+    const nextToOffLoadingBtn = document.getElementById("nextToOffLoadingBtn");
+
+    // Initialize increment/decrement buttons for numeric fields
+    initIntrinsicAdjustmentControls();
+
+    // Initialize skive inclination controls
+    initSkiveInclinationControls();
+
+    if (saveIntrinsicAdjustmentsBtn) {
+      saveIntrinsicAdjustmentsBtn.addEventListener("click", async function () {
+        // Get the prescription ID
+        const prescriptionId = document.getElementById(
+          "intrinsicAdjustmentsPrescriptionId"
+        ).value;
+        if (!prescriptionId) {
+          showToast("No prescription selected", "danger");
+          return;
+        }
+
+        // Show loading state
+        saveIntrinsicAdjustmentsBtn.disabled = true;
+        saveIntrinsicAdjustmentsBtn.innerHTML =
+          '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...';
+
+        try {
+          // Collect all form data
+          const formData = {
+            prescription: prescriptionId,
+            left_foot: {
+              arch_expansion:
+                document.getElementById("leftArchExpansion").value || "none",
+              heel_expansion:
+                document.getElementById("leftHeelExpansion").value || "none",
+              shell_width:
+                document.getElementById("leftShellWidth").value || "standard",
+              shell_length:
+                document.getElementById("leftShellLength").value || "standard",
+              pfa_height: {
+                type:
+                  document.getElementById("leftPFAHeight").value || "straight",
+                value:
+                  parseFloat(
+                    document.getElementById("leftPFAHeightValue").value
+                  ) || 0,
+              },
+              skive: {
+                type: document.getElementById("leftSkive").value || "medial",
+                method:
+                  document.getElementById("leftSkiveMethod").value ||
+                  "depth/degree",
+                depth:
+                  parseFloat(document.getElementById("leftSkiveDepth").value) ||
+                  0,
+                degrees:
+                  parseFloat(
+                    document.getElementById("leftSkiveDegrees").value
+                  ) || 0,
+                inclination:
+                  document.getElementById("leftSkiveInclination").value ||
+                  "maximum",
+                specific_inclination:
+                  parseFloat(
+                    document.getElementById("leftSpecificInclinationValue")
+                      .value
+                  ) || 0,
+              },
+            },
+            right_foot: {
+              arch_expansion:
+                document.getElementById("rightArchExpansion").value || "none",
+              heel_expansion:
+                document.getElementById("rightHeelExpansion").value || "none",
+              shell_width:
+                document.getElementById("rightShellWidth").value || "standard",
+              shell_length:
+                document.getElementById("rightShellLength").value || "standard",
+              pfa_height: {
+                type:
+                  document.getElementById("rightPFAHeight").value || "straight",
+                value:
+                  parseFloat(
+                    document.getElementById("rightPFAHeightValue").value
+                  ) || 0,
+              },
+              skive: {
+                type: document.getElementById("rightSkive").value || "medial",
+                method:
+                  document.getElementById("rightSkiveMethod").value ||
+                  "depth/degree",
+                depth:
+                  parseFloat(
+                    document.getElementById("rightSkiveDepth").value
+                  ) || 0,
+                degrees:
+                  parseFloat(
+                    document.getElementById("rightSkiveDegrees").value
+                  ) || 0,
+                inclination:
+                  document.getElementById("rightSkiveInclination").value ||
+                  "maximum",
+                specific_inclination:
+                  parseFloat(
+                    document.getElementById("rightSpecificInclinationValue")
+                      .value
+                  ) || 0,
+              },
+            },
+          };
+
+          // Save the intrinsic adjustments using the API service
+          const response =
+            await ApiService.prescriptions.saveIntrinsicAdjustments(
+              prescriptionId,
+              formData
+            );
+          console.log("Intrinsic adjustments saved:", response);
+          showToast("Intrinsic adjustments saved successfully", "success");
+
+          // Get the modal instance
+          const modal = bootstrap.Modal.getInstance(
+            document.getElementById("intrinsicAdjustmentsModal")
+          );
+          if (modal) {
+            modal.hide();
+          }
+
+          // Open the off-loading modal
+          openOffLoadingModal(prescriptionId);
+        } catch (error) {
+          console.error("Error saving intrinsic adjustments:", error);
+          showToast(
+            "Failed to save intrinsic adjustments: " +
+              (error.message || "Unknown error"),
+            "danger"
+          );
+        } finally {
+          // Re-enable the button
+          saveIntrinsicAdjustmentsBtn.disabled = false;
+          saveIntrinsicAdjustmentsBtn.innerHTML = "Save Adjustments";
+        }
+      });
+    }
+
+    // Handle the Next button click
+    if (nextToOffLoadingBtn) {
+      nextToOffLoadingBtn.addEventListener("click", function () {
+        // First save the intrinsic adjustments
+        saveIntrinsicAdjustmentsBtn.click();
+      });
+    }
+  }
+
+  function initIntrinsicAdjustmentControls() {
+    // Get all increment and decrement buttons
+    const decreaseBtns = document.querySelectorAll(".decrease-btn");
+    const increaseBtns = document.querySelectorAll(".increase-btn");
+
+    // Add event listeners for decrement buttons
+    decreaseBtns.forEach((btn) => {
+      btn.addEventListener("click", function () {
+        const targetId = this.getAttribute("data-target");
+        const input = document.getElementById(targetId);
+        if (input) {
+          let value = parseFloat(input.value) || 0;
+          let step = parseFloat(input.getAttribute("step")) || 1;
+          input.value = Math.max(value - step, 0).toFixed(1); // Prevent negative values
+        }
+      });
+    });
+
+    // Add event listeners for increment buttons
+    increaseBtns.forEach((btn) => {
+      btn.addEventListener("click", function () {
+        const targetId = this.getAttribute("data-target");
+        const input = document.getElementById(targetId);
+        if (input) {
+          let value = parseFloat(input.value) || 0;
+          let step = parseFloat(input.getAttribute("step")) || 1;
+          input.value = Math.min(value + step, 100).toFixed(1); // Set a reasonable maximum
+        }
+      });
+    });
+  }
+
+  function initSkiveInclinationControls() {
+    // Handle left foot skive inclination
+    const leftSkiveInclination = document.getElementById(
+      "leftSkiveInclination"
+    );
+    const leftSpecificInclination = document.getElementById(
+      "leftSpecificInclination"
+    );
+
+    if (leftSkiveInclination) {
+      leftSkiveInclination.addEventListener("change", function () {
+        if (this.value === "specific") {
+          leftSpecificInclination.style.display = "block";
+        } else {
+          leftSpecificInclination.style.display = "none";
+        }
+      });
+    }
+
+    // Handle right foot skive inclination
+    const rightSkiveInclination = document.getElementById(
+      "rightSkiveInclination"
+    );
+    const rightSpecificInclination = document.getElementById(
+      "rightSpecificInclination"
+    );
+
+    if (rightSkiveInclination) {
+      rightSkiveInclination.addEventListener("change", function () {
+        if (this.value === "specific") {
+          rightSpecificInclination.style.display = "block";
+        } else {
+          rightSpecificInclination.style.display = "none";
+        }
+      });
+    }
+  }
+
+  async function loadExistingIntrinsicAdjustments(prescriptionId) {
+    try {
+      // Fetch existing intrinsic adjustments from the API
+      const response = await ApiService.prescriptions.getIntrinsicAdjustments(
+        prescriptionId
+      );
+      console.log("Loaded intrinsic adjustments:", response);
+
+      if (response) {
+        // Left foot
+        if (response.left_foot) {
+          document.getElementById("leftArchExpansion").value =
+            response.left_foot.arch_expansion || "none";
+          document.getElementById("leftHeelExpansion").value =
+            response.left_foot.heel_expansion || "none";
+          document.getElementById("leftShellWidth").value =
+            response.left_foot.shell_width || "standard";
+          document.getElementById("leftShellLength").value =
+            response.left_foot.shell_length || "standard";
+
+          if (response.left_foot.pfa_height) {
+            document.getElementById("leftPFAHeight").value =
+              response.left_foot.pfa_height.type || "straight";
+            document.getElementById("leftPFAHeightValue").value =
+              response.left_foot.pfa_height.value || 0;
+          }
+
+          if (response.left_foot.skive) {
+            document.getElementById("leftSkive").value =
+              response.left_foot.skive.type || "medial";
+            document.getElementById("leftSkiveMethod").value =
+              response.left_foot.skive.method || "depth/degree";
+            document.getElementById("leftSkiveDepth").value =
+              response.left_foot.skive.depth || 0;
+            document.getElementById("leftSkiveDegrees").value =
+              response.left_foot.skive.degrees || 0;
+            document.getElementById("leftSkiveInclination").value =
+              response.left_foot.skive.inclination || "maximum";
+
+            if (response.left_foot.skive.inclination === "specific") {
+              document.getElementById("leftSpecificInclination").style.display =
+                "block";
+              document.getElementById("leftSpecificInclinationValue").value =
+                response.left_foot.skive.specific_inclination || 0;
+            }
+          }
+        }
+
+        // Right foot
+        if (response.right_foot) {
+          document.getElementById("rightArchExpansion").value =
+            response.right_foot.arch_expansion || "none";
+          document.getElementById("rightHeelExpansion").value =
+            response.right_foot.heel_expansion || "none";
+          document.getElementById("rightShellWidth").value =
+            response.right_foot.shell_width || "standard";
+          document.getElementById("rightShellLength").value =
+            response.right_foot.shell_length || "standard";
+
+          if (response.right_foot.pfa_height) {
+            document.getElementById("rightPFAHeight").value =
+              response.right_foot.pfa_height.type || "straight";
+            document.getElementById("rightPFAHeightValue").value =
+              response.right_foot.pfa_height.value || 0;
+          }
+
+          if (response.right_foot.skive) {
+            document.getElementById("rightSkive").value =
+              response.right_foot.skive.type || "medial";
+            document.getElementById("rightSkiveMethod").value =
+              response.right_foot.skive.method || "depth/degree";
+            document.getElementById("rightSkiveDepth").value =
+              response.right_foot.skive.depth || 0;
+            document.getElementById("rightSkiveDegrees").value =
+              response.right_foot.skive.degrees || 0;
+            document.getElementById("rightSkiveInclination").value =
+              response.right_foot.skive.inclination || "maximum";
+
+            if (response.right_foot.skive.inclination === "specific") {
+              document.getElementById(
+                "rightSpecificInclination"
+              ).style.display = "block";
+              document.getElementById("rightSpecificInclinationValue").value =
+                response.right_foot.skive.specific_inclination || 0;
+            }
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Error loading intrinsic adjustments:", error);
+    }
+  }
+
+  // Toast notification function
+  function showToast(message, type = "info") {
+    const toastContainer = document.getElementById("toast-container");
+    if (!toastContainer) {
+      console.error("Toast container not found");
+      return;
+    }
+
+    const toast = document.createElement("div");
+    toast.className = `toast align-items-center text-white bg-${
+      type === "error" ? "danger" : type
+    } border-0`;
+    toast.setAttribute("role", "alert");
+    toast.setAttribute("aria-live", "assertive");
+    toast.setAttribute("aria-atomic", "true");
+
+    toast.innerHTML = `
+      <div class="d-flex">
+        <div class="toast-body">${message}</div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+    `;
+
+    toastContainer.appendChild(toast);
+    const bsToast = new bootstrap.Toast(toast);
+    bsToast.show();
+
+    toast.addEventListener("hidden.bs.toast", function () {
+      toast.remove();
+    });
+  }
+
+  // Export the openIntrinsicAdjustmentsModal function to make it globally available
+  window.openIntrinsicAdjustmentsModal = function (prescriptionId) {
+    if (!prescriptionId) {
+      console.error("No prescription ID provided");
+      return;
+    }
+
+    // Set the prescription ID
+    document.getElementById("intrinsicAdjustmentsPrescriptionId").value =
+      prescriptionId;
+
+    // Clear form fields
+    document.getElementById("intrinsicAdjustmentsForm").reset();
+
+    // Load existing intrinsic adjustments
+    loadExistingIntrinsicAdjustments(prescriptionId);
+
+    // Show the modal
+    const modal = new bootstrap.Modal(
+      document.getElementById("intrinsicAdjustmentsModal")
+    );
+    modal.show();
+  };
+
+  // Initialize when the document is ready
+  document.addEventListener("DOMContentLoaded", function () {
+    initIntrinsicAdjustmentsForm();
+  });
+</script>

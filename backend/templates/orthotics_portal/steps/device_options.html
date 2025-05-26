@@ -1,0 +1,123 @@
+{% load static %}
+
+<div class="container">
+  <div class="row">
+    <div class="col">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0">Device Options</h5>
+        </div>
+        <div class="card-body">
+          <form id="deviceOptionsForm">
+            <div class="row">
+              <!-- Left Foot Column -->
+              <div class="col-md-6">
+                <div class="bg-light p-3 rounded mb-3">
+                  <h6 class="text-center">Left Foot</h6>
+
+                  <!-- Medial Arch Height -->
+                  <div class="mb-3">
+                    <label class="form-label d-flex align-items-center">
+                      Medial Arch Height
+                      <span
+                        class="ms-1 badge bg-info"
+                        data-bs-toggle="tooltip"
+                        title="Height of the medial arch"
+                        >mm</span
+                      >
+                    </label>
+                    <div class="input-group">
+                      <button
+                        type="button"
+                        class="btn btn-outline-secondary decrease-btn"
+                        data-target="leftMedialArchHeight"
+                      >
+                        -
+                      </button>
+                      <input
+                        type="number"
+                        class="form-control text-center"
+                        id="leftMedialArchHeight"
+                        name="left_medial_arch_height"
+                        value="0"
+                        min="0"
+                        max="50"
+                      />
+                      <button
+                        type="button"
+                        class="btn btn-outline-secondary increase-btn"
+                        data-target="leftMedialArchHeight"
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Add other left foot fields here -->
+                </div>
+              </div>
+
+              <!-- Right Foot Column -->
+              <div class="col-md-6">
+                <div class="bg-light p-3 rounded mb-3">
+                  <h6 class="text-center">Right Foot</h6>
+
+                  <!-- Medial Arch Height -->
+                  <div class="mb-3">
+                    <label class="form-label d-flex align-items-center">
+                      Medial Arch Height
+                      <span
+                        class="ms-1 badge bg-info"
+                        data-bs-toggle="tooltip"
+                        title="Height of the medial arch"
+                        >mm</span
+                      >
+                    </label>
+                    <div class="input-group">
+                      <button
+                        type="button"
+                        class="btn btn-outline-secondary decrease-btn"
+                        data-target="rightMedialArchHeight"
+                      >
+                        -
+                      </button>
+                      <input
+                        type="number"
+                        class="form-control text-center"
+                        id="rightMedialArchHeight"
+                        name="right_medial_arch_height"
+                        value="0"
+                        min="0"
+                        max="50"
+                      />
+                      <button
+                        type="button"
+                        class="btn btn-outline-secondary increase-btn"
+                        data-target="rightMedialArchHeight"
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Add other right foot fields here -->
+                </div>
+              </div>
+            </div>
+
+            <div class="row mt-3">
+              <div class="col">
+                <button type="submit" class="btn btn-primary">
+                  Save Device Options
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Include the modal for additional options -->
+{% include 'orthotics_portal/device_options.html' %}

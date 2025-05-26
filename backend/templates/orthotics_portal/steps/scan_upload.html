@@ -1,0 +1,165 @@
+{% load static %}
+
+<div class="scan-upload-step">
+  <div class="row">
+    <div class="col-12">
+      <div class="alert alert-info">
+        <i class="bi bi-info-circle me-2"></i>
+        Please upload high-quality scans of both feet. Supported formats: .jpg,
+        .png, .pdf
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <!-- Left Foot -->
+    <div class="col-md-6">
+      <div class="card mb-3">
+        <div class="card-header">
+          <h5 class="card-title mb-0">Left Foot</h5>
+        </div>
+        <div class="card-body">
+          <div class="upload-area" id="leftFootUploadArea">
+            <div class="upload-placeholder text-center p-4">
+              <i class="bi bi-cloud-arrow-up display-4"></i>
+              <p class="mt-3">Drag & drop files here or click to browse</p>
+              <input
+                type="file"
+                class="foot-scan-input"
+                id="leftFootScan"
+                accept=".jpg,.jpeg,.png,.pdf"
+                multiple
+                style="display: none"
+              />
+              <button
+                type="button"
+                class="btn btn-primary mt-2"
+                onclick="document.getElementById('leftFootScan').click()"
+              >
+                <i class="bi bi-upload me-2"></i>Upload Files
+              </button>
+            </div>
+            <div class="uploaded-files mt-3" id="leftFootFiles"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Foot -->
+    <div class="col-md-6">
+      <div class="card mb-3">
+        <div class="card-header">
+          <h5 class="card-title mb-0">Right Foot</h5>
+        </div>
+        <div class="card-body">
+          <div class="upload-area" id="rightFootUploadArea">
+            <div class="upload-placeholder text-center p-4">
+              <i class="bi bi-cloud-arrow-up display-4"></i>
+              <p class="mt-3">Drag & drop files here or click to browse</p>
+              <input
+                type="file"
+                class="foot-scan-input"
+                id="rightFootScan"
+                accept=".jpg,.jpeg,.png,.pdf"
+                multiple
+                style="display: none"
+              />
+              <button
+                type="button"
+                class="btn btn-primary mt-2"
+                onclick="document.getElementById('rightFootScan').click()"
+              >
+                <i class="bi bi-upload me-2"></i>Upload Files
+              </button>
+            </div>
+            <div class="uploaded-files mt-3" id="rightFootFiles"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Upload Progress -->
+  <div class="row">
+    <div class="col-12">
+      <div class="progress" style="display: none">
+        <div
+          class="progress-bar progress-bar-striped progress-bar-animated"
+          role="progressbar"
+          aria-valuenow="0"
+          aria-valuemin="0"
+          aria-valuemax="100"
+        ></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notes -->
+  <div class="row mt-3">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="card-title mb-0">Additional Notes</h5>
+        </div>
+        <div class="card-body">
+          <textarea
+            class="form-control"
+            id="scanNotes"
+            rows="3"
+            placeholder="Add any notes about the scans here..."
+          ></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .upload-area {
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    background-color: #f8f9fa;
+    transition: all 0.3s ease;
+  }
+
+  .upload-area:hover {
+    border-color: #0d6efd;
+    background-color: #f1f8ff;
+  }
+
+  .upload-area.dragover {
+    border-color: #0d6efd;
+    background-color: #e8f0fe;
+  }
+
+  .uploaded-files {
+    text-align: left;
+  }
+
+  .uploaded-file {
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    background: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    margin-bottom: 8px;
+  }
+
+  .uploaded-file .file-name {
+    flex-grow: 1;
+    margin: 0 10px;
+  }
+
+  .uploaded-file .remove-file {
+    color: #dc3545;
+    cursor: pointer;
+  }
+
+  .progress {
+    margin-top: 20px;
+    height: 20px;
+  }
+</style>

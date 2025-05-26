@@ -1,0 +1,499 @@
+{% load static %}
+
+<div class="offloading-step">
+  <div class="row">
+    <!-- Left Foot -->
+    <div class="col-md-6">
+      <div class="card mb-3">
+        <div class="card-header">
+          <h5 class="card-title mb-0">Left Foot</h5>
+        </div>
+        <div class="card-body">
+          <!-- Cuboid -->
+          <div class="mb-4">
+            <h6 class="mb-3">Cuboid</h6>
+            <div class="mb-3">
+              <label class="form-label">Height</label>
+              <div class="input-group">
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  data-action="decrement"
+                  data-target="leftCuboidHeight"
+                >
+                  <i class="bi bi-dash"></i>
+                </button>
+                <input
+                  type="number"
+                  class="form-control text-center"
+                  id="leftCuboidHeight"
+                  value="0"
+                  min="0"
+                  max="10"
+                  step="0.5"
+                />
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  data-action="increment"
+                  data-target="leftCuboidHeight"
+                >
+                  <i class="bi bi-plus"></i>
+                </button>
+                <span class="input-group-text">mm</span>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Width</label>
+              <div class="input-group">
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  data-action="decrement"
+                  data-target="leftCuboidWidth"
+                >
+                  <i class="bi bi-dash"></i>
+                </button>
+                <input
+                  type="number"
+                  class="form-control text-center"
+                  id="leftCuboidWidth"
+                  value="0"
+                  min="0"
+                  max="20"
+                  step="1"
+                />
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  data-action="increment"
+                  data-target="leftCuboidWidth"
+                >
+                  <i class="bi bi-plus"></i>
+                </button>
+                <span class="input-group-text">mm</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Styloid -->
+          <div class="mb-4">
+            <h6 class="mb-3">Styloid</h6>
+            <div class="mb-3">
+              <label class="form-label">Height</label>
+              <div class="input-group">
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  data-action="decrement"
+                  data-target="leftStyloidHeight"
+                >
+                  <i class="bi bi-dash"></i>
+                </button>
+                <input
+                  type="number"
+                  class="form-control text-center"
+                  id="leftStyloidHeight"
+                  value="0"
+                  min="0"
+                  max="10"
+                  step="0.5"
+                />
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  data-action="increment"
+                  data-target="leftStyloidHeight"
+                >
+                  <i class="bi bi-plus"></i>
+                </button>
+                <span class="input-group-text">mm</span>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Width</label>
+              <div class="input-group">
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  data-action="decrement"
+                  data-target="leftStyloidWidth"
+                >
+                  <i class="bi bi-dash"></i>
+                </button>
+                <input
+                  type="number"
+                  class="form-control text-center"
+                  id="leftStyloidWidth"
+                  value="0"
+                  min="0"
+                  max="20"
+                  step="1"
+                />
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  data-action="increment"
+                  data-target="leftStyloidWidth"
+                >
+                  <i class="bi bi-plus"></i>
+                </button>
+                <span class="input-group-text">mm</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Navicular -->
+          <div class="mb-4">
+            <h6 class="mb-3">Navicular</h6>
+            <div class="mb-3">
+              <label class="form-label">Height</label>
+              <div class="input-group">
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  data-action="decrement"
+                  data-target="leftNavicularHeight"
+                >
+                  <i class="bi bi-dash"></i>
+                </button>
+                <input
+                  type="number"
+                  class="form-control text-center"
+                  id="leftNavicularHeight"
+                  value="0"
+                  min="0"
+                  max="10"
+                  step="0.5"
+                />
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  data-action="increment"
+                  data-target="leftNavicularHeight"
+                >
+                  <i class="bi bi-plus"></i>
+                </button>
+                <span class="input-group-text">mm</span>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Width</label>
+              <div class="input-group">
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  data-action="decrement"
+                  data-target="leftNavicularWidth"
+                >
+                  <i class="bi bi-dash"></i>
+                </button>
+                <input
+                  type="number"
+                  class="form-control text-center"
+                  id="leftNavicularWidth"
+                  value="0"
+                  min="0"
+                  max="20"
+                  step="1"
+                />
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  data-action="increment"
+                  data-target="leftNavicularWidth"
+                >
+                  <i class="bi bi-plus"></i>
+                </button>
+                <span class="input-group-text">mm</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Notes</label>
+            <textarea
+              class="form-control"
+              id="leftFootNotes"
+              rows="3"
+              placeholder="Add any notes about left foot off-loading..."
+            ></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Foot -->
+    <div class="col-md-6">
+      <div class="card mb-3">
+        <div class="card-header">
+          <h5 class="card-title mb-0">Right Foot</h5>
+        </div>
+        <div class="card-body">
+          <!-- Cuboid -->
+          <div class="mb-4">
+            <h6 class="mb-3">Cuboid</h6>
+            <div class="mb-3">
+              <label class="form-label">Height</label>
+              <div class="input-group">
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  data-action="decrement"
+                  data-target="rightCuboidHeight"
+                >
+                  <i class="bi bi-dash"></i>
+                </button>
+                <input
+                  type="number"
+                  class="form-control text-center"
+                  id="rightCuboidHeight"
+                  value="0"
+                  min="0"
+                  max="10"
+                  step="0.5"
+                />
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  data-action="increment"
+                  data-target="rightCuboidHeight"
+                >
+                  <i class="bi bi-plus"></i>
+                </button>
+                <span class="input-group-text">mm</span>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Width</label>
+              <div class="input-group">
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  data-action="decrement"
+                  data-target="rightCuboidWidth"
+                >
+                  <i class="bi bi-dash"></i>
+                </button>
+                <input
+                  type="number"
+                  class="form-control text-center"
+                  id="rightCuboidWidth"
+                  value="0"
+                  min="0"
+                  max="20"
+                  step="1"
+                />
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  data-action="increment"
+                  data-target="rightCuboidWidth"
+                >
+                  <i class="bi bi-plus"></i>
+                </button>
+                <span class="input-group-text">mm</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Styloid -->
+          <div class="mb-4">
+            <h6 class="mb-3">Styloid</h6>
+            <div class="mb-3">
+              <label class="form-label">Height</label>
+              <div class="input-group">
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  data-action="decrement"
+                  data-target="rightStyloidHeight"
+                >
+                  <i class="bi bi-dash"></i>
+                </button>
+                <input
+                  type="number"
+                  class="form-control text-center"
+                  id="rightStyloidHeight"
+                  value="0"
+                  min="0"
+                  max="10"
+                  step="0.5"
+                />
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  data-action="increment"
+                  data-target="rightStyloidHeight"
+                >
+                  <i class="bi bi-plus"></i>
+                </button>
+                <span class="input-group-text">mm</span>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Width</label>
+              <div class="input-group">
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  data-action="decrement"
+                  data-target="rightStyloidWidth"
+                >
+                  <i class="bi bi-dash"></i>
+                </button>
+                <input
+                  type="number"
+                  class="form-control text-center"
+                  id="rightStyloidWidth"
+                  value="0"
+                  min="0"
+                  max="20"
+                  step="1"
+                />
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  data-action="increment"
+                  data-target="rightStyloidWidth"
+                >
+                  <i class="bi bi-plus"></i>
+                </button>
+                <span class="input-group-text">mm</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Navicular -->
+          <div class="mb-4">
+            <h6 class="mb-3">Navicular</h6>
+            <div class="mb-3">
+              <label class="form-label">Height</label>
+              <div class="input-group">
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  data-action="decrement"
+                  data-target="rightNavicularHeight"
+                >
+                  <i class="bi bi-dash"></i>
+                </button>
+                <input
+                  type="number"
+                  class="form-control text-center"
+                  id="rightNavicularHeight"
+                  value="0"
+                  min="0"
+                  max="10"
+                  step="0.5"
+                />
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  data-action="increment"
+                  data-target="rightNavicularHeight"
+                >
+                  <i class="bi bi-plus"></i>
+                </button>
+                <span class="input-group-text">mm</span>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Width</label>
+              <div class="input-group">
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  data-action="decrement"
+                  data-target="rightNavicularWidth"
+                >
+                  <i class="bi bi-dash"></i>
+                </button>
+                <input
+                  type="number"
+                  class="form-control text-center"
+                  id="rightNavicularWidth"
+                  value="0"
+                  min="0"
+                  max="20"
+                  step="1"
+                />
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  data-action="increment"
+                  data-target="rightNavicularWidth"
+                >
+                  <i class="bi bi-plus"></i>
+                </button>
+                <span class="input-group-text">mm</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Notes</label>
+            <textarea
+              class="form-control"
+              id="rightFootNotes"
+              rows="3"
+              placeholder="Add any notes about right foot off-loading..."
+            ></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Additional Notes -->
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="card-title mb-0">Additional Notes</h5>
+        </div>
+        <div class="card-body">
+          <textarea
+            class="form-control"
+            id="generalNotes"
+            rows="3"
+            placeholder="Add any general notes about off-loading..."
+          ></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .offloading-step .card {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  }
+
+  .offloading-step .input-group {
+    width: 100%;
+  }
+
+  .offloading-step .input-group .form-control {
+    text-align: center;
+  }
+
+  .offloading-step .input-group .btn {
+    min-width: 40px;
+  }
+
+  .offloading-step .form-control:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+  }
+
+  .offloading-step .card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+  }
+
+  .offloading-step h6 {
+    color: #6c757d;
+    font-weight: 600;
+  }
+</style>

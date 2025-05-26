@@ -26,6 +26,7 @@ from drf_yasg import openapi
 from core import views
 from rest_framework.routers import DefaultRouter
 import django_browser_reload
+from prescriptions.views import add_patient_view
 
 # Create schema view for Swagger
 schema_view = get_schema_view(
@@ -78,8 +79,11 @@ urlpatterns = [
     
     # New URLs
     path('register/', views.register_view, name='register'),
-    path('prescriptions/', views.prescriptions_view, name='prescriptions'),
-    path('prescriptions/<uuid:prescription_id>/', views.prescription_detail_view, name='prescription_detail'),
+    path('prescriptions/', include([
+        path('', views.prescriptions_view, name='prescriptions'),
+        path('add-patient/', add_patient_view, name='add_patient'),
+        path('<uuid:prescription_id>/', views.prescription_detail_view, name='prescription_detail'),
+    ])),
     path('orders/', views.orders_view, name='orders'),
     path('orders/<uuid:order_id>/', views.order_detail_view, name='order_detail'),
     path('invoices/', views.invoices_view, name='invoices'),

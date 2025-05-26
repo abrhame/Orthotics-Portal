@@ -1,0 +1,144 @@
+{% extends 'orthotics_portal/base.html' %} 
+{% load static %} 
+{% block title %}Create Prescription - Orthotics Portal{% endblock %} 
+{% block extra_css %}
+<style>
+  .sidebar {
+    min-height: calc(100vh - 56px);
+    background-color: #f8f9fa;
+    border-right: 1px solid #dee2e6;
+  }
+
+  .step-item {
+    padding: 1rem;
+    border-bottom: 1px solid #dee2e6;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .step-item:hover {
+    background-color: #e9ecef;
+  }
+
+  .step-item.active {
+    background-color: #3a6b6d;
+    color: white;
+  }
+
+  .step-item.completed {
+    background-color: #e9ecef;
+    color: #198754;
+  }
+
+  .step-item.completed .step-icon {
+    color: #198754;
+  }
+
+  .step-item .step-icon {
+    width: 24px;
+    text-align: center;
+    margin-right: 0.5rem;
+  }
+
+  .step-content {
+    min-height: calc(100vh - 56px);
+    padding: 2rem;
+  }
+
+  .timeline {
+    position: relative;
+    padding-left: 50px;
+  }
+
+  .timeline::before {
+    content: "";
+    position: absolute;
+    left: 25px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background-color: #dee2e6;
+  }
+
+  .timeline-item {
+    position: relative;
+    margin-bottom: 2rem;
+  }
+
+  .timeline-item::before {
+    content: "";
+    position: absolute;
+    left: -37px;
+    top: 0;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: #dee2e6;
+  }
+
+  .timeline-item.active::before {
+    background-color: #3a6b6d;
+  }
+
+  .timeline-item.completed::before {
+    background-color: #198754;
+  }
+</style>
+{% endblock %} {% block content %}
+<div class="container-fluid">
+  <div class="row">
+    <!-- Sidebar -->
+    <div class="col-md-3 col-lg-2 px-0 sidebar">
+      <div class="d-flex flex-column">
+        {% for step in steps %}
+        <div
+          class="step-item {% if step.id == current_step %}active{% endif %}"
+          data-step="{{ step.id }}"
+        >
+          <div class="d-flex align-items-center">
+            <span class="step-icon">
+              <i class="bi {{ step.icon }}"></i>
+            </span>
+            <span class="step-name">{{ step.name }}</span>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="col-md-9 col-lg-10 step-content">
+      <div class="timeline">
+        {% for step in steps %}
+        <div
+          class="timeline-item {% if step.id == current_step %}active{% endif %}"
+          data-step="{{ step.id }}"
+        >
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">{{ step.name }}</h5>
+              <div class="step-content-area">
+                {% include 'orthotics_portal/steps/'|add:step.id|add:'.html' %}
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} 
+{% block extra_js %}
+<script type="module">
+  import { PrescriptionWorkflow } from "{% static 'js/create_prescription/workflow.js' %}";
+
+  document.addEventListener('DOMContentLoaded', function() {
+    // Initialize the prescription workflow
+    window.prescriptionWorkflow = new PrescriptionWorkflow({
+      steps: {{ steps|safe }},
+      currentStep: '{{ current_step }}'
+    });
+  });
+</script>
+{% endblock %}

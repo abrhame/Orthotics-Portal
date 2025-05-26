@@ -1,8 +1,8 @@
 // Create a singleton instance for the DeviceOptionsModule
 const DeviceOptionsModule = {
   prescriptionId: null,
-
   init(prescriptionId) {
+    console.log("device options intialized");
     if (!prescriptionId) {
       console.error("No prescription ID provided for device options");
       return;

@@ -4,7 +4,7 @@ Views for the prescriptions app.
 from rest_framework import generics, viewsets, permissions, status
 from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.response import Response
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from django.db import transaction
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
@@ -27,6 +27,8 @@ from .serializers import (
 from patients.models import Patient
 import logging
 from rest_framework.exceptions import ValidationError
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
 
 logger = logging.getLogger(__name__)
 
@@ -1010,3 +1012,59 @@ class ActivityViewSet(viewsets.ModelViewSet):
     queryset = Activity.objects.all()
     serializer_class = ActivitySerializer
     permission_classes = [permissions.IsAuthenticated]
+
+@login_required
+def create_prescription_view(request):
+    """
+    View for the new prescription workflow page with sidebar layout
+    """
+    context = {
+        'current_step': 'patient',  # Initial step is patient selection/creation
+        'steps': [
+            {'id': 'patient', 'name': 'Patient', 'icon': 'bi-person'},
+            {'id': 'scan_upload', 'name': 'Scan Upload', 'icon': 'bi-cloud-upload'},
+            {'id': 'clinical_measures', 'name': 'Clinical Measures', 'icon': 'bi-rulers'},
+            {'id': 'intrinsic', 'name': 'Intrinsic Adjustments', 'icon': 'bi-sliders'},
+            {'id': 'offloading', 'name': 'Off-Loading', 'icon': 'bi-layers'},
+            {'id': 'plantar_modifiers', 'name': 'Plantar Modifiers', 'icon': 'bi-grid'},
+            {'id': 'material_selection', 'name': 'Material Selection', 'icon': 'bi-box'},
+            {'id': 'shoe_fitting', 'name': 'Shoe Fitting', 'icon': 'bi-boot'},
+            {'id': 'posting', 'name': 'Posting', 'icon': 'bi-stack'},
+            {'id': 'device_options', 'name': 'Device Options', 'icon': 'bi-gear'},
+            {'id': 'notes_attachments', 'name': 'Notes & Attachments', 'icon': 'bi-paperclip'},
+        ]
+    }
+    return render(request, 'orthotics_portal/create_prescription.html', context)
+
+@login_required
+def add_patient_view(request):
+    """
+    View for adding a new patient and creating their first prescription
+    """
+    if request.method == 'POST':
+        # Handle form submission here
+        return JsonResponse({'status': 'success'})
+    
+    context = {
+        'page_title': 'Add New Patient',
+        'is_new_patient': True,
+        'prescription': {
+            'id': 'New',
+            'created_at': None,
+            'status': {'name': 'Draft', 'color': 'secondary'},
+            'template': {'name': 'Standard'},
+            'patient': None,
+            'foot_type': None,
+            'wear_time': None,
+            'activity_level': None,
+            'contact_clinician': False,
+            'confirm_before_manufacture': False,
+            'clinician_computer_aided_design': False,
+            'general_notes': '',
+            'left_foot_notes': '',
+            'right_foot_notes': '',
+            'scans': [],
+            'attachments': []
+        }
+    }
+    return render(request, 'orthotics_portal/prescription_detail.html', context)

@@ -1,0 +1,310 @@
+{% load static %}
+
+<div class="clinical-measures-step">
+  <div class="row">
+    <!-- Left Foot -->
+    <div class="col-md-6">
+      <div class="card mb-3">
+        <div class="card-header">
+          <h5 class="card-title mb-0">Left Foot</h5>
+        </div>
+        <div class="card-body">
+          <div class="mb-3">
+            <label class="form-label">Arch Height</label>
+            <div class="input-group">
+              <button
+                type="button"
+                class="btn btn-outline-secondary"
+                data-action="decrement"
+                data-target="leftArchHeight"
+              >
+                <i class="bi bi-dash"></i>
+              </button>
+              <input
+                type="number"
+                class="form-control text-center"
+                id="leftArchHeight"
+                value="0"
+                min="0"
+                max="100"
+                step="1"
+              />
+              <button
+                type="button"
+                class="btn btn-outline-secondary"
+                data-action="increment"
+                data-target="leftArchHeight"
+              >
+                <i class="bi bi-plus"></i>
+              </button>
+              <span class="input-group-text">mm</span>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Heel Width</label>
+            <div class="input-group">
+              <button
+                type="button"
+                class="btn btn-outline-secondary"
+                data-action="decrement"
+                data-target="leftHeelWidth"
+              >
+                <i class="bi bi-dash"></i>
+              </button>
+              <input
+                type="number"
+                class="form-control text-center"
+                id="leftHeelWidth"
+                value="0"
+                min="0"
+                max="100"
+                step="1"
+              />
+              <button
+                type="button"
+                class="btn btn-outline-secondary"
+                data-action="increment"
+                data-target="leftHeelWidth"
+              >
+                <i class="bi bi-plus"></i>
+              </button>
+              <span class="input-group-text">mm</span>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Forefoot Width</label>
+            <div class="input-group">
+              <button
+                type="button"
+                class="btn btn-outline-secondary"
+                data-action="decrement"
+                data-target="leftForefootWidth"
+              >
+                <i class="bi bi-dash"></i>
+              </button>
+              <input
+                type="number"
+                class="form-control text-center"
+                id="leftForefootWidth"
+                value="0"
+                min="0"
+                max="100"
+                step="1"
+              />
+              <button
+                type="button"
+                class="btn btn-outline-secondary"
+                data-action="increment"
+                data-target="leftForefootWidth"
+              >
+                <i class="bi bi-plus"></i>
+              </button>
+              <span class="input-group-text">mm</span>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Notes</label>
+            <textarea
+              class="form-control"
+              id="leftFootNotes"
+              rows="3"
+              placeholder="Add any notes about left foot measurements..."
+            ></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Foot -->
+    <div class="col-md-6">
+      <div class="card mb-3">
+        <div class="card-header">
+          <h5 class="card-title mb-0">Right Foot</h5>
+        </div>
+        <div class="card-body">
+          <div class="mb-3">
+            <label class="form-label">Arch Height</label>
+            <div class="input-group">
+              <button
+                type="button"
+                class="btn btn-outline-secondary"
+                data-action="decrement"
+                data-target="rightArchHeight"
+              >
+                <i class="bi bi-dash"></i>
+              </button>
+              <input
+                type="number"
+                class="form-control text-center"
+                id="rightArchHeight"
+                value="0"
+                min="0"
+                max="100"
+                step="1"
+              />
+              <button
+                type="button"
+                class="btn btn-outline-secondary"
+                data-action="increment"
+                data-target="rightArchHeight"
+              >
+                <i class="bi bi-plus"></i>
+              </button>
+              <span class="input-group-text">mm</span>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Heel Width</label>
+            <div class="input-group">
+              <button
+                type="button"
+                class="btn btn-outline-secondary"
+                data-action="decrement"
+                data-target="rightHeelWidth"
+              >
+                <i class="bi bi-dash"></i>
+              </button>
+              <input
+                type="number"
+                class="form-control text-center"
+                id="rightHeelWidth"
+                value="0"
+                min="0"
+                max="100"
+                step="1"
+              />
+              <button
+                type="button"
+                class="btn btn-outline-secondary"
+                data-action="increment"
+                data-target="rightHeelWidth"
+              >
+                <i class="bi bi-plus"></i>
+              </button>
+              <span class="input-group-text">mm</span>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Forefoot Width</label>
+            <div class="input-group">
+              <button
+                type="button"
+                class="btn btn-outline-secondary"
+                data-action="decrement"
+                data-target="rightForefootWidth"
+              >
+                <i class="bi bi-dash"></i>
+              </button>
+              <input
+                type="number"
+                class="form-control text-center"
+                id="rightForefootWidth"
+                value="0"
+                min="0"
+                max="100"
+                step="1"
+              />
+              <button
+                type="button"
+                class="btn btn-outline-secondary"
+                data-action="increment"
+                data-target="rightForefootWidth"
+              >
+                <i class="bi bi-plus"></i>
+              </button>
+              <span class="input-group-text">mm</span>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Notes</label>
+            <textarea
+              class="form-control"
+              id="rightFootNotes"
+              rows="3"
+              placeholder="Add any notes about right foot measurements..."
+            ></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Additional Clinical Information -->
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="card-title mb-0">Additional Clinical Information</h5>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Foot Type</label>
+              <select class="form-select" id="footType">
+                <option value="">Select foot type...</option>
+                <option value="normal">Normal</option>
+                <option value="high_arch">High Arch</option>
+                <option value="flat">Flat</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Activity Level</label>
+              <select class="form-select" id="activityLevel">
+                <option value="">Select activity level...</option>
+                <option value="sedentary">Sedentary</option>
+                <option value="light">Light</option>
+                <option value="moderate">Moderate</option>
+                <option value="high">High</option>
+              </select>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">General Notes</label>
+            <textarea
+              class="form-control"
+              id="generalNotes"
+              rows="3"
+              placeholder="Add any general clinical notes..."
+            ></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .clinical-measures-step .card {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  }
+
+  .clinical-measures-step .input-group {
+    width: 100%;
+  }
+
+  .clinical-measures-step .input-group .form-control {
+    text-align: center;
+  }
+
+  .clinical-measures-step .input-group .btn {
+    min-width: 40px;
+  }
+
+  .clinical-measures-step .form-control:focus,
+  .clinical-measures-step .form-select:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+  }
+
+  .clinical-measures-step .card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+  }
+</style>

@@ -1,0 +1,308 @@
+{% load static %}
+
+<div class="intrinsic-step">
+  <div class="row">
+    <!-- Left Foot -->
+    <div class="col-md-6">
+      <div class="card mb-3">
+        <div class="card-header">
+          <h5 class="card-title mb-0">Left Foot</h5>
+        </div>
+        <div class="card-body">
+          <div class="mb-3">
+            <label class="form-label">Arch Height Adjustment</label>
+            <div class="input-group">
+              <button
+                type="button"
+                class="btn btn-outline-secondary"
+                data-action="decrement"
+                data-target="leftArchAdjustment"
+              >
+                <i class="bi bi-dash"></i>
+              </button>
+              <input
+                type="number"
+                class="form-control text-center"
+                id="leftArchAdjustment"
+                value="0"
+                min="-10"
+                max="10"
+                step="0.5"
+              />
+              <button
+                type="button"
+                class="btn btn-outline-secondary"
+                data-action="increment"
+                data-target="leftArchAdjustment"
+              >
+                <i class="bi bi-plus"></i>
+              </button>
+              <span class="input-group-text">mm</span>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Heel Cup Depth</label>
+            <div class="input-group">
+              <button
+                type="button"
+                class="btn btn-outline-secondary"
+                data-action="decrement"
+                data-target="leftHeelCupDepth"
+              >
+                <i class="bi bi-dash"></i>
+              </button>
+              <input
+                type="number"
+                class="form-control text-center"
+                id="leftHeelCupDepth"
+                value="0"
+                min="0"
+                max="20"
+                step="1"
+              />
+              <button
+                type="button"
+                class="btn btn-outline-secondary"
+                data-action="increment"
+                data-target="leftHeelCupDepth"
+              >
+                <i class="bi bi-plus"></i>
+              </button>
+              <span class="input-group-text">mm</span>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Metatarsal Pad Height</label>
+            <div class="input-group">
+              <button
+                type="button"
+                class="btn btn-outline-secondary"
+                data-action="decrement"
+                data-target="leftMetPadHeight"
+              >
+                <i class="bi bi-dash"></i>
+              </button>
+              <input
+                type="number"
+                class="form-control text-center"
+                id="leftMetPadHeight"
+                value="0"
+                min="0"
+                max="10"
+                step="0.5"
+              />
+              <button
+                type="button"
+                class="btn btn-outline-secondary"
+                data-action="increment"
+                data-target="leftMetPadHeight"
+              >
+                <i class="bi bi-plus"></i>
+              </button>
+              <span class="input-group-text">mm</span>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Notes</label>
+            <textarea
+              class="form-control"
+              id="leftFootNotes"
+              rows="3"
+              placeholder="Add any notes about left foot adjustments..."
+            ></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Foot -->
+    <div class="col-md-6">
+      <div class="card mb-3">
+        <div class="card-header">
+          <h5 class="card-title mb-0">Right Foot</h5>
+        </div>
+        <div class="card-body">
+          <div class="mb-3">
+            <label class="form-label">Arch Height Adjustment</label>
+            <div class="input-group">
+              <button
+                type="button"
+                class="btn btn-outline-secondary"
+                data-action="decrement"
+                data-target="rightArchAdjustment"
+              >
+                <i class="bi bi-dash"></i>
+              </button>
+              <input
+                type="number"
+                class="form-control text-center"
+                id="rightArchAdjustment"
+                value="0"
+                min="-10"
+                max="10"
+                step="0.5"
+              />
+              <button
+                type="button"
+                class="btn btn-outline-secondary"
+                data-action="increment"
+                data-target="rightArchAdjustment"
+              >
+                <i class="bi bi-plus"></i>
+              </button>
+              <span class="input-group-text">mm</span>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Heel Cup Depth</label>
+            <div class="input-group">
+              <button
+                type="button"
+                class="btn btn-outline-secondary"
+                data-action="decrement"
+                data-target="rightHeelCupDepth"
+              >
+                <i class="bi bi-dash"></i>
+              </button>
+              <input
+                type="number"
+                class="form-control text-center"
+                id="rightHeelCupDepth"
+                value="0"
+                min="0"
+                max="20"
+                step="1"
+              />
+              <button
+                type="button"
+                class="btn btn-outline-secondary"
+                data-action="increment"
+                data-target="rightHeelCupDepth"
+              >
+                <i class="bi bi-plus"></i>
+              </button>
+              <span class="input-group-text">mm</span>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Metatarsal Pad Height</label>
+            <div class="input-group">
+              <button
+                type="button"
+                class="btn btn-outline-secondary"
+                data-action="decrement"
+                data-target="rightMetPadHeight"
+              >
+                <i class="bi bi-dash"></i>
+              </button>
+              <input
+                type="number"
+                class="form-control text-center"
+                id="rightMetPadHeight"
+                value="0"
+                min="0"
+                max="10"
+                step="0.5"
+              />
+              <button
+                type="button"
+                class="btn btn-outline-secondary"
+                data-action="increment"
+                data-target="rightMetPadHeight"
+              >
+                <i class="bi bi-plus"></i>
+              </button>
+              <span class="input-group-text">mm</span>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Notes</label>
+            <textarea
+              class="form-control"
+              id="rightFootNotes"
+              rows="3"
+              placeholder="Add any notes about right foot adjustments..."
+            ></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Additional Adjustments -->
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="card-title mb-0">Additional Adjustments</h5>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Arch Type</label>
+              <select class="form-select" id="archType">
+                <option value="">Select arch type...</option>
+                <option value="neutral">Neutral</option>
+                <option value="medial">Medial</option>
+                <option value="lateral">Lateral</option>
+              </select>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Support Level</label>
+              <select class="form-select" id="supportLevel">
+                <option value="">Select support level...</option>
+                <option value="light">Light</option>
+                <option value="moderate">Moderate</option>
+                <option value="firm">Firm</option>
+              </select>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">General Notes</label>
+            <textarea
+              class="form-control"
+              id="generalNotes"
+              rows="3"
+              placeholder="Add any general notes about intrinsic adjustments..."
+            ></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .intrinsic-step .card {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  }
+
+  .intrinsic-step .input-group {
+    width: 100%;
+  }
+
+  .intrinsic-step .input-group .form-control {
+    text-align: center;
+  }
+
+  .intrinsic-step .input-group .btn {
+    min-width: 40px;
+  }
+
+  .intrinsic-step .form-control:focus,
+  .intrinsic-step .form-select:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+  }
+
+  .intrinsic-step .card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+  }
+</style>

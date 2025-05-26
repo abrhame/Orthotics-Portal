@@ -9,6 +9,7 @@ from patients.models import Patient
 from orders.models import Order
 from invoices.models import Invoice
 from prescriptions.models import Prescription, Template
+from prescriptions.views import create_prescription_view
 from users.models import Clinic
 from django.contrib.auth import get_user_model
 import logging

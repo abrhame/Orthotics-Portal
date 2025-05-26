@@ -19,7 +19,7 @@ urlpatterns = [
     path('', include(router.urls)),
     
     # Keep the standalone endpoint for simplicity in frontend integration
-    path('create/', views.create_prescription, name='create_prescription'),
+    path('create/', views.create_prescription_view, name='create_prescription'),
     
     # Add clinical measures endpoint
     path('<uuid:pk>/clinical-measures/', views.PrescriptionViewSet.as_view({'post': 'clinical_measures'}), name='prescription-clinical-measures'),

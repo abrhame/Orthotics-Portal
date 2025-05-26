@@ -1,0 +1,607 @@
+{% load static %}
+
+<!-- Clinical Measures Modal -->
+<div
+  class=""
+  id="clinicalMeasuresModal"
+  tabindex="-1"
+  aria-labelledby="clinicalMeasuresModalLabel"
+  aria-hidden="true"
+>
+  <div class="">
+    <div class="modal-content">
+      <div class="modal-body">
+        <form id="clinicalMeasuresForm">
+          <input type="hidden" id="clinicalMeasuresPrescriptionId" value="" />
+
+          <div class="row mb-4">
+            <div class="col-12">
+              <h6>Alignment Methods</h6>
+            </div>
+            <div class="col-12">
+              <div class="card mb-3">
+                <div class="card-body">
+                  <div class="row align-items-center mb-3">
+                    <div class="col-md-3">
+                      <label class="form-label mb-0">Scan Angle</label>
+                      <span class="badge bg-primary ms-1">deg.</span>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="input-group">
+                        <button
+                          type="button"
+                          class="btn btn-outline-secondary decrease-btn"
+                          data-target="leftScanAngle"
+                        >
+                          −
+                        </button>
+                        <input
+                          type="number"
+                          class="form-control text-center"
+                          id="leftScanAngle"
+                          value="0"
+                        />
+                        <button
+                          type="button"
+                          class="btn btn-outline-secondary increase-btn"
+                          data-target="leftScanAngle"
+                        >
+                          +
+                        </button>
+                      </div>
+                      <div class="d-flex justify-content-between mt-1">
+                        <small>Everted</small>
+                        <small>Inverted</small>
+                      </div>
+                    </div>
+                    <div class="col-md-1"></div>
+                    <div class="col-md-4">
+                      <div class="input-group">
+                        <button
+                          type="button"
+                          class="btn btn-outline-secondary decrease-btn"
+                          data-target="rightScanAngle"
+                        >
+                          −
+                        </button>
+                        <input
+                          type="number"
+                          class="form-control text-center"
+                          id="rightScanAngle"
+                          value="0"
+                        />
+                        <button
+                          type="button"
+                          class="btn btn-outline-secondary increase-btn"
+                          data-target="rightScanAngle"
+                        >
+                          +
+                        </button>
+                      </div>
+                      <div class="d-flex justify-content-between mt-1">
+                        <small>Everted</small>
+                        <small>Inverted</small>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row align-items-center mb-3">
+                    <div class="col-md-3">
+                      <label class="form-label mb-0">Forefoot Varus</label>
+                      <span class="badge bg-primary ms-1">deg.</span>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="input-group">
+                        <button
+                          type="button"
+                          class="btn btn-outline-secondary decrease-btn"
+                          data-target="leftForefootVarus"
+                        >
+                          −
+                        </button>
+                        <input
+                          type="number"
+                          class="form-control text-center"
+                          id="leftForefootVarus"
+                          value="0"
+                        />
+                        <button
+                          type="button"
+                          class="btn btn-outline-secondary increase-btn"
+                          data-target="leftForefootVarus"
+                        >
+                          +
+                        </button>
+                      </div>
+                      <div class="d-flex justify-content-between mt-1">
+                        <small>Everted</small>
+                        <small>Inverted</small>
+                      </div>
+                    </div>
+                    <div class="col-md-1"></div>
+                    <div class="col-md-4">
+                      <div class="input-group">
+                        <button
+                          type="button"
+                          class="btn btn-outline-secondary decrease-btn"
+                          data-target="rightForefootVarus"
+                        >
+                          −
+                        </button>
+                        <input
+                          type="number"
+                          class="form-control text-center"
+                          id="rightForefootVarus"
+                          value="0"
+                        />
+                        <button
+                          type="button"
+                          class="btn btn-outline-secondary increase-btn"
+                          data-target="rightForefootVarus"
+                        >
+                          +
+                        </button>
+                      </div>
+                      <div class="d-flex justify-content-between mt-1">
+                        <small>Everted</small>
+                        <small>Inverted</small>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row align-items-center mb-3">
+                    <div class="col-md-3">
+                      <label class="form-label mb-0">Forefoot Valgus</label>
+                      <span class="badge bg-primary ms-1">deg.</span>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="input-group">
+                        <button
+                          type="button"
+                          class="btn btn-outline-secondary decrease-btn"
+                          data-target="leftForefootValgus"
+                        >
+                          −
+                        </button>
+                        <input
+                          type="number"
+                          class="form-control text-center"
+                          id="leftForefootValgus"
+                          value="0"
+                        />
+                        <button
+                          type="button"
+                          class="btn btn-outline-secondary increase-btn"
+                          data-target="leftForefootValgus"
+                        >
+                          +
+                        </button>
+                      </div>
+                      <div class="d-flex justify-content-between mt-1">
+                        <small>Everted</small>
+                        <small>Inverted</small>
+                      </div>
+                    </div>
+                    <div class="col-md-1"></div>
+                    <div class="col-md-4">
+                      <div class="input-group">
+                        <button
+                          type="button"
+                          class="btn btn-outline-secondary decrease-btn"
+                          data-target="rightForefootValgus"
+                        >
+                          −
+                        </button>
+                        <input
+                          type="number"
+                          class="form-control text-center"
+                          id="rightForefootValgus"
+                          value="0"
+                        />
+                        <button
+                          type="button"
+                          class="btn btn-outline-secondary increase-btn"
+                          data-target="rightForefootValgus"
+                        >
+                          +
+                        </button>
+                      </div>
+                      <div class="d-flex justify-content-between mt-1">
+                        <small>Everted</small>
+                        <small>Inverted</small>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row align-items-center mb-3">
+                    <div class="col-md-3">
+                      <label class="form-label mb-0"
+                        >Heel Centre to 1st MPJ Centre</label
+                      >
+                      <span class="badge bg-primary ms-1">mm</span>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="input-group">
+                        <button
+                          type="button"
+                          class="btn btn-outline-secondary decrease-btn"
+                          data-target="leftHeelToMPJ"
+                        >
+                          −
+                        </button>
+                        <input
+                          type="number"
+                          class="form-control text-center"
+                          id="leftHeelToMPJ"
+                          value="0"
+                        />
+                        <button
+                          type="button"
+                          class="btn btn-outline-secondary increase-btn"
+                          data-target="leftHeelToMPJ"
+                        >
+                          +
+                        </button>
+                      </div>
+                    </div>
+                    <div class="col-md-1"></div>
+                    <div class="col-md-4">
+                      <div class="input-group">
+                        <button
+                          type="button"
+                          class="btn btn-outline-secondary decrease-btn"
+                          data-target="rightHeelToMPJ"
+                        >
+                          −
+                        </button>
+                        <input
+                          type="number"
+                          class="form-control text-center"
+                          id="rightHeelToMPJ"
+                          value="0"
+                        />
+                        <button
+                          type="button"
+                          class="btn btn-outline-secondary increase-btn"
+                          data-target="rightHeelToMPJ"
+                        >
+                          +
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row align-items-center">
+                    <div class="col-md-3">
+                      <label class="form-label mb-0"
+                        >Posterior Heel to Heel Centre</label
+                      >
+                      <span class="badge bg-primary ms-1">mm</span>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="input-group">
+                        <button
+                          type="button"
+                          class="btn btn-outline-secondary decrease-btn"
+                          data-target="leftPosteriorHeel"
+                        >
+                          −
+                        </button>
+                        <input
+                          type="number"
+                          class="form-control text-center"
+                          id="leftPosteriorHeel"
+                          value="0"
+                        />
+                        <button
+                          type="button"
+                          class="btn btn-outline-secondary increase-btn"
+                          data-target="leftPosteriorHeel"
+                        >
+                          +
+                        </button>
+                      </div>
+                    </div>
+                    <div class="col-md-1"></div>
+                    <div class="col-md-4">
+                      <div class="input-group">
+                        <button
+                          type="button"
+                          class="btn btn-outline-secondary decrease-btn"
+                          data-target="rightPosteriorHeel"
+                        >
+                          −
+                        </button>
+                        <input
+                          type="number"
+                          class="form-control text-center"
+                          id="rightPosteriorHeel"
+                          value="0"
+                        />
+                        <button
+                          type="button"
+                          class="btn btn-outline-secondary increase-btn"
+                          data-target="rightPosteriorHeel"
+                        >
+                          +
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="clinicalNotes" class="form-label">Clinical Notes</label>
+            <textarea
+              class="form-control"
+              id="clinicalNotes"
+              rows="3"
+              placeholder="Enter any additional clinical observations or notes"
+            ></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" data-bs-dismiss="modal">
+          Cancel
+        </button>
+        <button
+          type="button"
+          class="btn"
+          style="background-color: #3a6b6d; color: white"
+          id="saveClinicalMeasuresBtn"
+        >
+          Save Measures
+        </button>
+        <button
+          type="button"
+          class="btn"
+          style="background-color: #3a6b6d; color: white"
+          id="nextStepBtnIntrinsicAdjustments"
+        >
+          Next
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast container for notifications -->
+<div id="toast-container" class="position-fixed bottom-0 end-0 p-3"></div>
+
+<!-- Clinical Measures JavaScript -->
+<script>
+  // Initialize the clinical measures functionality
+  function initClinicalMeasuresForm() {
+    const saveClinicalMeasuresBtn = document.getElementById(
+      "saveClinicalMeasuresBtn"
+    );
+    const nextStepBtnIntrinsicAdjustments = document.getElementById(
+      "nextStepBtnIntrinsicAdjustments"
+    );
+
+    // Initialize increment/decrement buttons
+    initAlignmentControls();
+
+    if (saveClinicalMeasuresBtn) {
+      saveClinicalMeasuresBtn.addEventListener("click", async function () {
+        // Get the prescription ID
+        const prescriptionId = document.getElementById(
+          "clinicalMeasuresPrescriptionId"
+        ).value;
+        if (!prescriptionId) {
+          showToast("No prescription selected", "danger");
+          return;
+        }
+
+        // Collect all form data
+        const formData = {
+          prescription: prescriptionId,
+          left_scan_angle: document.getElementById("leftScanAngle").value || 0,
+          left_forefoot_varus:
+            document.getElementById("leftForefootVarus").value || 0,
+          left_forefoot_valgus:
+            document.getElementById("leftForefootValgus").value || 0,
+          left_heel_to_mpj_centre:
+            document.getElementById("leftHeelToMPJ").value || 0,
+          left_posterior_heel_to_heel_centre:
+            document.getElementById("leftPosteriorHeel").value || 0,
+          right_scan_angle:
+            document.getElementById("rightScanAngle").value || 0,
+          right_forefoot_varus:
+            document.getElementById("rightForefootVarus").value || 0,
+          right_forefoot_valgus:
+            document.getElementById("rightForefootValgus").value || 0,
+          right_heel_to_mpj_centre:
+            document.getElementById("rightHeelToMPJ").value || 0,
+          right_posterior_heel_to_heel_centre:
+            document.getElementById("rightPosteriorHeel").value || 0,
+          clinical_notes: document.getElementById("clinicalNotes").value || "",
+        };
+
+        // Show loading state
+        saveClinicalMeasuresBtn.disabled = true;
+        saveClinicalMeasuresBtn.innerHTML =
+          '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...';
+
+        try {
+          // Save the clinical measures using the API service
+          const response = await ApiService.prescriptions.saveClinicalMeasures(
+            prescriptionId,
+            formData
+          );
+          console.log("Clinical measures saved:", response);
+          showToast("Clinical measures saved successfully", "success");
+
+          // Reset the clinical measure form
+          document.getElementById("clinicalMeasuresForm").reset();
+          const modal = bootstrap.Modal.getInstance(
+            document.getElementById("clinicalMeasuresModal")
+          );
+          if (modal) {
+            modal.hide();
+          }
+
+          // Open the intrinsic adjustments modal with the same prescription ID
+          openIntrinsicAdjustmentsModal(prescriptionId);
+        } catch (error) {
+          console.error("Error saving clinical measures:", error);
+          showToast(
+            "Failed to save clinical measures: " +
+              (error.message || "Unknown error"),
+            "danger"
+          );
+        } finally {
+          // Re-enable the button
+          saveClinicalMeasuresBtn.disabled = false;
+          saveClinicalMeasuresBtn.innerHTML = "Save Measures";
+        }
+      });
+    }
+
+    // Handle the Next button click
+    if (nextStepBtnIntrinsicAdjustments) {
+      nextStepBtnIntrinsicAdjustments.addEventListener("click", function () {
+        // First save the clinical measures
+        saveClinicalMeasuresBtn.click();
+      });
+    }
+  }
+
+  function initAlignmentControls() {
+    // Get all increment and decrement buttons
+    const decreaseBtns = document.querySelectorAll(".decrease-btn");
+    const increaseBtns = document.querySelectorAll(".increase-btn");
+
+    // Add event listeners for decrement buttons
+    decreaseBtns.forEach((btn) => {
+      btn.addEventListener("click", function () {
+        const targetId = this.getAttribute("data-target");
+        const input = document.getElementById(targetId);
+        if (input) {
+          let value = parseInt(input.value) || 0;
+          input.value = Math.max(value - 1, -180); // Prevent going below -180 degrees
+        }
+      });
+    });
+
+    // Add event listeners for increment buttons
+    increaseBtns.forEach((btn) => {
+      btn.addEventListener("click", function () {
+        const targetId = this.getAttribute("data-target");
+        const input = document.getElementById(targetId);
+        if (input) {
+          let value = parseInt(input.value) || 0;
+          input.value = Math.min(value + 1, 180); // Prevent going above 180 degrees
+        }
+      });
+    });
+  }
+
+  async function loadExistingClinicalMeasures(prescriptionId) {
+    try {
+      // Fetch existing clinical measures from the API
+      const response = await ApiService.prescriptions.getClinicalMeasures(
+        prescriptionId
+      );
+      console.log("Loaded clinical measures:", response);
+
+      if (response) {
+        // Left foot measurements
+        document.getElementById("leftScanAngle").value =
+          response.left_scan_angle || 0;
+        document.getElementById("leftForefootVarus").value =
+          response.left_forefoot_varus || 0;
+        document.getElementById("leftForefootValgus").value =
+          response.left_forefoot_valgus || 0;
+        document.getElementById("leftHeelToMPJ").value =
+          response.left_heel_to_mpj_centre || 0;
+        document.getElementById("leftPosteriorHeel").value =
+          response.left_posterior_heel_to_heel_centre || 0;
+
+        // Right foot measurements
+        document.getElementById("rightScanAngle").value =
+          response.right_scan_angle || 0;
+        document.getElementById("rightForefootVarus").value =
+          response.right_forefoot_varus || 0;
+        document.getElementById("rightForefootValgus").value =
+          response.right_forefoot_valgus || 0;
+        document.getElementById("rightHeelToMPJ").value =
+          response.right_heel_to_mpj_centre || 0;
+        document.getElementById("rightPosteriorHeel").value =
+          response.right_posterior_heel_to_heel_centre || 0;
+
+        // Clinical notes
+        document.getElementById("clinicalNotes").value =
+          response.clinical_notes || "";
+      }
+    } catch (error) {
+      console.error("Error loading clinical measures:", error);
+      // Don't show a toast here as it might be the first time accessing clinical measures
+    }
+  }
+
+  // Toast notification function
+  function showToast(message, type = "info") {
+    const toastContainer = document.getElementById("toast-container");
+    if (!toastContainer) {
+      console.error("Toast container not found");
+      return;
+    }
+
+    const toast = document.createElement("div");
+    toast.className = `toast align-items-center text-white bg-${
+      type === "error" ? "danger" : type
+    } border-0`;
+    toast.setAttribute("role", "alert");
+    toast.setAttribute("aria-live", "assertive");
+    toast.setAttribute("aria-atomic", "true");
+
+    toast.innerHTML = `
+      <div class="d-flex">
+        <div class="toast-body">${message}</div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+    `;
+
+    toastContainer.appendChild(toast);
+    const bsToast = new bootstrap.Toast(toast);
+    bsToast.show();
+
+    toast.addEventListener("hidden.bs.toast", function () {
+      toast.remove();
+    });
+  }
+
+  // Export the openClinicalMeasuresModal function to make it globally available
+  window.openClinicalMeasuresModal = function (prescriptionId) {
+    if (!prescriptionId) {
+      console.error("No prescription ID provided");
+      return;
+    }
+
+    // Set the prescription ID
+    document.getElementById("clinicalMeasuresPrescriptionId").value =
+      prescriptionId;
+
+    // Clear form fields
+    document.getElementById("clinicalMeasuresForm").reset();
+
+    // Load existing clinical measures
+    loadExistingClinicalMeasures(prescriptionId);
+
+    // Show the modal
+    const modal = new bootstrap.Modal(
+      document.getElementById("clinicalMeasuresModal")
+    );
+    modal.show();
+  };
+
+  // Initialize when the document is ready
+  document.addEventListener("DOMContentLoaded", function () {
+    initClinicalMeasuresForm();
+  });
+</script>

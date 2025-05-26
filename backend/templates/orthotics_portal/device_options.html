@@ -1,29 +1,15 @@
 <!-- Device Options Modal -->
+{% load static %}
 <div
-  class="modal fade"
+  class=""
   id="deviceOptionsModal"
   tabindex="-1"
   role="dialog"
   aria-labelledby="deviceOptionsModalLabel"
   aria-hidden="true"
 >
-  <div class="modal-dialog modal-lg" role="document">
+  <div class="">
     <div class="modal-content">
-      <div class="modal-header">
-        <h5
-          class="modal-title"
-          id="deviceOptionsModalLabel"
-          style="color: #ffffff"
-        >
-          Device Options
-        </h5>
-        <button
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="modal"
-          aria-label="Close"
-        ></button>
-      </div>
       <div class="modal-body">
         <form id="deviceOptionsForm">
           <div class="row">
@@ -617,43 +603,3 @@
     </div>
   </div>
 </div>
-
-<style>
-  .input-group .form-control {
-    text-align: center;
-  }
-  .badge.bg-info {
-    cursor: help;
-  }
-  .modal-lg {
-    max-width: 900px;
-  }
-  #deviceOptionsModal {
-    z-index: 1060 !important;
-  }
-  #deviceOptionsModal .modal-dialog {
-    z-index: 1070 !important;
-  }
-  .modal-backdrop {
-    z-index: 1050 !important;
-  }
-  #deviceOptionsModal .modal-content {
-    position: relative;
-    z-index: 1070 !important;
-  }
-  #deviceOptionsModal .form-control,
-  #deviceOptionsModal .btn,
-  #deviceOptionsModal .form-check-input {
-    position: relative;
-    z-index: 1;
-  }
-  /* Remove number input spinners */
-  input[type="number"]::-webkit-inner-spin-button,
-  input[type="number"]::-webkit-outer-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-  }
-  input[type="number"] {
-    -moz-appearance: textfield;
-  }
-</style>
